@@ -1,0 +1,21 @@
+# Private observations/land/finances & secrets: NEVER commit
+data/raw/
+data/private/
+private/
+.env
+.env.*
+!.env.example
+*api_key*
+*credentials*
+*token*
+OBS_ASOS_TIM_*.csv
+output/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.egg-info/
+*.xlsx
+*.pdf
+*.zip
+*.pyc
