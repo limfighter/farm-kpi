@@ -1,0 +1,153 @@
+{
+  "metadata": {
+    "version": "0.1.0",
+    "as_of": "2026-10-14",
+    "location": "Jeonju area, South Korea",
+    "independent_land_pyeong": 3000,
+    "excluded": [
+      "existing pear orchard",
+      "separate forest mushroom enterprise"
+    ],
+    "currency": "KRW_10000_constant_2026",
+    "price_source": "scenario_only_no_KAMIS",
+    "weather_source": "KMA ASOS station 146 observed annual features 2006-2025",
+    "damage_parameters_status": "scenario_assumptions_not_calibrated"
+  },
+  "finance": {
+    "years": [
+      2027,
+      2036
+    ],
+    "real_discount_rate": 0.05,
+    "field_initial_capex": 450,
+    "site_overhead": 150,
+    "potato_revenue": 220,
+    "scallion_revenue": 140,
+    "potato_operating_cost_excluding_hired_labor": 140,
+    "scallion_operating_cost_excluding_hired_labor": 90,
+    "cucumber_revenue_300p": 2497.55,
+    "cucumber_operating_cost_excluding_hired_labor": 800,
+    "new_house_capex": 5450,
+    "new_house_maintenance": 125,
+    "house_salvage_fraction": 0.15,
+    "rent_deposit": 800,
+    "rent_fitout": 750,
+    "rent_yearly": 300,
+    "rent_maintenance": 50,
+    "land_maintenance_if_idle": 110,
+    "facility_major_repair_cost": 350,
+    "hired_hour_rate": 1.87,
+    "owner_hour_economic_value": 1.5,
+    "owner_available_hours_by_month": [
+      20,
+      35,
+      25,
+      15,
+      15,
+      30,
+      45,
+      45,
+      20,
+      20,
+      35,
+      45
+    ],
+    "hour_requirements_site": [
+      0,
+      0,
+      8,
+      10,
+      10,
+      15,
+      15,
+      15,
+      10,
+      10,
+      5,
+      2
+    ],
+    "hour_requirements_potato": [
+      0,
+      0,
+      12,
+      20,
+      28,
+      15,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "hour_requirements_scallion": [
+      5,
+      5,
+      10,
+      10,
+      10,
+      10,
+      5,
+      5,
+      10,
+      20,
+      10,
+      0
+    ],
+    "hour_requirements_cucumber": [
+      0,
+      0,
+      10,
+      50,
+      75,
+      85,
+      90,
+      80,
+      75,
+      40,
+      17,
+      0
+    ]
+  },
+  "loan": {
+    "enabled_for_new_house": true,
+    "principal": 3000,
+    "annual_nominal_rate": 0.015,
+    "draw_year": 2028,
+    "grace_years": 5,
+    "amortization_years": 20,
+    "status": "HYPOTHETICAL; not approved; nominal-vs-real consistency pending"
+  },
+  "risk": {
+    "price_common_sigma": 0.1,
+    "price_potato_sigma": 0.18,
+    "price_scallion_sigma": 0.2,
+    "price_cucumber_sigma": 0.16,
+    "pest_potato_base": 0.12,
+    "pest_scallion_base": 0.15,
+    "pest_cucumber_base": 0.18,
+    "pest_loss_potato": 0.12,
+    "pest_loss_scallion": 0.15,
+    "pest_loss_cucumber": 0.2,
+    "major_repair_base_prob": 0.012,
+    "major_repair_wet_sensitivity": 0.05,
+    "first_year_field_productivity": 0.85,
+    "cucumber_ramp_from_2028": [
+      0.78,
+      0.9,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "tax_and_insurance": {
+    "annual_tax_cash": 0,
+    "annual_insurance_premium_cash": 0,
+    "annual_insurance_payout_cash": 0,
+    "status": "UNKNOWN: zeros are placeholders NOT tax exemptions or free insurance"
+  }
+}
