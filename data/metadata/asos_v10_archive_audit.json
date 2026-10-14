@@ -1,0 +1,12 @@
+{
+  "source": "Uploaded KMA hourly ASOS CSV; station 146 Jeonju; locally observed; downloaded 2026-10-14",
+  "period": ["2006-01-01T00:00", "2025-12-31T23:00"],
+  "files_scanned": 43,
+  "hours_expected": 175320,
+  "unique_hours": 175319,
+  "missing_hours": ["2015-06-27T05:00:00"],
+  "duplicate_records": 61295,
+  "conflicting_duplicate_fields": {},
+  "rain_caveat": "Blank, QC8 or QC9 rainfall is unknown, not a zero. Derived sums are observed lower bounds, not validated totals.",
+  "audit_status": "Archived v10 metadata, not independently rechecked from original hourly files in this GitHub revision"
+}

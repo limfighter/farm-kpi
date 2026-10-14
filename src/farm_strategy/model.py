@@ -101,6 +101,8 @@ def one_path(plan, scenario, pool, config, rng):
     results = []
     project_npv = equity_npv = economic_npv = 0.0
     debt = 0.0
+    cumulative_equity_cash = 0.0
+    lowest_annual_cash_balance = 0.0
 
     for t, year in enumerate(range(f["years"][0], f["years"][1] + 1)):
         w = rng.choice(pool)  # whole historical year retains climate correlations
@@ -167,8 +169,9 @@ def one_path(plan, scenario, pool, config, rng):
         if built and loan["enabled_for_new_house"]:
             draw, repayment, debt = loan_cash(year, loan)
         equity_cash = project_cash + draw - repayment
-        if year == 2036 and built and loan["enabled_for_new_house"]:
-            equity_cash -= debt   # end-of-horizon outstanding liability (not cash repayment)
+        # Unpaid principal is a liability, not a cash payment in 2036.
+        cumulative_equity_cash += equity_cash
+        lowest_annual_cash_balance = min(lowest_annual_cash_balance, cumulative_equity_cash)
         factor = (1.0 + f["real_discount_rate"]) ** t
         project_npv += project_cash / factor
         equity_npv += equity_cash / factor
@@ -179,7 +182,10 @@ def one_path(plan, scenario, pool, config, rng):
                         "project_cash": project_cash, "loan_draw": draw,
                         "loan_payment": repayment, "debt_end": debt,
                         "equity_cash": equity_cash})
+    terminal_debt_pv = debt / (1.0 + f["real_discount_rate"]) ** (f["years"][1] - f["years"][0])
     return {"project_npv": project_npv, "equity_npv": equity_npv,
+            "equity_terminal_liability_adjusted_npv": equity_npv - terminal_debt_pv,
+            "annual_liquidity_buffer_required": -lowest_annual_cash_balance,
             "economic_npv": economic_npv,
             "cash_2030_after_debt": next(y["project_cash"] + y["loan_draw"] - y["loan_payment"]
                                          for y in results if y["year"] == 2030),
@@ -194,7 +200,9 @@ def simulate(plan, scenario, weather, config, seed=42, paths=1000, window="recen
     if len(pool) < 5: raise ValueError("Need >=5 annual observations")
     rng = random.Random(seed)
     runs = [one_path(plan, scenario, pool, config, rng) for _ in range(paths)]
-    keys = ("project_npv", "equity_npv", "economic_npv",
+    keys = ("project_npv", "equity_npv",
+            "equity_terminal_liability_adjusted_npv",
+            "annual_liquidity_buffer_required", "economic_npv",
             "cash_2030_after_debt", "hired_hours_2030", "debt_end")
     summary = {}
     for key in keys:
@@ -215,4 +223,6 @@ def simulate(plan, scenario, weather, config, seed=42, paths=1000, window="recen
                 "price": "UNVALIDATED synthetic shocks; KAMIS excluded",
                 "construction": "UNVALIDATED construction and rent quotes",
                 "tax_insurance": "ZERO PLACEHOLDERS; NOT a tax-exemption assertion",
-                "loan": "illustrative terms; not approved"}}
+                "loan": "illustrative terms; not approved",
+                "liquidity": "ANNUAL year-end balances only; monthly minimum unmodeled",
+                "equity_npv": "cashflow NPV excludes outstanding terminal debt; adjusted metric deducts liability PV"}}
