@@ -1,0 +1,52 @@
+"""Command-line interface: scenario engine; no implicit live API access."""
+import argparse
+import json
+from pathlib import Path
+from .model import PLANS, SCENARIOS, read_config, read_weather, simulate
+
+ROOT = Path(__file__).resolve().parents[2]
+
+def main(argv=None):
+    p = argparse.ArgumentParser(prog="farm-strategy")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("validate", help="Check input data source and uncertainty status")
+    for cmd in ("compare", "forecast"):
+        sp = sub.add_parser(cmd)
+        sp.add_argument("--scenario", choices=SCENARIOS, default="base")
+        sp.add_argument("--window", choices=("recent10", "all20"), default="recent10")
+        sp.add_argument("--seed", type=int, default=42)
+        sp.add_argument("--paths", type=int, default=1000)
+        sp.add_argument("--output", type=Path)
+        if cmd == "forecast":
+            sp.add_argument("--plan", choices=PLANS, default="new_cucumber_house")
+    p.add_argument("--config", type=Path, default=ROOT / "configs/base.json")
+    p.add_argument("--weather", type=Path, default=ROOT / "data/processed/annual_weather.csv")
+    args = p.parse_args(argv)
+    config = read_config(args.config)
+    observed = read_weather(args.weather)
+    if args.cmd == "validate":
+        result = {"n_weather_years": len(observed),
+                  "years": [int(x["year"]) for x in observed],
+                  "weather_source": config["metadata"]["weather_source"],
+                  "price_source": config["metadata"]["price_source"],
+                  "damage_parameters_status": config["metadata"]["damage_parameters_status"],
+                  "tax_insurance_status": config["tax_and_insurance"]["status"]}
+    elif args.cmd == "compare":
+        result = {"runs": [simulate(plan, args.scenario, observed, config,
+                                    seed=args.seed, paths=args.paths,
+                                    window=args.window) for plan in PLANS],
+                  "warning": "Only weather input is observed; price/pest/loss/quotes unvalidated"}
+    else:
+        result = simulate(args.plan, args.scenario, observed, config,
+                          seed=args.seed, paths=args.paths, window=args.window)
+    text = json.dumps(result, ensure_ascii=False, indent=2)
+    if getattr(args, "output", None):
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(text + "\n", encoding="utf-8")
+        print(f"Wrote {args.output}")
+    else:
+        print(text)
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
