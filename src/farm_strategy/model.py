@@ -123,6 +123,10 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
                         min(1, r["pest_scallion_base"] + 0.07 * wet),
                         min(1, r["pest_cucumber_base"] + 0.10 * wet)]
         pest_hit = [rng.random() < chance for chance in pest_chances]
+        # Consume one repair draw even without a facility. This keeps the
+        # same stochastic weather/price/pest streams aligned across plans
+        # when the same seed is used for paired comparisons.
+        repair_draw = rng.random()
         pests = [r["pest_loss_potato"], r["pest_loss_scallion"],
                  r["pest_loss_cucumber"]]
         field = not (paused and t > 0)
@@ -158,7 +162,7 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
                 if plan == "new_cucumber_premium": cost += 170
                 chance = min(1, r["major_repair_base_prob"]
                              + r["major_repair_wet_sensitivity"] * wet)
-                if rng.random() < chance: cost += f["facility_major_repair_cost"]
+                if repair_draw < chance: cost += f["facility_major_repair_cost"]
         else:
             cost = f["land_maintenance_if_idle"]
         cost += unresolved["annual_tax_cash"] + unresolved["annual_insurance_premium_cash"]
