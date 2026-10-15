@@ -70,3 +70,42 @@
 python scripts/check_off_survey_candidates.py --check
 python -m pytest -q tests/test_off_survey_candidates.py
 ```
+
+## 농작업 기반 작목×시설 월별 시뮬레이터 (가정형 1차)
+
+- 코드: `src/farm_strategy/workflow.py` / 실행: `scripts/compare_workflows.py`.
+- 입력 양식: [가상 3대안](../../data/templates/workflow_scenarios_SYNTHETIC.json). **작업월·수확량·판매가·자재비·노동비·시설비는 모두 검증되지 않은 A**이며 실제 작물 추천이나 전주 농가 실적이 아닙니다.
+- `cases[]`: `id`, `crop`, `facility`, `region`, `basis_year`(단일 명목 원화 기준연도), `area_m2`(모형상의 실제 운영 면적), `owner_available_hours_by_month`(12값 또는 `null`), `operations[]`, `harvests[]`, `facility_events[]`.
+- 작업별 `operations[]`: 작업명·월·자가/고용 노동 `h/10a`, 고용 단가 `KRW/h`, 자재비·외주비 `KRW/10a`, 출처 분류/참조. 자가노동의 경제적 기회비용은 현재 결과에 **미포함**.
+- 판매별 `harvests[]`: 수확월, 생산량 `kg/10a`, 상품화 비율, 가격 `KRW/kg`, 위탁수수료율·공제액 `KRW/kg`, 운송비 `KRW/10a`, 정산 지연(0~6개월), 출처. 출하 시 운송비 지출, 순정산액은 **입금월**에 기록. 연말 미수금은 매출 0이 아님.
+- `facility_events[]`: `OPERATING`(운영 지출), `CAPEX`(투자), `DEPOSIT_PAID`, `DEPOSIT_RETURN` 별도 기록. 반환액은 이미 지급한 보증금 이하여야 하고, 보증금·CAPEX는 운영 기여액 비용으로 중복 반영하지 않음.
+- 출력: `operating_contribution_before_owner_labor_tax_depreciation_krw`(**회계상 순이익 아님**), `december_cash_balance_krw`, `unsettled_receivables_after_december_krw`, `peak_month_end_funding_gap_krw`, 자가/고용 노동, 출처 사건 계수와 월별 원장. 잔액은 **초기 현금 0·차입 0이라는 계산 기준**으로 본 월말 누적치이며 실금융 필요액을 확정하지 않음.
+- 제한: 연도별 물가·장기 시설 잔존가/감가상각/세금·보험/대출/연작·작부체계 중첩/재배 리스크/하루 안의 현금 격차/필지 적합성은 **미구현**. 서로 다른 명목 기준연도 사례는 비교 거부. 이 1년형 사례를 시설 투자 회수기간이나 ROI로 변환 금지.
+- 모든 운영/판매/시설 사건은 `source_kind`(`R/O/T/Q/A`)와 `source_ref`(개인정보 없는 참조ID)를 가짐. 분류 표시는 원문 검증을 대체하지 않으며 실제 소득 근거 심사는 별도 수행.
+
+```bash
+python -m pytest -q tests/test_workflow.py tests/test_workflow_cli.py
+python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html
+```
+
+### 51작목 전체·조사 밖 후보 탐색과 워크플로우 입력
+
+- [범용 오프라인 작물×시설 입력 화면](../../dashboard/universe/index.html)은 [원본 51작목 보고 통계](../../data/reported/rda_2024_all_51_crop_candidates.csv)로 생성합니다. `python scripts/build_crop_universe.py --check`로 목록·단위·PDF 페이지의 잠금 및 화면 일치를 검사합니다.
+- 최초 목록에 **51개 RDA 조사 작형을 전부 포함**하며, [별도 등록부](../../data/metadata/off_survey_candidate_registry.json)에 공개 정보로 등재된 조사 밖 작목은 UNKNOWN으로 함께 표시합니다. HTML에서 직접 추가한 후보는 브라우저 내에서만 만들며 원본 CSV/통계에 혼합하지 않습니다.
+- RDA 2024 전국 `income`, 노동 h/10a/작기, `yield_unit`, 소득·노동 PDF 쪽수는 **참고 정보(R)**입니다. 이를 아래 재무 사례의 노동·판매·운영비에 **자동 복사하지 않습니다**.
+- UI에서는 작업별 `operations[]`, 출하 `harvests[]`, 시설/보증금 `facility_events[]`의 숫자를 필수로 입력해야 계산합니다. 빈 값은 0으로 채우지 않으며 입력 사례는 로컬 JSON으로 내보내 `scripts/compare_workflows.py`에 전달할 수 있습니다. JSON 파일에 주소·계좌·거래처 실명을 넣어 Git에 커밋하지 않습니다.
+- `harvests[]`는 기존 kg 전용 형식도 유지하고, 신규 범용 형식의 `yield_quantity_per_10a`, `yield_unit`, `price_krw_per_unit`, `buyer_deduction_krw_per_unit`을 추가 지원합니다. **수확수량의 단위와 판매/공제 단위는 반드시 동일**해야 하며 자동 kg 환산은 하지 않습니다. 단위 입력은 시뮬레이터가 단위의 진실성을 인증하는 것은 아닙니다.
+- **다년 작기/작기 미확인** 후보는 1년 입력 화면에서 현금흐름 계산을 막고, **과수 신규 식재**는 성목 보고 수익을 신설 첫해 매출로 취급하지 않도록 기본 차단합니다. 기존 성목 포장이라는 사용자의 별도 확인 없이는 과수 단년 계산을 허용하지 않습니다. 다년 작기·신규 과수의 생육/비생산 연도와 시설 수명/감가상각을 추적할 범용 다년 모델은 아직 **미구현**입니다.
+- 이 탐색/계산 화면은 현재 브라우저 안에서만 처리하며 서버 전송이 없습니다. RDA 출처의 공식 2024 전국값은 전주 필지 성과나 작목 선정 추천 결과가 아닙니다.
+
+## 작목별 농작업 일정의 출처 근거 (비수치 참조)
+
+- [작업일정 출처 레지스트리](../../data/metadata/crop_work_calendar_sources.json)는 위 2024년 RDA 51개 품목 식별자와 10개 농사로 작목별 작업일정 원문을 **별도로 연결**합니다. 41개 조사 작목은 여전히 일정 미검토입니다. 등록이 없는 것은 작목 부재나 부적합이 아니라 자료 미검토 상태입니다.
+- `official_title` / `source_url` / `variant` / `match_level` / `region_scope` / `reviewed_on` / `season_notes` / `stages[]`는 **원문 재배력/작형 설명을 간략화한 참조**입니다. 원문 발행연도 확인 전에는 `source_year=null`로 둡니다. 화면은 2024년 소득 조사시점과 재배력 게시연도를 동일하다고 표시하지 않습니다.
+- `stages[].window_months`는 원문에 달이 명시된 경우에만 목록으로 기록합니다. 미기재 월은 `[]`로 남깁니다. `crosses_calendar_year=true`면 다음 연도까지 걸친 작기(시설딸기 11~5월 등)로, 현 단년 HTML에 한 작기 수확량을 자동 생성하지 않습니다. 비교적 긴 기간은 월별 작업량 분배 자료가 **아닙니다**.
+- `match_level`: `CROP_SYSTEM_REFERENCE`(작목/노지·시설 분류 참조), `VARIANT_REFERENCE`(작형 변형 중 하나), `CROP_FAMILY_ONLY`(작물 일치하지만 작형/토양·수경 등을 별도 확인해야 함). 이 세 값 모두 실제 농가 작형·지역·필지 적합성 인증은 아닙니다.
+- 원문에는 **KOGL 공공누리 2유형(출처표시 + 상업적 이용금지)** 조건을 표시한 페이지가 있습니다. 프로젝트는 짧은 단계명/월 범위와 URL·검토 메타데이터만 관리하고, 원문 PDF/표/그림을 재배포하지 않습니다. 향후 상품화 전에 개별 원문의 라이선스와 사용허가를 검토합니다.
+- 사용자가 원문 단계 이름으로 새 입력 행을 생성해도 **자가·고용 노동, 자재·외주비, 생산량, 가격, 시설비는 자동 입력되지 않고 UNKNOWN**입니다. 새 행의 `source_kind=A`는 사용자가 나중에 입력할 재무값의 출처 분류이며, 농사로 단계 자체의 출처는 `source_ref`로 연결합니다.
+- 수동 또는 승인 받은 API 방식의 향후 일정 갱신 후보: [농촌진흥청 농작업일정 정보 공공데이터](https://www.data.go.kr/data/15033498/openapi.do)와 [농사로 공개 API 목록](https://www.nongsaro.go.kr/portal/ps/psn/psnj/openApiLst.ps?menuId=PS65428). 인증·개별 이용조건·작형 매핑 전에는 자동 수집하거나 라이선스 미확인 원문을 저장하지 않습니다.
+
+실행 검사: `python -m pytest -q tests/test_work_calendar.py tests/test_crop_universe.py` / `python scripts/build_crop_universe.py --check`.

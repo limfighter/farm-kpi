@@ -18,6 +18,8 @@ jobs:
         run: python scripts/check_docs.py --check
       - name: Verify 51-source crop exploration dataset and offline page
         run: python scripts/refresh_crop_discovery.py --check
+      - name: Check complete 51-crop editable workflow explorer
+        run: python scripts/build_crop_universe.py --check
       - name: Verify locked 2024 RDA PDF transcription registry
         run: python scripts/verify_rda_pdf_source.py --check
       - name: Verify RDA national/regional publication registry and 2024-only long-form observations
@@ -34,6 +36,23 @@ jobs:
         run: python scripts/build_feasibility.py --check
       - name: Reaudit derived ASOS annual data
         run: python -m farm_strategy.audit --annual data/processed/annual_asos_jeonju_2006_2025.csv --metadata data/metadata/asos_v10_archive_audit.json
+      - name: Simulate workflow based crop-facility options (synthetic inputs only)
+        run: |
+          python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html
+      - name: Upload illustrative workflow comparison HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-workflow-experiment-not-validated
+          path: |
+            output/workflow-example.json
+            output/workflow-example.html
+          retention-days: 14
+      - name: Upload offline all-crop browser
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-all-crop-workflow-editor
+          path: dashboard/universe/index.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)

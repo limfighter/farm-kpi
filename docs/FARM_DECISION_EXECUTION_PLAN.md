@@ -57,6 +57,18 @@ by the GitHub PR, not by this dated roadmap.
 5. **Multiple objectives, no arbitrary single-score winner**: compare lower-end financial outcomes, maximum cash gap, first-year/peak-month labor and loss/exposure separately; Pareto analysis only after meaningful comparable evidence. User chooses acceptable tradeoffs.
 6. **Protect private sources**: original settlement statements, quotations, coordinates, parcel IDs and loan details remain under ignored `data/private/` or an authorized external store; track only redacted source metadata and content hashes.
 
+## Product correction: workflow-first simulator, research in parallel (2026-10-15)
+
+The practical target is **a realistic comparison of crop × cultivation system × usable area × farm workflow × facility × buyer**, not merely expanding an RDA provenance registry. Deliver an executable simulator even when some inputs are assumptions, then replace them with dated field evidence. Reports must distinguish **what the simulation computes** from **whether its inputs are empirically validated**.
+
+1. Represent cultivation as monthly named tasks: preparation, sowing/planting, irrigation, nutrition, crop protection, harvest/grading, packing, shipping and settlement. Require sourced quantities, input/contractor costs, owner/hired hours and hiring rates.
+2. Compare **field-only, new structure and leased facility** alternatives with explicit up-front capex, operating/utility costs, rent, deposits and refunds. Avoid double-counting capex as annual operating cost; add depreciation and multi-year economics only with explicit asset-life evidence and model support.
+3. Report separately net settled revenue, operating cash contribution (not accounting net profit), owner/hired labor, month-end cash gaps, unpaid receivables, and capex. Avoid a single simplistic crop-income ranking.
+4. Start with an executable **A-labelled synthetic prototype now**, without waiting for all P0/P1 data. Crop-specific real farm workflow calendars (e.g. official RDA work schedules), actual farm cost records, wholesale/farmgate settlement evidence, written facility quotes and local suitability remain parallel empirical workstreams.
+5. Only after reviewing real evidence by crop-system and farm feasibility, expand to multi-year capex/depreciation/financing, price-yield stress tests, and recommendation-grade comparisons. No loan or permanent construction decision follows merely from a demo.
+
+Prototype entrypoint: `python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html`. The first version is deterministic and **does not** estimate real prices, losses, or investment return.
+
 ## 2. Work packages: priority, prerequisite, and acceptance gate
 
 | ID | Priority | Work / action | Responsible / data source | Deliverable and acceptance |

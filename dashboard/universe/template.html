@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Farm KPI — 전체 작목 시뮬레이션</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#293e32;background:#f5f6f0;line-height:1.5}
+*{box-sizing:border-box}body{margin:0}
+header{padding:28px 4vw;background:#284736;color:white}
+header h1{margin:0;font-size:clamp(24px,3vw,34px)}header p{color:#e0eee1;margin:8px 0}
+main{max-width:1500px;margin:auto;padding:22px;display:grid;grid-template-columns:minmax(260px,310px) minmax(0,1fr);gap:18px}
+h2{font-size:18px;margin:0 0 10px}h3{font-size:15px}
+.panel{padding:18px;background:white;border:1px solid #dbe2d9;border-radius:12px;min-width:0;margin-bottom:16px}
+label{font-size:12px;font-weight:650;display:block;margin:8px 0 4px}
+input,select{width:100%;padding:8px;border-radius:6px;border:1px solid #c0ccc3;font:inherit;min-height:36px}
+button{cursor:pointer;font:inherit}button.primary{background:#32624b;color:white;border:0;padding:10px 13px;border-radius:7px}
+button.sub{background:white;color:#32624b;border:1px solid #b5c6b8;padding:9px 12px;border-radius:7px}
+button.remove{background:#f5e6e2;color:#804d3d;border:0;border-radius:5px}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(156px,1fr));gap:12px}
+.small{font-size:12px;color:#617366}.note{background:#fff3db;border-left:4px solid #b99561;padding:12px;border-radius:4px;font-size:13px}
+#crops{max-height:425px;overflow:auto;border:1px solid #dfe5dc;border-radius:6px}
+.crop{width:100%;text-align:left;border:0;border-bottom:1px solid #e5eae5;padding:10px;background:white}
+.crop:hover,.crop.selected{background:#e3eee3}
+.crop small{display:block;color:#637868}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;min-width:750px}
+th,td{font-size:12px;border-bottom:1px solid #e6ece6;padding:8px;text-align:right;white-space:nowrap}
+th{background:#e8f0e7}th:first-child,td:first-child{text-align:left}
+.edit td,.edit th{text-align:left;padding:4px}
+.edit input,.edit select{min-width:88px;font-size:12px;padding:6px}
+.edit input[data-key=name]{min-width:160px}
+.section{border-top:1px solid #e5ebe5;margin:18px 0 8px;padding-top:8px}
+#message{font-size:13px;white-space:pre-wrap;color:#446d50}
+details{border:1px solid #dee7dd;border-radius:7px;margin:9px 0;padding:9px}
+summary{cursor:pointer;font-weight:650}
+.metric{padding:9px;border:1px solid #e4eae3;border-radius:8px}
+.metric strong{display:block;font-size:18px}
+@media(max-width:830px){main{grid-template-columns:1fr}#crops{max-height:225px}}
+</style></head><body>
+<header><div class="small" style="color:#e0eee1">FARM KPI · ALL-CROP WORKFLOW LAB</div>
+<h1>작물 제한 없는 농장 운영 시뮬레이션</h1>
+<p>51개 공식 조사 작목 + 직접 등록 작물 · 재배 작업 × 시설 × 면적 × 출하·정산을 각기 비교</p></header>
+<main><aside><section class="panel"><h2>1. 작물 검색</h2>
+<label for="search">작목명 또는 코드</label><input id="search" placeholder="예: 딸기, 보리, 인삼">
+<label for="category">분야</label><select id="category"><option value="">전체</option></select>
+<p id="count" class="small"></p><div id="crops"></div>
+<div class="section"><h3>조사에 없는 작물 추가</h3>
+<label for="extraName">작물/작형 이름</label><input id="extraName" placeholder="사용자 지정 작목">
+<div class="grid"><div><label for="extraUnit">거래 단위</label><input id="extraUnit" placeholder="kg / 개 / 본"></div>
+<div><label for="extraCycle">작기 연수</label><input id="extraCycle" type="number" min="1" step="1" placeholder="모르면 공란"></div></div>
+<div class="buttons"><button id="addExtra" class="sub">사용자 작물 선택</button></div>
+<p class="small">추가 작물은 보고 소득이 없습니다. 등록 자체가 재배 가능/판매 가능을 뜻하지 않습니다.</p>
+</div></section></aside>
+<div><section class="panel"><h2>2. 작목별 통계 참고</h2><div id="picked"></div>
+<div id="reference" class="grid"></div>
+<div class="section" id="calendar"><p class="small">작업 일정 자료 연결 상태를 불러옵니다.</p></div>
+<p class="note">2024년 농촌진흥청의 전국 <b>원/10a/해당 작기</b> 보고 통계는 실제 전주 농장 사업 현금흐름이나 시설투자 수익이 아닙니다. 아래 모델에 통계 소득·노동을 자동 입력하지 않으며, 4년근 인삼·신규 과수 등은 1년치로 연환산하지 않습니다.</p></section>
+<section class="panel"><h2>3. 시설·면적·농작업 입력</h2>
+<p class="small">모형 값은 직접 입력합니다. 빈칸은 <b>UNKNOWN</b>, 0은 실제로 0일 때만 입력하세요. 자료 출처 R/O/T/Q/A는 입력값에 따라 구분하되 원문 진위 검증을 뜻하지 않습니다.</p>
+<div class="grid">
+<div><label for="system">재배 시설/방식</label><select id="system">
+<option>노지</option><option>시설 신축</option><option>시설 임대</option><option>기존 시설</option><option>작업 위탁</option><option>기타</option></select></div>
+<div><label for="area">운영 면적 (㎡)</label><input id="area" type="number" min="0.01" step="any" placeholder="미입력"></div>
+<div><label for="year">금액 기준 연도</label><input id="year" type="number" min="2000" max="2100" value="2026"></div>
+<div><label for="hours">매월 자가노동 가용시간 (동일 월 가정)</label><input id="hours" type="number" min="0" step="any" placeholder="UNKNOWN"></div>
+</div>
+<label><input id="mature" type="checkbox" style="width:auto;min-height:0"> 기존 성목/성숙 포장의 운영기간임을 확인 (과수에만 해당)</label>
+<div class="section"><h3>① 월별 농작업 · 자재 · 인력 · 외주</h3>
+<div class="scroll"><table id="tasks" class="edit"><thead></thead><tbody></tbody></table></div>
+<div class="buttons"><button id="addTask" class="sub">+ 농작업 추가</button></div></div>
+<div class="section"><h3>② 수확 · 판매 · 정산</h3>
+<div class="scroll"><table id="sales" class="edit"><thead></thead><tbody></tbody></table></div>
+<div class="buttons"><button id="addSale" class="sub">+ 출하 단계 추가</button></div></div>
+<div class="section"><h3>③ 시설 신축·임대·보증금·유지관리</h3>
+<div class="scroll"><table id="facilities" class="edit"><thead></thead><tbody></tbody></table></div>
+<div class="buttons"><button id="addFacility" class="sub">+ 시설 현금 사건 추가</button></div></div>
+<div class="buttons"><button id="save" class="primary">이 작물·시설 대안 비교하기</button>
+<button id="export" class="sub">JSON 내려받기</button>
+<label style="font-weight:400" for="import">JSON 불러오기</label><input type="file" id="import" accept=".json,application/json" style="max-width:260px"></div>
+<p id="message" aria-live="polite"></p></section>
+<section class="panel"><h2>4. 시나리오 결과</h2>
+<div id="comparison" class="scroll">비교 시나리오가 없습니다.</div><div id="monthly"></div>
+<p class="small">¹ 운영 기여액 = 예상 순정산액 − 자재/고용/외주/운송/시설운영 지출. 자기노동, 세금, 감가상각, 대출, 다년 시설 회수 제외. 최대 월말 자금부족은 초기 현금 0 가정 하의 누적 현금 최저점이며 실제 조달액 아님. 시나리오 점수화/추천을 하지 않습니다. 브라우저 계산은 실적 예측이나 수익 보장이 아닙니다.</p></section></div></main>
+<script>
+"use strict";
+const CATALOG=__CROP_CATALOG_JSON__;
+const $=id=>document.getElementById(id);
+const format=n=>Number(n).toLocaleString("ko-KR",{maximumFractionDigits:0});
+const list=CATALOG.slice(),choices=[],sources=["A","R","O","T","Q"],facKinds=["OPERATING","CAPEX","DEPOSIT_PAID","DEPOSIT_RETURN"];
+let picked=CATALOG[0],counter=0;
+const FIELDS={
+ tasks:[["name","작업명","str"],["month","월","int"],["owner_hours_per_10a","자가 h/10a","num"],["hired_hours_per_10a","고용 h/10a","num"],["hired_wage_krw_per_hour","고용 시급(원)","num"],["materials_krw_per_10a","자재비/10a","num"],["contractor_krw_per_10a","외주비/10a","num"],["source_kind","출처","source"],["source_ref","출처ID","str"]],
+ sales:[["name","수확/출하","str"],["month","월","int"],["yield_quantity_per_10a","수량/10a","num"],["yield_unit","단위","str"],["marketable_fraction","상품화율(0-1)","num"],["price_krw_per_unit","원/단위","num"],["commission_fraction","수수료율(0-1)","num"],["buyer_deduction_krw_per_unit","공제/단위(원)","num"],["transport_krw_per_10a","운송비/10a","num"],["settlement_lag_months","입금 지연(월)","int"],["source_kind","출처","source"],["source_ref","출처ID","str"]],
+ facilities:[["name","항목","str"],["month","월","int"],["kind","구분","kind"],["amount_krw","금액(원)","num"],["source_kind","출처","source"],["source_ref","출처ID","str"]]
+};
+function status(text,bad=false){$("message").textContent=text;$("message").style.color=bad?"#a64c3e":"#326c51";}
+function el(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=String(text);if(cls)x.className=cls;return x;}
+function renderCrops(){
+ const q=$("search").value.trim().toLowerCase(),c=$("category").value;
+ const filtered=list.filter(x=>(!c||x.category===c)&&(x.name.toLowerCase().includes(q)||x.id.toLowerCase().includes(q)));
+ $("crops").replaceChildren();$("count").textContent=String(filtered.length)+"개 표시 / 공식 조사 51개 + 사용자/기타 "+String(list.length-51)+"개";
+ for(const x of filtered){const b=el("button",x.name,"crop"+(picked.id===x.id?" selected":""));b.type="button";
+ b.append(el("small",x.category+" · "+x.id));b.onclick=()=>{picked=x;renderCrops();renderPicked();};$("crops").append(b);}
+}
+function renderPicked(){
+ $("picked").textContent=picked.name+" · "+picked.category+" · "+picked.id;
+ const box=$("reference");box.replaceChildren();
+ if(picked.source_kind==="R"){
+ for(const [caption,val] of [
+ ["RDA 2024 전국 소득(원/10a/작기)",format(picked.income)],
+ ["자가/고용 노동(h/10a/작기)",String(picked.labor_owner)+" / "+String(picked.labor_hired)],
+ ["작기/보고 수량 단위",String(picked.cycle_years)+"년 / "+picked.yield_unit],
+ ["PDF 근거 페이지","소득 "+picked.pdf_page+"쪽 · 노동 "+picked.labor_page+"쪽"]]){
+ const card=el("div",undefined,"metric");card.append(el("span",caption,"small"),el("strong",val));box.append(card);}
+ }else box.append(el("p","공표 비교값 없음(UNKNOWN). 보고 통계나 지역 적합성을 생성하지 않습니다.","small"));
+ renderCalendar();
+}
+function renderCalendar(){
+ const root=$("calendar");root.replaceChildren();
+ root.append(el("h3","공식 농작업 일정 · 작형별 원문 참조"));
+ const cal=picked.calendar;
+ if(!cal){root.append(el("p","이 작목의 개별 재배력은 아직 연결하지 않았습니다. 공식 자료 없음이나 작물 부적합을 뜻하지 않습니다.","small"));return;}
+ const link=el("a","농촌진흥청 농사로 원문 확인: "+cal.official_title);
+ link.href=cal.source_url;link.target="_blank";link.rel="noopener noreferrer";
+ root.append(link,el("p","참고 작형: "+cal.variant+" · 지역: "+cal.region_scope+" · 연결 정합성: "+cal.match_level,"small"));
+ root.append(el("p",cal.season_notes,"small"));
+ const intro=el("p","작업명과 월 범위는 원문을 간략히 정리한 참고입니다. 정확한 필지·품종·재배방식의 작업 달력은 재확인해야 합니다. 아래 입력 행을 추가해도 노동·자재·수확량·가격은 자동으로 채우지 않습니다.","small");
+ root.append(intro);
+ const box=el("div",undefined,"buttons");
+ for(const stage of cal.stages){
+  const months=stage.window_months;
+  const period=months.length?months.join("·")+"월":"월 미확인";
+  const item=el("div",undefined,"metric");
+  item.append(el("strong",stage.action+" · "+period));
+  if(stage.crosses_calendar_year){
+   item.append(el("span","다음 해까지 이어지는 작기 · 현재 단년 원장에 자동 추가 금지","small"));
+  }else{
+   const btn=el("button","+ 해당 작업/출하 입력행","sub");
+   btn.type="button";
+   btn.onclick=()=>{
+    const sale=stage.action.includes("수확");
+    const values={name:stage.action,source_kind:"A",
+      source_ref:"작업시기 참조: "+cal.source_url+" ; 금액/시간/수량/가격: 개별 입력 필요"};
+    if(months.length===1)values.month=months[0];
+    if(sale&&picked.yield_unit)values.yield_unit=picked.yield_unit;
+    addRow(sale?"sales":"tasks",values);
+    status("원문 기반 작업명 참고를 입력행에 추가했습니다. 비용/노동/생산량/가격은 아직 UNKNOWN이며 직접 검증·입력해야 합니다.");
+   };
+   item.append(btn);
+  }
+  box.append(item);
+ }
+ root.append(box);
+}
+function addRow(section,initial={}){
+ const row=document.createElement("tr");
+ for(const [name,label,type] of FIELDS[section]){
+ const td=document.createElement("td");let input;
+ if(type==="source"||type==="kind"){
+ input=document.createElement("select");
+ for(const v of (type==="source"?sources:facKinds)){const op=el("option",v);op.value=v;input.append(op);}
+ }else{input=document.createElement("input");input.type=(type==="num"||type==="int")?"number":"text";
+ if(input.type==="number"){input.min="0";input.step=type==="int"?"1":"any";}
+ input.placeholder=label;}
+ input.dataset.key=name;input.setAttribute("aria-label",label);
+ if(name==="source_kind")input.value="A";
+ if(name==="source_ref")input.value="가정 입력(원본 미검증)";
+ if(name==="yield_unit"&&picked.yield_unit)input.placeholder=picked.yield_unit;
+ if(Object.prototype.hasOwnProperty.call(initial,name))input.value=initial[name];
+ td.append(input);row.append(td);
+ }
+ const td=document.createElement("td"),b=el("button","삭제","remove");b.type="button";b.onclick=()=>row.remove();td.append(b);row.append(td);
+ document.querySelector("#"+section+" tbody").append(row);
+}
+function readRows(section){
+ const rows=[...document.querySelectorAll("#"+section+" tbody tr")];
+ return rows.map((row,i)=>{
+ const result={};
+ for(const input of row.querySelectorAll("[data-key]")){
+ const key=input.dataset.key,v=input.value.trim();
+ if(v==="")throw Error(section+" "+(i+1)+"행의 "+key+" 가 미입력입니다. 모르면 0을 적지 마세요.");
+ if(input.type==="number"){
+ const n=Number(v);
+ if(!Number.isFinite(n)||n<0)throw Error(key+" 은 유한한 0 이상 숫자여야 합니다.");
+ result[key]=n;
+ }else result[key]=v;
+ }
+ if(!Number.isInteger(result.month)||result.month<1||result.month>12)throw Error("월은 1~12 정수");
+ if(section==="sales"&&(!Number.isInteger(result.settlement_lag_months)||result.settlement_lag_months>6||result.marketable_fraction>1||result.commission_fraction>1))throw Error("정산 지연은 0~6개월, 비율은 0~1");
+ return result;
+ });
+}
+function assemble(){
+ const a=$("area").value.trim(),yr=$("year").value.trim(),av=$("hours").value.trim();
+ if(a===""||!Number.isFinite(Number(a))||Number(a)<=0)throw Error("실제 모델 면적(㎡)을 입력하세요.");
+ if(yr===""||!Number.isInteger(Number(yr))||Number(yr)<2000||Number(yr)>2100)throw Error("입력 금액 기준연도를 입력하세요.");
+ if(av!==""&&(!Number.isFinite(Number(av))||Number(av)<0))throw Error("자가 노동시간은 0 이상");
+ if(picked.cycle_years!==1)throw Error("작기 1년이 검증되지 않았거나 다년 작기입니다. 1년 모델로 환산하지 않습니다.");
+ if(picked.category.includes("과수")&&!$("mature").checked)throw Error("신규 과수는 미생산 기간이 있어 단년 모델 비교 불가. 기존 성목 포장이면 확인을 선택하세요.");
+ const operations=readRows("tasks"),harvests=readRows("sales"),facility_events=readRows("facilities");
+ if(!operations.length||!harvests.length)throw Error("농작업과 출하 단계를 적어도 1개씩 입력하세요.");
+ if($("system").value==="시설 신축"&&!facility_events.some(x=>x.kind==="CAPEX"))throw Error("신축 시설의 CAPEX 금액을 먼저 입력하세요.");
+ if($("system").value==="시설 임대"&&!facility_events.some(x=>x.kind==="OPERATING"||x.kind==="DEPOSIT_PAID"))throw Error("시설 임대료/보증금 입력이 필요합니다.");
+ return {id:"workflow-"+(++counter),crop:picked.name,facility:$("system").value,region:"UNSPECIFIED; MODEL ASSUMPTION",
+ basis_year:Number(yr),area_m2:Number(a),owner_available_hours_by_month:av===""?null:Array(12).fill(Number(av)),
+ operations,harvests,facility_events};
+}
+function calc(s){
+ const k=s.area_m2/1000;
+ if(!Number.isFinite(k)||k<=0||!s.operations.length||!s.harvests.length)throw Error("면적·작업·출하 오류");
+ const horizon=Math.max(12,...s.harvests.map(x=>x.month+x.settlement_lag_months));
+ if(horizon>18||horizon<12)throw Error("정산 기한 오류");
+ const ms=Array.from({length:horizon},(_,i)=>({year:s.basis_year+Math.floor(i/12),month:i%12+1,receipt:0,cost:0,capex:0,deposit:0,returned:0,owner:0,hired:0,activities:[]}));
+ const month=m=>ms[m-1];let gross=0,net=0,op=0,capex=0,owner=0,hired=0,deposit=0;
+ for(const t of s.operations){
+ const m=month(t.month),o=t.owner_hours_per_10a*k,h=t.hired_hours_per_10a*k;
+ const c=h*t.hired_wage_krw_per_hour+(t.materials_krw_per_10a+t.contractor_krw_per_10a)*k;
+ m.cost+=c;m.owner+=o;m.hired+=h;m.activities.push(t.name);op+=c;owner+=o;hired+=h;
+ }
+ for(const t of s.harvests){
+ const units=t.yield_quantity_per_10a*k*t.marketable_fraction;
+ const g=units*t.price_krw_per_unit,n=g*(1-t.commission_fraction)-units*t.buyer_deduction_krw_per_unit;
+ if(n<0)throw Error("정산 공제액이 수익보다 큽니다.");
+ const freight=t.transport_krw_per_10a*k;
+ month(t.month).cost+=freight;month(t.month).activities.push(t.name+" 출하");
+ month(t.month+t.settlement_lag_months).receipt+=n;gross+=g;net+=n;op+=freight;
+ }
+ for(const t of [...s.facility_events].sort((a,b)=>a.month-b.month)){
+ const m=month(t.month);m.activities.push(t.name);
+ if(t.kind==="OPERATING"){m.cost+=t.amount_krw;op+=t.amount_krw;}
+ else if(t.kind==="CAPEX"){m.capex+=t.amount_krw;capex+=t.amount_krw;}
+ else if(t.kind==="DEPOSIT_PAID"){m.deposit+=t.amount_krw;deposit+=t.amount_krw;}
+ else if(t.kind==="DEPOSIT_RETURN"){
+ if(t.amount_krw>deposit)throw Error("보증금 반환은 선지급액을 초과할 수 없습니다.");
+ m.returned+=t.amount_krw;deposit-=t.amount_krw;
+ }else throw Error("시설비 구분 오류");
+ }
+ let cumulative=0,min=0;
+ for(const m of ms){m.cash=m.receipt+m.returned-m.cost-m.capex-m.deposit;cumulative+=m.cash;m.cumulative=cumulative;min=Math.min(min,cumulative);}
+ return {case:s,ms,gross,net,op,capex,owner,hired,contribution:net-op,dec:ms.slice(0,12).reduce((a,m)=>a+m.cash,0),
+ remaining:ms.slice(12).reduce((a,m)=>a+m.receipt,0),gap:-min};
+}
+function drawTable(parent,heads,rows){
+ const table=el("table"),th=el("thead"),r=el("tr");
+ for(const h of heads)r.append(el("th",h));th.append(r);table.append(th);
+ const body=el("tbody");for(const vals of rows){const tr=el("tr");for(const val of vals)tr.append(el("td",val));body.append(tr);}
+ table.append(body);parent.append(table);
+}
+function renderResults(){
+ const p=$("comparison"),m=$("monthly");p.replaceChildren();m.replaceChildren();
+ if(!choices.length){p.textContent="아직 비교 대안이 없습니다.";return;}
+ let computed;
+ try{
+ if(new Set(choices.map(x=>x.basis_year)).size!==1)throw Error("서로 다른 금액 기준연도는 직접 비교하지 않습니다.");
+ computed=choices.map(calc);
+ }catch(e){p.textContent="비교 보류: "+e.message;return;}
+ drawTable(p,["작물/시설","순수취 예정액(원)","운영기여액¹(원)","시설 CAPEX(원)","12월 현금(원)","연말 미수금(원)","최대 월말 필요자금(원)","자가/고용 노동(h)"],
+ computed.map(x=>[x.case.crop+" / "+x.case.facility,format(x.net),format(x.contribution),format(x.capex),format(x.dec),format(x.remaining),format(x.gap),x.owner.toFixed(1)+" / "+x.hired.toFixed(1)]));
+ const buttons=el("div",undefined,"buttons");
+ computed.forEach((x,i)=>{const b=el("button",String(i+1)+"번 대안 제거","sub");b.onclick=()=>{choices.splice(i,1);renderResults();};buttons.append(b);});p.append(buttons);
+ for(const x of computed){
+ const det=el("details"),summary=el("summary",x.case.crop+" / "+x.case.facility+" 월별 현금 흐름");det.append(summary);
+ const box=el("div",undefined,"scroll");
+ drawTable(box,["월","작업/시설","정산 입금","운영 지출","시설 투자","보증금 순지출","월 순현금","누적 현금","자가/고용 h"],
+ x.ms.map(t=>[t.year+"-"+String(t.month).padStart(2,"0"),t.activities.join(", ")||"—",format(t.receipt),format(t.cost),format(t.capex),format(t.deposit-t.returned),format(t.cash),format(t.cumulative),t.owner.toFixed(1)+" / "+t.hired.toFixed(1)]));
+ det.append(box);m.append(det);
+ }
+}
+function validateImported(s){
+ if(!s||typeof s.crop!=="string"||typeof s.facility!=="string"||typeof s.region!=="string"||
+ !Number.isInteger(s.basis_year)||s.basis_year<2000||s.basis_year>2100||
+ !Number.isFinite(s.area_m2)||s.area_m2<=0||!Array.isArray(s.operations)||!Array.isArray(s.harvests)||!Array.isArray(s.facility_events))throw Error("JSON 기본 필드 오류");
+ for(const [section,arr] of [["tasks",s.operations],["sales",s.harvests],["facilities",s.facility_events]]){
+ for(const row of arr){
+ const fields=FIELDS[section];if(Object.keys(row).length!==fields.length||fields.some(f=>!(f[0] in row)))throw Error("JSON 작업 필드가 다릅니다.");
+ for(const [key,,kind] of fields){
+ const v=row[key];if(kind==="num"||kind==="int"){
+ if(typeof v!=="number"||!Number.isFinite(v)||v<0||(kind==="int"&&!Number.isInteger(v)))throw Error("JSON 수치/단위 오류");
+ }else if(typeof v!=="string"||!v.trim())throw Error("JSON 문자열 필드 공란");
+ }
+ if(!Number.isInteger(row.month)||row.month<1||row.month>12||!sources.includes(row.source_kind))throw Error("JSON 월/출처 오류");
+ if(section==="sales"&&(row.marketable_fraction>1||row.commission_fraction>1||row.settlement_lag_months>6))throw Error("JSON 정산 조건 오류");
+ if(section==="facilities"&&!facKinds.includes(row.kind))throw Error("JSON 시설비 구분 오류");
+ }}
+ calc(s);
+}
+function setup(){
+ for(const category of [...new Set(CATALOG.map(x=>x.category))]){
+ const opt=el("option",category);opt.value=category;$("category").append(opt);
+ }
+ for(const section of Object.keys(FIELDS)){
+ const row=el("tr");for(const [,label] of FIELDS[section])row.append(el("th",label));row.append(el("th","삭제"));
+ document.querySelector("#"+section+" thead").append(row);
+ }
+ renderCrops();renderPicked();renderResults();
+}
+$("search").oninput=renderCrops;$("category").onchange=renderCrops;
+$("addTask").onclick=()=>addRow("tasks");$("addSale").onclick=()=>addRow("sales");$("addFacility").onclick=()=>addRow("facilities");
+$("addExtra").onclick=()=>{
+ const name=$("extraName").value.trim(),unit=$("extraUnit").value.trim(),cy=$("extraCycle").value.trim();
+ if(!name||!unit){status("작물명과 판매단위를 입력하세요.",true);return;}
+ if(cy!==""&&(!Number.isInteger(Number(cy))||Number(cy)<1)){status("작기 연수는 1 이상의 정수입니다.",true);return;}
+ picked={id:"CUSTOM-"+(++counter),name,category:"직접 등록",cycle_years:cy===""?null:Number(cy),yield_unit:unit,source_kind:null};
+ list.push(picked);$("search").value="";$("category").value="";renderCrops();renderPicked();
+ status("직접 등록된 작물은 이 브라우저에만 존재하며 실수익/작기/필지 검증을 뜻하지 않습니다.");
+};
+$("save").onclick=()=>{
+ try{const s=assemble();validateImported(s);choices.push(s);renderResults();status("비교 목록에 추가했습니다. 수치는 입력 가정이며 자동 추천은 하지 않습니다.");}
+ catch(e){status(e.message,true);}
+};
+$("export").onclick=()=>{
+ if(!choices.length){status("내려받을 비교 대안이 없습니다.",true);return;}
+ const result={schema_version:1,disclaimer:"사용자 입력 모델; 실제 농가 영수증/거래/시설 견적 독립 검증 전 투자결정 금지",cases:choices};
+ const blob=new Blob([JSON.stringify(result,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);
+ const a=el("a");a.href=url;a.download="farm-kpi-workflows.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+$("import").onchange=async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+ if(file.size>1024*1024)throw Error("파일은 1MB 이하여야 합니다.");
+ const obj=JSON.parse(await file.text());
+ if(obj.schema_version!==1||!Array.isArray(obj.cases)||!obj.cases.length||obj.cases.length>100)throw Error("입력 스키마가 다릅니다.");
+ obj.cases.forEach(validateImported);
+ if(new Set(obj.cases.map(x=>x.basis_year)).size!==1)throw Error("금액 기준 연도를 맞추세요.");
+ choices.length=0;choices.push(...obj.cases);counter+=choices.length;renderResults();status("JSON을 이 브라우저에서만 불러왔습니다.");
+ }catch(err){status(err.message,true);}e.target.value="";
+};
+setup();
+</script></body></html>

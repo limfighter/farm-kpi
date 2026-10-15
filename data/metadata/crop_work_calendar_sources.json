@@ -1,0 +1,446 @@
+{
+  "schema_version": 1,
+  "purpose": "Short research pointers to original RDA Nongsaro crop-work calendars; never validated parcel/month costs or all-51 stage coverage. Crop cycles and official variety and locality differ.",
+  "reviewed_on": "2026-10-15",
+  "source_license_notice": "Nongsaro pages may carry KOGL Type 2 attribution + noncommercial. This file records short summaries and links; do not copy official page content into redistributed products.",
+  "references": [
+    {
+      "crop_id": "RDA2024-05",
+      "official_title": "고구마",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30701&menuId=PS00087",
+      "variant": "보통기재배 / 남부",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "남부",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "남부 보통기재배의 작기 참조; 품종/실제 기상에 따라 조정, 개별 필지 재배적합성 미검증",
+      "stages": [
+        {
+          "action": "정식",
+          "window_months": [
+            5
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            9,
+            10
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-06",
+      "official_title": "감자",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30699&menuId=PS00087",
+      "variant": "봄재배 / 전국 평난지대",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "전국 평난지대",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "씨감자 준비는 파종 전 20~35일; 전주가 원문 지대 분류에 해당하는지 미확인",
+      "stages": [
+        {
+          "action": "씨감자 준비",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "파종",
+          "window_months": [
+            2,
+            3
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            5,
+            6
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-19",
+      "official_title": "생강",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30625&menuId=PS00087",
+      "variant": "노지재배",
+      "match_level": "CROP_SYSTEM_REFERENCE",
+      "region_scope": "원문 일반 노지",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "종강 준비의 정확한 월은 원문에 직접 명시되지 않아 UNKNOWN; 노지 아주심기 4~5월과 수확 10~11월만 공식 명시",
+      "stages": [
+        {
+          "action": "종강 준비",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "아주심기",
+          "window_months": [
+            4,
+            5
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            10,
+            11
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-22",
+      "official_title": "딸기(촉성재배)",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30610&menuId=PS00087",
+      "variant": "촉성재배 / 시설딸기",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반 시설",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문 수확 기간 11월 하순~다음해 5월 상순; 단년 모델의 한 해 수확으로 재해석 금지",
+      "stages": [
+        {
+          "action": "육묘",
+          "window_months": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "아주심기",
+          "window_months": [
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "보온 준비",
+          "window_months": [
+            10
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "crosses_calendar_year": true,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-23",
+      "official_title": "딸기(촉성재배)",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30610&menuId=PS00087",
+      "variant": "촉성재배 / 수경 별도 구분 필요",
+      "match_level": "CROP_FAMILY_ONLY",
+      "region_scope": "원문 토양·수경 설명 혼재",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "수경 딸기 조사 작형과 촉성 재배력이 동일한 실제 표본이라는 검증 없음; 투자비와 생산성 복사 금지",
+      "stages": [
+        {
+          "action": "육묘",
+          "window_months": [
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "아주심기",
+          "window_months": [
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "보온 준비",
+          "window_months": [
+            10
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "crosses_calendar_year": true,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-24",
+      "official_title": "오이",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30636&menuId=PS00087",
+      "variant": "조숙재배(원문 네 작형 중 하나)",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "동일 원문에는 촉성/반촉성/조숙/억제 등 다른 작형이 있어 시설 가온비·월별 노동은 다름",
+      "stages": [
+        {
+          "action": "씨뿌림",
+          "window_months": [
+            2,
+            3
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "아주심기",
+          "window_months": [
+            3,
+            4
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            5,
+            6,
+            7
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-26",
+      "official_title": "토마토·방울토마토",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30646&menuId=PS00087",
+      "variant": "촉성/반촉성 등 다중 작형",
+      "match_level": "CROP_FAMILY_ONLY",
+      "region_scope": "원문 일반",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "작형별 파종·정식·수확 달력이 다르며 원문을 하나의 시설토마토 월별 작기로 정밀 매핑하지 않음",
+      "stages": [
+        {
+          "action": "육묘",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "아주심기",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "관수·유인",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-47",
+      "official_title": "장미",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30688&menuId=PS00087",
+      "variant": "연중재배 / 시설절화",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "연중재배 일반 정보; 신규 시설 장미 실제 생산주기·규격과 시설별 에너지 원가 미검증",
+      "stages": [
+        {
+          "action": "아주심기",
+          "window_months": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "꽃 수확·선별",
+          "window_months": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-48",
+      "official_title": "참깨",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30714&menuId=PS00087",
+      "variant": "단작 / 그 외 지역",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "전남·경남 외 지역",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문 단작 지역 그룹 기준, 전주 필지 배수·이모작 가능성 미확인",
+      "stages": [
+        {
+          "action": "파종",
+          "window_months": [
+            5,
+            6
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-51",
+      "official_title": "들깨",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=259524&menuId=PS00087",
+      "variant": "논재배 직파 참조",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 논재배",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "RDA 조사 들깨와 논재배 작형 완전 동일성이 검증되지 않음; 밭재배에 기계적 적용 금지",
+      "stages": [
+        {
+          "action": "직파",
+          "window_months": [
+            6
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            10
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    }
+  ]
+}
