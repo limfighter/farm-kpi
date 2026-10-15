@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "description": "Single navigation and ownership inventory; docs/STATUS.md alone describes current project state.",
+  "current_status": "docs/STATUS.md",
+  "entrypoint": "docs/README.md",
+  "policy": "docs/CONTRIBUTING_DOCS.md",
+  "documentation_sources": "docs/explanation/DOCS_DESIGN_SOURCES.md",
+  "documents": [
+    {
+      "path": "docs/README.md",
+      "type": "index",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/STATUS.md",
+      "type": "reference",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/CONTRIBUTING_DOCS.md",
+      "type": "how-to",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/how-to/GET_STARTED.md",
+      "type": "tutorial",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/how-to/UPDATE_REPORTED_DATA.md",
+      "type": "how-to",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/reference/DATA_CONTRACTS.md",
+      "type": "reference",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/explanation/MODEL_BOUNDARIES.md",
+      "type": "explanation",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/explanation/DOCS_DESIGN_SOURCES.md",
+      "type": "explanation",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "type": "index",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/decisions/0001-evidence-first-open-crop-choice.md",
+      "type": "decision",
+      "owner": "maintainer",
+      "lifecycle": "accepted"
+    },
+    {
+      "path": "docs/decisions/0002-private-data-boundary.md",
+      "type": "decision",
+      "owner": "maintainer",
+      "lifecycle": "accepted"
+    },
+    {
+      "path": "docs/decisions/TEMPLATE.md",
+      "type": "template",
+      "owner": "maintainer",
+      "lifecycle": "template"
+    },
+    {
+      "path": "docs/ASOS_AUDIT_AND_ROADMAP.md",
+      "type": "reference",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/CROP_DISCOVERY_PROTOCOL.md",
+      "type": "explanation",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/CROP_SITE_READINESS.md",
+      "type": "reference",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/FARM_DECISION_EXECUTION_PLAN.md",
+      "type": "reference",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/PRIVATE_CALIBRATION_PREVIEW.md",
+      "type": "how-to",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/RDA_2024_SOURCE_REVIEW.md",
+      "type": "reference",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/RDA_AUDIT_AND_SITE_INTAKE.md",
+      "type": "how-to",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/SESSION_HANDOFF_2026-10-15.md",
+      "type": "reference",
+      "owner": "maintainer",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "docs/STRATEGY_COMPARISON_AND_EVIDENCE.md",
+      "type": "reference",
+      "owner": "model",
+      "lifecycle": "active"
+    }
+  ]
+}
