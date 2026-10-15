@@ -28,6 +28,31 @@ lists CI/data-quality fixes, parcel verification, buyer/net revenue and capital
 requirements, generic crop-cycle simulation, and an evidence-gated pilot/decision.
 The timetable is contingent on external sources and responses; **unknown is not zero**.
 
+## Source verification and private site intake (Weeks 1–2)
+
+The user-supplied RDA 2024 book was compared with all **51 aggregate
+income triplets and 51 labor-page totals**. The reviewed PDF's SHA256
+and a canonical 51-row digest are stored as source metadata; the PDF
+itself remains **untracked**. Repeat the digest check:
+
+```bash
+python scripts/verify_rda_pdf_source.py --check
+```
+
+The [parcel and operations intake guide](docs/RDA_AUDIT_AND_SITE_INTAKE.md)
+describes how to record **unknown** usable area, soil/water/power/permit
+statuses, 12 months of owner availability and capital limits safely.
+There is no crop selection or verified parcel suitability yet.
+
+```bash
+cp data/templates/private_site_intake_TEMPLATE.json data/private/site-facts.json
+farm-strategy site-check --file data/private/site-facts.json --output output/site-status-redacted.json
+```
+
+The report contains only missingness and gate status counts. Private facts
+cannot be imported into the tracked crop dashboard or hypothetical
+five-plan model through this command.
+
 ## Crop discovery: 51 open options, no crop selected
 
 **No crop type, planting area split, facility decision, or harvesting schedule is
