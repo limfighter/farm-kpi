@@ -50,6 +50,21 @@ If accepting a deliberate model change, update the tracked CSV snapshot
 and HTML together, then review the diff. Do not publish raw/private
 farm receipts, land addresses, or source hourly observations.
 
+## Uploaded RDA benchmark (R: reported statistic, not actual receipts)
+
+Public 2024 crop-income benchmarks for spring/autumn potatoes, field scallion,
+and greenhouse cucumber are recorded in read-only
+[`data/reported/rda_2024_crop_income_10a.csv`](data/reported/rda_2024_crop_income_10a.csv);
+the model-to-OpenAPI identifiers (codes only, **not** live API data) are in
+[`data/reported/rda_income_api_crop_crosswalk.csv`](data/reported/rda_income_api_crop_crosswalk.csv).
+All 2024 numbers are **nominal KRW per 10a / one crop**, not 2026-real
+KRW 10,000 for your farm; existing finance assumptions remain unchanged.
+
+See [`docs/RDA_2024_SOURCE_REVIEW.md`](docs/RDA_2024_SOURCE_REVIEW.md)
+for original PDF pages, key accounting mismatches, 2026 method/form status,
+and the notable arithmetic match between 300-pyeong cucumber receipts and
+the existing hypothetical configuration.
+
 ## Private evidence calibration preview (review-gated)
 
 To compare candidate crop receipts, actual field costs, labor quotes or
