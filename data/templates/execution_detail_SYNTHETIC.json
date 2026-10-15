@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "case": {
+    "crop": "SYNTHETIC MULTIYEAR CROPPING TEST",
+    "region": "TEST REGION, NOT JEONBUK",
+    "start_year": 2027,
+    "horizon_years": 3,
+    "area_m2": 1000,
+    "annual_real_discount_rate": 0.05,
+    "owner_hour_value_krw": null,
+    "owner_available_hours_by_month": null,
+    "no_sales_reason": null,
+    "operations": [
+      {
+        "name": "plant/preparation synthetic",
+        "year": 1,
+        "month": 3,
+        "owner_hours_per_10a": 10,
+        "hired_hours_per_10a": 3,
+        "hired_hour_wage_krw": 12000,
+        "materials_krw_per_10a": 50000,
+        "contractor_krw_per_10a": 20000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "management synthetic",
+        "year": 2,
+        "month": 7,
+        "owner_hours_per_10a": 10,
+        "hired_hours_per_10a": 3,
+        "hired_hour_wage_krw": 12000,
+        "materials_krw_per_10a": 50000,
+        "contractor_krw_per_10a": 20000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "harvest preparation synthetic",
+        "year": 3,
+        "month": 9,
+        "owner_hours_per_10a": 10,
+        "hired_hours_per_10a": 3,
+        "hired_hour_wage_krw": 12000,
+        "materials_krw_per_10a": 50000,
+        "contractor_krw_per_10a": 20000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      }
+    ],
+    "sales": [
+      {
+        "name": "future test harvest",
+        "year": 3,
+        "month": 11,
+        "quantity_per_10a": 500,
+        "quantity_unit": "units",
+        "marketable_fraction": 0.8,
+        "price_krw_per_unit": 3000,
+        "commission_fraction": 0.08,
+        "deduction_krw_per_unit": 70,
+        "transport_krw_per_10a": 50000,
+        "settlement_lag_months": 2,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      }
+    ],
+    "id": "synthetic-owned-facility",
+    "system": "SYNTHETIC NEW FACILITY",
+    "facility_events": [
+      {
+        "name": "construction fictional",
+        "year": 1,
+        "month": 1,
+        "kind": "CAPEX",
+        "amount_krw": 20000000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "utility synthetic",
+        "year": 1,
+        "month": 12,
+        "kind": "OPERATING",
+        "amount_krw": 240000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "utility synthetic",
+        "year": 2,
+        "month": 12,
+        "kind": "OPERATING",
+        "amount_krw": 240000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "utility synthetic",
+        "year": 3,
+        "month": 12,
+        "kind": "OPERATING",
+        "amount_krw": 240000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "name": "residual cash synthetic",
+        "year": 3,
+        "month": 12,
+        "kind": "SALVAGE_RECEIPT",
+        "amount_krw": 2000000,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      }
+    ]
+  },
+  "detail": {
+    "schema_version": 1,
+    "disclaimer": "All grade and weekly allocation figures are synthetic (A) with no actual buyer documents, labor schedule or parcel measurements.",
+    "grade_lots": [
+      {
+        "sale_index": 0,
+        "grade": "A",
+        "sold_quantity_per_10a": 300,
+        "quantity_unit": "units",
+        "price_krw_per_unit": 3000,
+        "commission_fraction": 0.08,
+        "buyer_deduction_krw_per_unit": 70,
+        "packing_krw_per_unit": 100,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      },
+      {
+        "sale_index": 0,
+        "grade": "B",
+        "sold_quantity_per_10a": 100,
+        "quantity_unit": "units",
+        "price_krw_per_unit": 1800,
+        "commission_fraction": 0.08,
+        "buyer_deduction_krw_per_unit": 70,
+        "packing_krw_per_unit": 100,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC ONLY"
+      }
+    ],
+    "weekly_allocations": [
+      {
+        "operation_index": 0,
+        "work_date": "2027-03-15",
+        "owner_hours": 10,
+        "hired_hours": 3
+      },
+      {
+        "operation_index": 1,
+        "work_date": "2028-07-10",
+        "owner_hours": 10,
+        "hired_hours": 3
+      },
+      {
+        "operation_index": 2,
+        "work_date": "2029-09-10",
+        "owner_hours": 10,
+        "hired_hours": 3
+      }
+    ],
+    "weekly_capacity": [
+      {
+        "week_start": "2027-03-15",
+        "owner_available_hours": 5,
+        "hired_available_hours": null
+      }
+    ]
+  }
+}
