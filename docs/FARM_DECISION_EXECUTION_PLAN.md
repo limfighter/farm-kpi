@@ -17,12 +17,17 @@
 | Feasibility | Brown/sage HTML 51-crop checklist, eight baseline site evidence gates, flags for protected facilities, orchards and 4-year ginseng | All 51 parcel-specific checks currently `UNKNOWN_NOT_EVALUATED`; no verified parcel observations |
 | Weather | KMA Jeonju ASOS 2006–2025 derived annual features | Original hourly ASOS audit unverified without source file; climate station is **not** parcel or crop-specific damage rate |
 | Finance | Preliminary paired Monte Carlo across five **example** potato/scallion/cucumber plans; annual and month-end liquidity | No calibrated cost/yield/price/loan/contract; separate costs and facility build not yet transferable to other 46 crop systems |
-| Governance | R/T/Q/O category separation, private self-attested calibration preview, offline dashboards, CI | No actual signed review of transactions; `main` untouched and draft PR unmerged |
-| CI health | Earlier model and 51-crop checks passed | The formerly failing feasibility HTML/source hash drift was fixed by reconciling tracked CSV line endings. Push/PR CI green at prior head `fa4c7009`; source regression, parcel intake and PDF audits are now added, with their newest CI status checked separately. |
+| Governance | R/T/Q/O category separation, private self-attested calibration preview, offline dashboards, CI | No actual signed review of transactions. Check current `main` and PR status on GitHub; this table does not establish merge state |
+| CI health | Source/data/UI/model regression and generation checks configured in `.github/workflows/ci.yml` | Previously failing HTML/source-hash drift fixed; verify CI against the exact latest `main`/PR SHA rather than relying on a historical green run |
 
 Critical accounting distinctions: RDA `income = gross_receipts - management_costs` is **neither** project NPV **nor** cash balance. Reported management costs include hired labor and facility depreciation, so blindly copying them into a model that separately prices labor, building capex and maintenance would double count. 2024 nominal KRW are not 2026-constant modeled KRW; **4-year ginseng** values must not be silently annualized; existing mature-orchard returns are not establishment-phase cash flows.
 
 ## Development progress recorded 2026-10-15
+
+For the next ChatGPT session, start with
+[`docs/SESSION_HANDOFF_2026-10-15.md`](SESSION_HANDOFF_2026-10-15.md).
+The historic implementation PR was #1; the current merge status is determined
+by the GitHub PR, not by this dated roadmap.
 
 - **P0-01 DONE:** fixed 51-crop feasible-HTML stale source; preceding PR & push Actions both green.
 - **P0-02 IMPLEMENTED:** verified all 51 RDA 2024 PDF overview gross/cost/income
@@ -128,8 +133,9 @@ derived solely from a clicked button.
 
 ## 6. Next five actions (in order)
 
-1. **Development now:** fix the real CI failure at the latest branch head,
-   then rerun all tests and generated-site sync on Python 3.11.
+1. **Development on each new change:** run all tests and HTML/source data checks
+   on Python 3.11; the 51-crop HTML/CSV hash drift was fixed previously.
+   Do not treat historical Actions success as evidence for newer commits.
 2. **Data work next:** audit 2024 RDA 51 rows (including differing cropping
    cycles), build comparable historical/region source registry without
    fabricating data, preserve PDF source page citations.
