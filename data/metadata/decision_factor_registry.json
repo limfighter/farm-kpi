@@ -136,11 +136,11 @@
       "label": "계절별 관수량·가뭄 시 공급",
       "role": "HARD_GATE",
       "priority": "P0",
-      "implementation": "INTAKE_ONLY",
-      "model_binding": "site.gate.irrigation_water",
+      "implementation": "MODELED",
+      "model_binding": "portfolio.site.water_supply_m3_by_month",
       "evidence_needed": "관정/용수 계약·주간 확보량·관수량",
       "conditional_benefit": "관수 안정성",
-      "caveat": "용수 있다는 사실만으로 필요한 유량 확보 불가"
+      "caveat": "월별 입력 물량만 비교 가능; 순간 펌프 유량과 수질/가뭄 모델은 아님"
     },
     {
       "id": "water_quality",
@@ -208,11 +208,11 @@
       "label": "전력 인입·용량·계약·정전",
       "role": "HARD_GATE",
       "priority": "P0",
-      "implementation": "INTAKE_ONLY",
-      "model_binding": "site.gate.electricity_supply",
+      "implementation": "MODELED",
+      "model_binding": "portfolio.site.electricity_supply_kwh_by_month",
       "evidence_needed": "전기 인입 확인·증설 공사 견적",
       "conditional_benefit": "관수·냉난방 시설 선택",
-      "caveat": "전력 증설 미포함시 시설투자 과소"
+      "caveat": "월별 kWh 합계만 검증; 계약 kW/순간 용량과 인입 허가 미검증"
     },
     {
       "id": "cultivation_system",
@@ -544,11 +544,11 @@
       "label": "대출 이자·상환·금리 변동",
       "role": "ECONOMIC_DRIVER",
       "priority": "P0",
-      "implementation": "NOT_MODELED",
-      "model_binding": null,
+      "implementation": "MODELED",
+      "model_binding": "portfolio.financing_events.amount_krw",
       "evidence_needed": "금융기관 승인/상환 일정·변동금리",
       "conditional_benefit": "자기자본 수익과 지급능력 구분",
-      "caveat": "현 다년 모형은 자금조달과 프로젝트 NPV 별도"
+      "caveat": "인출·이자·원금상환 명시 현금 원장; 은행 심사/자동 금리·거치기간 미지원"
     },
     {
       "id": "insurance_taxes",
@@ -580,11 +580,11 @@
       "label": "복수 작물 작기·윤작/릴레이",
       "role": "ADVANTAGE",
       "priority": "P1",
-      "implementation": "NOT_MODELED",
-      "model_binding": null,
+      "implementation": "MODELED",
+      "model_binding": "portfolio.plantings.occupancies",
       "evidence_needed": "작물별 면적/점유월/윤작과 노동시간",
       "conditional_benefit": "연중 유휴면적 활용·시장 위험 분산",
-      "caveat": "동일 면적의 중복 파종/이중 수확 계산 금지"
+      "caveat": "월별 점유면적·주간 노동 충돌 검사만; 토양 윤작효과와 일별 작형전환 미검증"
     },
     {
       "id": "shared_facility",

@@ -132,3 +132,13 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 [합성 입력](../../data/templates/execution_detail_SYNTHETIC.json)을 `src/farm_strategy/execution_detail.py`로 평가합니다. `weekly_allocations[]`는 작업 `operation_index`(0부터), `work_date`(YYYY-MM-DD), 전체 경작 면적에 대한 `owner_hours`, `hired_hours`를 모두 기재하고 기존 연도/월·시간 합계와 일치시켜야 합니다. 주는 월요일부터 시작하며 `weekly_capacity[]`의 자가/고용 가용시간은 각각 null 허용; 미입력은 UNKNOWN이고 0이나 고용 확정이 아닙니다.
 
 `grade_lots[]`는 `sale_index`, `grade`, `sold_quantity_per_10a`, `quantity_unit`, `price_krw_per_unit`, `commission_fraction`, `buyer_deduction_krw_per_unit`, `packing_krw_per_unit`, `source_kind`, `source_ref`의 명시 자료입니다. 모든 출하 사건을 구성하는 등급별 수량 합은 원래 수량×상품화율과 일치해야 하며, 기존 출하를 **대체**해 추가 매출을 중복 계산하지 않습니다. 기존 운송비는 한 번, 포장비는 출하월 운영비에 별도, 등급별 판매대금은 원래 정산월에 기록합니다. 유통 등급·작업주간은 실측 검증 없이 전부 A 가정입니다. 냉장·반품·실제 농가 인원·하루 단위 충돌은 이 모델이 아직 검증하지 않습니다.
+
+## 복수 작물 공유 농장 포트폴리오 계약 (가상 사례)
+
+[합성 입력](../../data/templates/portfolio_SYNTHETIC.json)은 기존 다년 원장과 별개로 농장 전체 구획/자원을 공유합니다. 필수 최상위는 schema_version=1, disclaimer, site, plots, plantings, shared_facility_events, financing_events, weekly_capacity. site에는 1~10년 기간·유효 면적·초기 자유현금·할인율 및 각각 기간 전체의 월별 자가/고용 노동 가용시간, 물 공급 m³, 전력 공급 kWh를 입력합니다. 배열 또는 개별 공급 셀이 null이면 UNKNOWN으로 표시하고 충분하다고 판정하지 않습니다.
+
+plots의 각 구획 면적 합은 총 유효 면적 이하여야 하고, plantings 각 작물은 전체 lifecycle.case와 구획 id, 상대 연/월 점유 구간 occupancies, **점유 매월** 자원 사용량과 비용 resources 및 주별 노동배분 weekly_allocations(미확인 시 null)를 포함합니다. 같은 구획의 동일 월 점유면적 합이 초과되면 실패. 작업·출하 시점도 점유 기간 안이어야 합니다. 작형 전환의 일별 적기까지 자동 보증하는 것은 아닙니다.
+
+plantings에 포함된 각 다년 case의 facility_events는 반드시 빈 배열로 두며 공동 CAPEX/임대/보증금은 shared_facility_events로 한 번만 입력합니다. 물/전기비는 resources에서 한번 기록하며 공통 운영비에 또 합치지 않도록 실제 견적·영수증으로 대조해야 합니다. 단년/다년 작물별 수량·가격 자동 가정이나 그 수익의 기계적 재생성은 금지합니다.
+
+financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/source_kind/source_ref를 모두 입력합니다. 원금 초과 상환은 오류, 인출시 이자 사건(0 포함)을 명시해야 합니다. 은행 대출승인이나 완전한 상환기간(10년 이후 포함)을 추론하지 않습니다. 대출은 현금 유동성 지표에만 반영하고 무차입 사업 NPV는 독립적으로 계산합니다. 기초 잔고는 site.initial_unrestricted_cash_krw. 전체 금액은 기준연도 불변 원화로 사용자 입력이 이미 통일되었다는 가정입니다.

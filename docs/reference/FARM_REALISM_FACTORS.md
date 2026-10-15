@@ -7,7 +7,7 @@
 - [단년 모델](../../src/farm_strategy/workflow.py): 상위 필드 10개, 작업 사건 필드 9개, 범용 판매 사건 필드 12개, 시설 사건 필드 6개.
 - [다년 모델](../../src/farm_strategy/lifecycle.py): 상위 필드 **14개**, 작업 사건 필드 **10개**, 판매 사건 필드 **13개**, 시설 사건 필드 **7개**.
 - [현장 조사 모듈](../../src/farm_strategy/site_intake.py): 공통 현장 게이트 **12개**, 단일 수치 항목 **4개**, 운영자 월별 가용시간 **12개 슬롯**.
-- [현실 농사 요인 등록부](../../data/metadata/decision_factor_registry.json)는 **8개 분야 51개 별도 검토 요인**을 나눈다. 이 51개와 농촌진흥청 통계의 **51개 작목**은 전혀 다른 숫자다. **계산 입력 가능 19개 / 조사 항목만 12개 / 현재 미구현 20개**.
+- [현실 농사 요인 등록부](../../data/metadata/decision_factor_registry.json)는 **8개 분야 51개 별도 검토 요인**을 나눈다. 이 51개와 농촌진흥청 통계의 **51개 작목**은 전혀 다른 숫자다. **계산 입력 가능 23개 / 조사 항목만 10개 / 현재 미구현 18개**.
 - 위 필드 수는 **스키마 키**이다. 이름·월·출처ID도 포함하며 독립 경제변수의 수나 실제 실측·검증 완료율이 아니다. 계산할 수 있다는 뜻은 시설 난방비를 현금원장에 입력할 수 있다는 정도이며 난방 부하와 전력 용량을 물리적으로 검증한 것은 아니다.
 
 ## 2. 수익률보다 먼저 확인할 실무 조건
@@ -81,3 +81,15 @@
 - python -m farm_strategy.operational_factors --check --output output/decision-factor-audit.json --html output/decision-factor-audit.html
 
 결과 HTML/JSON은 저장소 **기능 커버리지**만 검사하며, 주소·계약·계좌·현장 관측자료를 포함하거나 수익성/투자결정을 승인하지 않는다.
+
+## 9. 여러 작물의 면적·자원·금융 제약을 함께 검사
+
+[농장 포트폴리오 모델](../../src/farm_strategy/portfolio.py)은 같은 구획에 작물을 시간차로 재배할 때 작물별 파종/수확까지의 점유 기간에 면적이 겹치면 오류를 발생시킵니다. 다른 구획이라도 물·전기·주간 노동은 농장 전체가 공유하므로 함께 합산합니다. 실제 필지 적합성과 개별 윤작 병해 효과는 미검증입니다.
+
+공식 출처: [농사로 이모작 상담](https://www.nongsaro.go.kr/portal/ps/psz/psza/contentNsSub.ps?cntntsNo=210175&menuId=PS00078&totalSearchYn=Y)은 보리 수확일과 후작 콩 파종기 충돌을 명시합니다. 해당 사례의 작형·날짜를 전주 필지의 확정 일정으로 전용하지 않습니다.
+
+물 수요/공급은 점유월별 m³, 전기 수요/공급은 월별 kWh로 비교합니다. [농사로 관수량 질의응답](https://www.nongsaro.go.kr/portal/ps/psz/psza/contentNsSub.ps?cntntsNo=213366&menuId=PS00078&totalSearchYn=Y)은 토양·생육·기상에 따라 적정 관수가 달라짐을 설명합니다. 월 kWh는 순간 kW/계약전력, 물 m³는 순간 관정유량·수질 검증이 아닙니다.
+
+대출 DRAW, INTEREST, PRINCIPAL은 사용자로부터 각 현금 시점을 명시적으로 받아 계산합니다. 이자·원금 상환은 프로젝트 영업기여/NPV에 합치지 않으며, 차입금 잔액과 유동성 부족을 별도 표시합니다. [농식품부 2025.12 사업지침](https://www.mafra.go.kr/bbs/home/791/593059/download.do)은 대출 대상 선정과 실제 금융기관 승인 여부가 별개임을 안내합니다. 자동 신용심사, 금리/거치기간 가정, 인허가 판단은 수행하지 않습니다.
+
+실행: python scripts/compare_portfolio.py --input data/templates/portfolio_SYNTHETIC.json --output output/portfolio-synthetic.json --html output/portfolio-synthetic.html

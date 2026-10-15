@@ -15,7 +15,7 @@ def test_all_factors_are_bound_to_actual_model_fields_or_explicitly_missing():
     r = audit()
     assert r["factors_total"] == 51  # NOT the number of researched crop systems
     assert r["implementation_counts"] == {
-        "INTAKE_ONLY": 12, "MODELED": 19, "NOT_MODELED": 20
+        "INTAKE_ONLY": 10, "MODELED": 23, "NOT_MODELED": 18
     }
     assert r["hard_gate_count"] == 17
     assert r["advantage_count"] == 9
@@ -25,7 +25,7 @@ def test_all_factors_are_bound_to_actual_model_fields_or_explicitly_missing():
 def test_top_unmodeled_farm_risks_are_visible():
     r = audit()
     unresolved = set(r["p0_unmodeled"])
-    assert {"water_quality", "flood_damage", "crop_loss", "financing"} <= unresolved
+    assert {"water_quality", "flood_damage", "crop_loss"} <= unresolved
     rows = {f["id"]: f for f in r["factors"]}
     assert rows["usable_area"]["implementation"] == "MODELED"
     assert rows["soil_ph_ec"]["implementation"] == "INTAKE_ONLY"
@@ -33,7 +33,8 @@ def test_top_unmodeled_farm_risks_are_visible():
     assert rows["grade_mix"]["model_binding"] == "execution.grade_lots.sold_quantity_per_10a"
     assert rows["peak_week"]["implementation"] == "MODELED"
     assert rows["risk_diversification"]["role"] == "ADVANTAGE"
-    assert rows["financing"]["model_binding"] is None
+    assert rows["financing"]["model_binding"] == "portfolio.financing_events.amount_krw"
+    assert rows["multiple_cropping"]["implementation"] == "MODELED"
     assert rows["facility_energy"]["model_binding"] == "lifecycle.facility_events.amount_krw"
 
 

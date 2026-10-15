@@ -10,7 +10,7 @@ from html import escape
 import json
 from pathlib import Path
 
-from farm_strategy import lifecycle, site_intake, execution_detail
+from farm_strategy import lifecycle, site_intake, execution_detail, portfolio
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "data/metadata/decision_factor_registry.json"
@@ -28,6 +28,9 @@ BINDINGS = {
     "lifecycle.facility_events": lifecycle.FACILITY_FIELDS,
     "execution.weekly_allocations": execution_detail.WORK_FIELDS,
     "execution.grade_lots": execution_detail.LOT_FIELDS,
+    "portfolio.site": portfolio.SITE_FIELDS,
+    "portfolio.plantings": portfolio.PLANT_FIELDS,
+    "portfolio.financing_events": portfolio.FINANCE_FIELDS,
     "site.gate": set(site_intake.GATES),
     "site.constraint": set(site_intake.NUMERIC_FIELDS) | {"owner_hours_available_by_month"},
 }
@@ -89,7 +92,7 @@ def audit(path=CATALOG):
             if (not separator or namespace not in BINDINGS
                     or field not in BINDINGS[namespace]):
                 raise ValueError(f"Unknown field binding {binding}")
-            if (row["implementation"] == "MODELED") != namespace.startswith(("lifecycle.", "execution.")):
+            if (row["implementation"] == "MODELED") != namespace.startswith(("lifecycle.", "execution.", "portfolio.")):
                 raise ValueError("Modeled and intake-only must use their own actual fields")
     groups_summary = {
         key: {"total":sum(x["group"] == key for x in factors),
