@@ -53,6 +53,17 @@ jobs:
           name: farm-kpi-all-crop-workflow-editor
           path: dashboard/universe/index.html
           retention-days: 14
+      - name: Generate synthetic 3-year crop and facility lifecycle cashflow
+        run: |
+          python scripts/compare_multiyear.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/multiyear-model-only.json --html output/multiyear-model-only.html
+      - name: Upload synthetic 3-year lifecycle report
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-multiyear-experiment-not-validated
+          path: |
+            output/multiyear-model-only.json
+            output/multiyear-model-only.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
