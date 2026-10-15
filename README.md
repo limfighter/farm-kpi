@@ -39,6 +39,10 @@ itself remains **untracked**. Repeat the digest check:
 python scripts/verify_rda_pdf_source.py --check
 ```
 
+Open the [**offline brown/sage parcel intake form**](dashboard/site-intake/index.html)
+locally to enter all 12 site facts and optionally import/export a private JSON.
+The form requires no server and does not transmit data.
+
 The [parcel and operations intake guide](docs/RDA_AUDIT_AND_SITE_INTAKE.md)
 describes how to record **unknown** usable area, soil/water/power/permit
 statuses, 12 months of owner availability and capital limits safely.
