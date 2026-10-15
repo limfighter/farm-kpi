@@ -11,6 +11,7 @@
 | `src/farm_strategy/sampling.py` | 기상 표본 선택과 분위수 보간 | 파일 입출력·난수 생성·사업 판단 없음 |
 | `src/farm_strategy/model.py` | 한 경로의 가상 재무 계산과 단일 계획 집계 | 기존 다섯 예시 계획과 가정 기반 반응식 |
 | `src/farm_strategy/comparison.py` | 같은 충격을 사용하는 계획·시나리오 비교 | 경로별 공통 seed와 차이 집계, CSV 계약 유지 |
+| `src/farm_strategy/lifecycle.py` | 1~10년 명시적 작업/작형/판매/시설/보증금 이벤트 계산 | 기존 다섯 시나리오와 독립, 현금 계정만; RDA 성목 소득/가상 연실적 자동 복사 금지 |
 | `src/farm_strategy/workflow.py` | 작업/판매/시설 사건 기반 1년 작물×시설 비교(가정/근거 표지) | 기존 5전략 몬테카를로와 별개. 감가상각·대출·장기 ROI 미구현; 진짜 작목 적합성 인증 금지 |
 | `src/farm_strategy/cashflow.py` | 월별 배분, 명목→실질 변환, 비용 정합성 | 설명되지 않은 차액은 오류; 수리비로 흡수 금지 |
 | `src/farm_strategy/evidence.py`, `calibration.py`, `site_intake.py` | 비공개 증빙 형식, 검토 기반 미리보기, 현장 누락정보 | 기존 개인정보·해시·출력 경로 제한 유지 |

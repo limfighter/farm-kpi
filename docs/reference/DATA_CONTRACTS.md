@@ -109,3 +109,16 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 - 수동 또는 승인 받은 API 방식의 향후 일정 갱신 후보: [농촌진흥청 농작업일정 정보 공공데이터](https://www.data.go.kr/data/15033498/openapi.do)와 [농사로 공개 API 목록](https://www.nongsaro.go.kr/portal/ps/psn/psnj/openApiLst.ps?menuId=PS65428). 인증·개별 이용조건·작형 매핑 전에는 자동 수집하거나 라이선스 미확인 원문을 저장하지 않습니다.
 
 실행 검사: `python -m pytest -q tests/test_work_calendar.py tests/test_crop_universe.py` / `python scripts/build_crop_universe.py --check`.
+
+## 다년 농작업·시설·작기 현금흐름 계약 (합성 모형)
+
+- `src/farm_strategy/lifecycle.py`, `scripts/compare_multiyear.py`, [전체 가상 예시](../../data/templates/multiyear_scenarios_SYNTHETIC.json)는 기존 단년 `workflow.py`와 **독립**인 명시 이벤트 기반 계산입니다. 버전 2 최상위 키는 `schema_version=2`, `disclaimer`, `cases`이며 1~10년만 지원합니다.
+- 각 사례는 `id`, `crop`, `system`, `region`, `start_year`, `horizon_years`, `area_m2`, `annual_real_discount_rate` (실질 연 할인율, `null` 가능), `owner_hour_value_krw` (`null` 가능), `owner_available_hours_by_month` (전체 모델 월 수 길이 또는 `null`), `no_sales_reason`, `operations`, `sales`, `facility_events`를 반드시 제공해야 합니다.
+- 모든 `operations`, `sales`, `facility_events` 이벤트는 **1부터 시작하는 재배연도 `year`**와 **1~12월 `month`**를 직접 표시합니다. 이벤트가 없으면 자동으로 매해 반복하지 않으며, 이미 수확한 성목의 소득을 미수확 연도에 복사하지 않습니다. `sales=[]`이면 `no_sales_reason=PRE_PRODUCTIVE_WINDOW`(명시한 미생산 기간) 또는 `DOCUMENTED_NO_SALES`를 필수 지정해 결측을 무의미한 수익 0으로 변환하지 않습니다.
+- 작업별 면적비 = `area_m2 / 1000` (10a=1,000㎡). 개별 작업은 자가·고용 `h/10a`, 고용 `KRW/h`, 자재·외주 `KRW/10a`. 출하는 수량/10a, 단위, 상품화율, 판매가·공제액/단위, 운송원가/10a, 수수료율과 0~6개월 실제 입금 지연을 분리합니다. `quantity_unit`은 명시하되 kg, 개, 본 등을 자동 환산하지 않습니다.
+- 시설 사건 `CAPEX` / `OPERATING` / `DEPOSIT_PAID` / `DEPOSIT_RETURN` / `SALVAGE_RECEIPT`는 독립 현금 종류입니다. 반환 보증금이 기지급액을 넘거나 원장에 나타나지 않은 금액을 보정하려 하면 오류. 시뮬레이션은 세금·대출·감가상각/장부가·실제 시설 수명·손실 확률·현장 적합성을 **추론하지 않습니다**.
+- 각 이벤트 `source_kind`는 R/O/T/Q/A 중 하나이고 `source_ref`는 개인정보 없는 참조 문자열. 가정으로 만든 합성 이벤트는 모두 A로 기록. 전체 입력 금액은 `start_year` **불변 원** 기준으로 이미 동일하게 환산되었다고 가정하며, 실제 명목 다년도 현금과 섞지 않습니다. 연간 `annual_real_discount_rate=null`일 때 사업 NPV도 `null`; 자가노동 시간가치 `null`이면 경제적 NPV는 계산하지 않습니다.
+- 출력의 `operating_contribution_before_owner_labor_tax_depreciation_krw`는 회계상 순이익이 아닙니다. `peak_month_end_funding_gap_krw`는 월말 기준 초기 잔고 0에서의 최대 누적 부족액. `unsettled_settlement_after_horizon_krw`는 마지막 해 이후 들어올 정산액을 매출 0으로 처리하지 않습니다.
+- 비교는 같은 `start_year`, `horizon_years`, 할인율 입력일 때만 허용합니다. 다년 모델의 프로젝트 NPV나 운영 기여액은 근거 수치가 전부 실측되지 않은 상황에서 작목별 수익성 순위를 자동 결정할 수 없습니다.
+
+실행: `python -m pytest -q tests/test_lifecycle.py tests/test_multiyear_cli.py` 후 `python scripts/compare_multiyear.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/multiyear-model-only.json --html output/multiyear-model-only.html`.
