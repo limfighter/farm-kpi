@@ -43,6 +43,18 @@ python scripts/compare_portfolio.py --input data/templates/portfolio_SYNTHETIC.j
 
 `python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`
 
+## 영농기록 로컬 CSV와 가격·수확량·관수/전력 스트레스 테스트
+
+영농 작업시간·수확량·실입금·지출·관수·전기 사용량을 **날짜별 비식별 CSV**로 가져오는 `src/farm_strategy/farm_records_stress.py`를 추가했습니다. 각 기록의 출처표시(O=관측, T=실제 정산, A=실험 가정)는 **자기 신고값**으로 독립 검증이 아니라는 경고를 유지합니다. 원본 정산서·계좌·연락처·주소는 Git에 올리지 않습니다. 실제 기록은 무조건 `data/private/` 같은 무추적 경로에만 보관하고, 샘플은 [가상 영농일지](data/templates/field_log_SYNTHETIC.csv)를 참고합니다.
+
+가격과 수확량의 결합 하락 및 월별 관수·전력 공급 부족을 [가정형 스트레스 파일](data/templates/farm_stresses_SYNTHETIC.json)로 시험합니다. **관수 부족이 자동으로 수량 감소를 초래한다고 추론하지 않고**, 관련된 수량 감소를 사용자가 별도로 가정한 경우에만 반영합니다. 출력은 미래 수익확률·추천이나 과거 실측 검증이 아닙니다.
+
+```bash
+python scripts/analyze_farm_reality.py --portfolio data/templates/portfolio_SYNTHETIC.json --stress data/templates/farm_stresses_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-reality.json --html output/farm-reality.html
+```
+
+실제 파일 사용 시 `--log data/private/my-redacted-log.csv`로 바꾸고 **로컬 컴퓨터에서만 실행**합니다. 기록 CSV가 없다면 `--log`를 빼고 가정 스트레스만 실행할 수 있습니다. 사적 파일의 원본·날짜별 거래·출처ID는 HTML/JSON에 복제하지 않고 작형별 합계만 출력합니다.
+
 ## 오프라인 브라운·세이지 화면
 
 - **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).

@@ -103,3 +103,14 @@
 대출 원리금 현금은 직접 입력한 실질금리와 균등원금 월납·거치기간으로 생성하지만, 실제 정책자금·시중 금융사의 명목금리 및 납부주기와 동일하다고 주장하지 않습니다. [농식품부 정책자금 지침](https://www.mafra.go.kr/bbs/home/791/593059/download.do)에는 신용/담보심사가 별도로 필요하며 상환조건도 사업별·선정 시점별로 달라집니다. 실제 금융사가 발행한 상환표의 결제일과 지급통화 기준을 확인해야 합니다.
 
 실행: `python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`.
+
+
+## 11. 실제 날짜별 영농기록을 가상 위험 분석과 분리
+
+[로컬 입력 + 스트레스 계산](../../src/farm_strategy/farm_records_stress.py)은 실제 농가일지(작업/수확/비용/정산/관수/전력)를 **보관하는 개인의 컴퓨터에서만** CSV로 불러와 합산하고, 기존 포트폴리오 수익 가정과는 별개로 가격·수량 하락/관수·전력 공급 부족을 계산합니다. 원본 공개 업로드는 권장하지 않으며, 기록 누락을 '0 실적' 또는 '작물 부적합'으로 취급하지 않습니다. 원본 계약·거래명세는 Git 커밋 금지입니다.
+
+수량과 가격 변화가 함께 발생하면 **총 매출 증분은 두 배수의 곱**으로 반영되고, 수수료·수량별 공제는 바뀐 물량에, 운송비는 원래 계획에 남아 있습니다. 물 부족에 따른 수량 저하·전력 부족으로 인한 시설 고장 등의 인과관계/손실확률은 시뮬레이션이 추측하지 않습니다. 부족 물량·비상조치/보험 적용 여부와 수량 충격을 별도로 확인한 경우에만 추가 가정을 입력할 수 있습니다.
+
+농사로의 [2026년 경영기록장](https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=847&pageIndex=1)은 실제 지출·판매를 수집하는 기록틀이며, [농식품부의 유통구조 개선 자료](https://www.mafra.go.kr/bbs/home/795/592429/download.do)는 생산·시기·시장 반입에 따라 가격이 달라지는 조건을 설명합니다. 해당 공식 문서는 코드의 가상 피해율·가격 배수의 출처가 아닙니다.
+
+실행: `python scripts/analyze_farm_reality.py --portfolio data/templates/portfolio_SYNTHETIC.json --stress data/templates/farm_stresses_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-reality.json --html output/farm-reality.html`.

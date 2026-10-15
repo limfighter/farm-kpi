@@ -156,3 +156,21 @@ financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/sou
 `loan_terms=null`이면 새 금융 원장은 생성하지 않으며 기존 `portfolio.financing_events`는 그대로 사용합니다. `loan_terms`가 있으면 수동 금융 현금 사건은 빈 배열이어야 하며, `{name,draw_year,draw_month,principal_krw,annual_real_interest_rate,grace_months,equal_principal_repayment_months,source_kind,source_ref}`가 필수입니다. 월말 가정 이자=개시원금×입력 실질 연율/12, 인출 다음 달부터 계산, 거치 이후 매월 균등원금. 시뮬레이션 기간 밖에는 상환액을 강제로 당겨 넣지 않고 잔액만 표시. **실제 은행의 명목 약정 금리/연 1회 이자납부/수수료/변동금리/거치시점과 다를 수 있습니다.** 명목 원화 지급·장래 명목원가를 불변 원화에 혼합하면 NPV 무효입니다. 대출 승인/융자 적격을 암시하지 않습니다.
 
 실행: `python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`.
+
+
+## 로컬 영농기록 CSV와 모델 외부 스트레스 검사
+
+[가상 CSV 예시](../../data/templates/field_log_SYNTHETIC.csv)의 헤더는 반드시 아래 **11개 컬럼과 같은 순서**로 사용합니다.
+
+`date,case_id,kind,category,quantity,unit,amount_krw,owner_hours,hired_hours,source_kind,source_ref`
+
+- `case_id`는 대상 `portfolio.plantings[].case.id`와 일치하며 `date`는 ISO `YYYY-MM-DD`와 모델 연도 내 날짜여야 합니다. `source_ref`는 실주소/계좌/고객·정산서 번호를 담지 않고 **3~64자의 비식별 영문숫자·하이픈·밑줄 ID**만 사용합니다. 원본 영수증이나 거래처는 `data/private/` 등 무추적 경로에 보관합니다.
+- `kind=WORK`: `owner_hours`, `hired_hours`만 기록. `HARVEST`: `quantity`와 모델 판매단위(`kg` 등) 기재, 실제 현금으로 자동 해석하지 않습니다. 둘 다 `O`(관측이라고 사용자가 주장) 또는 `A`(가정).
+- `kind=SETTLEMENT`: 매수자에게 실제 **입금된 순현금** `amount_krw`, 해당 입금 물량 `quantity`/단위. `kind=EXPENSE`: 실제 지급된 비용 `amount_krw`와 MATERIALS, FERTILIZER, PEST_CONTROL, HIRED_LABOR, PACKAGING, FREIGHT, UTILITIES, REPAIR, OTHER 중 `category` 선택. 둘 다 `T`(정산/실거래라는 사용자의 분류) 또는 `A`(가정). 미지급 외상과 약정 가격을 실제 입금으로 적지 않습니다.
+- `WATER_USE`는 m3, `POWER_USE`는 kWh만 입력하며 `O` 또는 `A`. 실제 사용계량·생산량 결측은 빈 기록/UNKNOWN이지 0 입력이 아닙니다. 물량 이외 현금 비용과 거래대금을 혼합해 중복 합산하지 않습니다.
+- 실제 입금·관측(클래스 T/O)을 **미래 날짜**에 기재할 수 없고, 비해당 숫자 열은 공란이어야 합니다. CSV 행수가 제한되어 있으며 결과 HTML/JSON에는 원본 `source_ref`가 복제되지 않습니다. 출처 분류가 인증된 원본 자료의 진위 확인을 의미하지 않습니다.
+- 서로 다른 기록이 **불완전한 기간에 대해 부분 수집**될 수 있으므로 CSV 합계에서 전농장 매출·비용, 검증된 이익, 정상 영업률을 산출하지 않습니다. `NO_RECORDS_UNKNOWN`은 관측값 0이 아닙니다. CSV 수치는 기존 현금 시나리오를 **재학습하거나 덮어쓰지 않습니다**.
+
+[명시적 스트레스 예시](../../data/templates/farm_stresses_SYNTHETIC.json): `schema_version=1`, `disclaimer`, `scenarios[]`이며 각 시나리오는 `id,description,case_factors,water_supply_factor,electricity_supply_factor,months_affected,source_kind=A,source_ref`가 필요합니다. `case_factors`에 기재된 각 작물 ID별 `yield_factor`, `price_factor`는 기존 상품화율·운송비·정산 지연을 그대로 유지하고 **판매수량과 단가**에만 곱합니다. 물/전력 공급 배수는 `months_affected`에 열거한 1부터 시작하는 월 인덱스에만 적용하며 빈 리스트는 모든 월 적용을 의미합니다. 원래 월 공급량 자체가 미확인(null)이면 충격을 가해도 UNKNOWN입니다. 입금 시점, 관수/기후의 자동 작물 피해율, 유통 등급, 신규 고용/에너지비 지출은 추정하지 않습니다. 수확량과 가격 배수는 고정 시간/전 작기 대상이며 개별 판매 이벤트별 시점 변동은 후속 과제입니다.
+
+공식 참고: [농사로 2026년 경영기록장](https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=847&pageIndex=1), [농식품부 유통구조 개선·가격 변동 요인](https://www.mafra.go.kr/bbs/home/795/592429/download.do). 실 농가 수치·가격·파종 제약이 새로 확보되었다는 뜻은 아닙니다.
