@@ -96,7 +96,7 @@ function el(tag,text,cls){const x=document.createElement(tag);if(text!==undefine
 function renderCrops(){
  const q=$("search").value.trim().toLowerCase(),c=$("category").value;
  const filtered=list.filter(x=>(!c||x.category===c)&&(x.name.toLowerCase().includes(q)||x.id.toLowerCase().includes(q)));
- $("crops").replaceChildren();$("count").textContent=String(filtered.length)+"개 표시 / 공식 조사 51개 + 사용자/기타 "+String(list.length-51)+"개";
+ $("crops").replaceChildren();$("count").textContent=String(filtered.length)+"개 표시 / 공식 조사 51개 · 농사로 작업일정 연결 "+String(CATALOG.filter(x=>x.calendar).length)+"개 · 아직 미연결 "+String(CATALOG.filter(x=>!x.calendar).length)+"개 · 사용자 등록 "+String(list.length-CATALOG.length)+"개";
  for(const x of filtered){const b=el("button",x.name,"crop"+(picked.id===x.id?" selected":""));b.type="button";
  b.append(el("small",x.category+" · "+x.id));b.onclick=()=>{picked=x;renderCrops();renderPicked();};$("crops").append(b);}
 }

@@ -93,7 +93,7 @@ def test_invalid_template_slot_and_bad_source_fail(tmp_path):
 
 def test_all_crop_browser_links_source_reviewed_work_calendar_only():
     rows = catalog()
-    assert len([x for x in rows if x["calendar"] is not None]) == 10
+    assert len([x for x in rows if x["calendar"] is not None]) == 20
     assert rows[0]["calendar"] is None  # no arbitrary calendar attached
     potato = next(x for x in rows if x["id"] == "RDA2024-06")
     assert potato["calendar"]["source_kind"] == "R"
@@ -105,3 +105,16 @@ def test_all_crop_browser_links_source_reviewed_work_calendar_only():
     assert "작업명과 월 범위는 원문" in page
     assert "다음 해까지 이어지는 작기" in page
     assert '"official_title":"감자"' in page
+
+
+def test_all_51_remain_in_catalog_and_new_crops_are_references_only():
+    rows = catalog()
+    assert len(rows) == 51
+    extra = next(x for x in rows if x["id"] == "RDA2024-31")
+    assert extra["calendar"]["match_level"] == "VARIANT_REFERENCE"
+    assert extra["calendar"]["stages"][-1]["crosses_calendar_year"]
+    for r in rows:
+        assert "operations" not in r and "sales" not in r
+        if r["calendar"]:
+            assert "income" not in r["calendar"]
+            assert "facility_events" not in r["calendar"]
