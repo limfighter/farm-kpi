@@ -15,6 +15,8 @@
 | 문서 추가·검증·PR 운영 | [기여 규칙](docs/CONTRIBUTING_DOCS.md) |
 | 이전 세션 기록 | [2026-10-15 인수인계 스냅샷](docs/SESSION_HANDOFF_2026-10-15.md) |
 
+개발 자동화·MCP 작업 규칙은 [루트 AGENTS.md](AGENTS.md)에 있습니다. 현재 결정 상태의 기준 문서는 [docs/STATUS.md](docs/STATUS.md)입니다.
+
 ## 오프라인 브라운·세이지 화면
 
 - **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).
