@@ -35,6 +35,14 @@
 
 python scripts/compare_portfolio.py --input data/templates/portfolio_SYNTHETIC.json --output output/portfolio-synthetic.json --html output/portfolio-synthetic.html
 
+## 날짜별 작기·생육단계별 물과 전력·실질금리 가정 대출 상환
+
+`src/farm_strategy/physical_operations.py`는 기존 `portfolio.py`를 **변경하지 않는 검증용 확장계층**입니다. 작형 전환일의 휴지기, 생육단계별 날짜/일 사용량과 기존 월별 물(m³)·전기(kWh) 사용량의 합계 대조, 펌프 m³/h × 실제 가동 가능 시간, 동시 최대 부하 kW, 입력한 **실질** 연이율·거치기간·월 단위 균등원금 상환 스케줄을 계산합니다.
+
+현재 원장에선 같은 달 내 작물 전환은 여전히 허용되지 않으며, 월별 kWh ≠ 순간 kW입니다. 합성 입력의 생육단계 수요·장비 출력·실질금리 값은 **검증된 영농/금융조건이 아닙니다**. 실거래 명목 금리를 실질금리로 몰래 전용하면 안 됩니다. 은행 제시 상환표와 일치하는지 검증하는 기능도 아닙니다.
+
+`python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`
+
 ## 오프라인 브라운·세이지 화면
 
 - **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).

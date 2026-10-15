@@ -108,6 +108,17 @@ jobs:
             output/portfolio-synthetic.json
             output/portfolio-synthetic.html
           retention-days: 14
+      - name: Validate daily crop-stage inputs, peak pump/power and equal-principal amortization
+        run: |
+          python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html
+      - name: Upload synthetic daily operations physical capacity preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-daily-physical-and-finance-model-only
+          path: |
+            output/physical-operations.json
+            output/physical-operations.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
