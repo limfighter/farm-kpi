@@ -43,6 +43,8 @@ python scripts/verify_rda_pdf_source.py --check
 
 ## 2. 농지 및 운영 가능 조건 입력 양식 (P0-03/P0-04)
 
+**권장 입력 방법:** [오프라인 브라운·세이지 현장 조사표](../dashboard/site-intake/index.html)를 브라우저로 열고, 12개 항목을 입력한 뒤 'JSON 저장'으로 내려받아 `data/private/`에 보관합니다. 이전에 저장한 JSON은 화면 안에서만 다시 불러올 수 있습니다. 서버 전송이나 자동 동기화는 없습니다. 파일 구조가 맞는지는 아래 `site-check` 명령으로 별도 검증하세요.
+
 1. `data/templates/private_site_intake_TEMPLATE.json`을
    **로컬** `data/private/site-facts.json`으로 복사합니다.
 2. 최초 값 `approx_gross_area_pyeong: 3000`은 개략적 총면적이며,
