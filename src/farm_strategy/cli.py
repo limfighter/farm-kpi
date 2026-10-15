@@ -7,6 +7,7 @@ from .cashflow import validate_cashflow_config
 from .comparison import compare_plans, save_comparison_csv
 from .evidence import validate_evidence
 from .calibration import calibrate_preview, save_preview_outputs
+from .site_intake import check_site_file, save_site_summary
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -18,6 +19,11 @@ def main(argv=None):
                         help="Validate private evidence metadata; do not import amounts")
     ev.add_argument("--file", required=True, type=Path)
     ev.add_argument("--output", type=Path)
+    si = sub.add_parser("site-check",
+                        help="Private plot/operating constraints: format & missingness only")
+    si.add_argument("--file", type=Path, required=True)
+    si.add_argument("--output", type=Path,
+                    help="Write a REDACTED summary in output/ or data/private/")
     cp = sub.add_parser("calibration-preview",
                         help="Human-reviewed, hash-locked PRIVATE evidence what-if; never changes base.json")
     cp.add_argument("--file", type=Path, required=True)
@@ -46,6 +52,14 @@ def main(argv=None):
     p.add_argument("--config", type=Path, default=ROOT / "configs/base.json")
     p.add_argument("--weather", type=Path, default=ROOT / "data/processed/annual_weather.csv")
     args = p.parse_args(argv)
+    if args.cmd == "site-check":
+        report = check_site_file(args.file)
+        if args.output:
+            dest = save_site_summary(args.output, report, ROOT)
+            print(f"Redacted site evidence status written: {dest}")
+        else:
+            print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0
     if args.cmd == "evidence-check":
         result = validate_evidence(args.file)
     else:
