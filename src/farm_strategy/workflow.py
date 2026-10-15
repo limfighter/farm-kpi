@@ -22,6 +22,14 @@ HARVESTS = {
     "buyer_deduction_krw_per_kg", "transport_krw_per_10a",
     "settlement_lag_months", "source_kind", "source_ref",
 }
+# Version 2 keeps yield/price units explicit for grains, flowers, fruits and
+# individually counted harvests; the old kg-only case shape remains valid.
+HARVESTS_UNITS = {
+    "name", "month", "yield_quantity_per_10a", "yield_unit",
+    "marketable_fraction", "price_krw_per_unit", "commission_fraction",
+    "buyer_deduction_krw_per_unit", "transport_krw_per_10a",
+    "settlement_lag_months", "source_kind", "source_ref",
+}
 FACILITIES = {"name", "month", "kind", "amount_krw", "source_kind", "source_ref"}
 FACILITY_KINDS = {"OPERATING", "CAPEX", "DEPOSIT_PAID", "DEPOSIT_RETURN"}
 
@@ -102,7 +110,10 @@ def simulate_workflow(case):
     horizon = 12
     for index, sale in enumerate(case["harvests"], 1):
         label = f"harvest {index}"
-        _exact(sale, HARVESTS, label)
+        if set(sale) not in (HARVESTS, HARVESTS_UNITS):
+            raise ValueError(f"{label}: required fields differ")
+        if set(sale) == HARVESTS_UNITS:
+            _text(sale["yield_unit"], f"{label}.yield_unit")
         _text(sale["name"], label)
         _source(sale, label)
         m = _month(sale["month"], label)
@@ -139,14 +150,18 @@ def simulate_workflow(case):
     for index, sale in enumerate(case["harvests"], 1):
         label = f"harvest {index}"
         m = sale["month"]
-        kg = _num(sale["yield_kg_per_10a"], label) * area_factor * _num(
+        units_based = set(sale) == HARVESTS_UNITS
+        quantity_key = "yield_quantity_per_10a" if units_based else "yield_kg_per_10a"
+        price_key = "price_krw_per_unit" if units_based else "price_krw_per_kg"
+        deduct_key = "buyer_deduction_krw_per_unit" if units_based else "buyer_deduction_krw_per_kg"
+        marketable_qty = _num(sale[quantity_key], label) * area_factor * _num(
             sale["marketable_fraction"], label, cap=1.0)
-        price = _num(sale["price_krw_per_kg"], label)
+        price = _num(sale[price_key], label)
         commission = _num(sale["commission_fraction"], label, cap=1.0)
-        deduction = _num(sale["buyer_deduction_krw_per_kg"], label)
+        deduction = _num(sale[deduct_key], label)
         transport = _num(sale["transport_krw_per_10a"], label) * area_factor
-        gross = kg*price
-        net = gross*(1-commission)-kg*deduction
+        gross = marketable_qty * price
+        net = gross * (1 - commission) - marketable_qty * deduction
         if net < 0:
             raise ValueError(f"{label}: negative buyer settlement; revise deductions")
         # Freight is paid at dispatch, while the buyer's fee is deducted

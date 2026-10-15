@@ -115,3 +115,24 @@ def test_compare_multiple_systems_without_auto_ranking():
     result = compare_workflows([one, two])
     assert len(result["cases"]) == 2
     assert "No automatic ranking" in result["comparison_rule"]
+
+def test_non_kg_unit_harvests_flow_through_with_same_economics():
+    s = case()
+    sale = s["harvests"][0]
+    sale["yield_unit"] = "본"
+    sale["yield_quantity_per_10a"] = sale.pop("yield_kg_per_10a")
+    sale["price_krw_per_unit"] = sale.pop("price_krw_per_kg")
+    sale["buyer_deduction_krw_per_unit"] = sale.pop("buyer_deduction_krw_per_kg")
+    r = simulate_workflow(s)
+    assert r["net_receivables_krw"] == 160000
+
+
+def test_non_kg_harvest_requires_explicit_unit():
+    s = case()
+    sale = s["harvests"][0]
+    sale["yield_unit"] = ""
+    sale["yield_quantity_per_10a"] = sale.pop("yield_kg_per_10a")
+    sale["price_krw_per_unit"] = sale.pop("price_krw_per_kg")
+    sale["buyer_deduction_krw_per_unit"] = sale.pop("buyer_deduction_krw_per_kg")
+    with pytest.raises(ValueError, match="yield_unit"):
+        simulate_workflow(s)
