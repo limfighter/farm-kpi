@@ -20,6 +20,34 @@ pytest -q
 
 If you have original user-supplied ASOS files, keep them **locally** in `data/raw` (gitignored); do **not** upload them to GitHub. Derived yearly weather records are included for reproducibility.
 
+## Crop discovery: 51 open options, no crop selected
+
+**No crop type, planting area split, facility decision, or harvesting schedule is
+currently selected.** The five existing potato/scallion/cucumber strategies are
+illustrative model examples only, not a recommended shortlist.
+
+Open [the 51-crop offline explorer](dashboard/crop-discovery/index.html):
+browse all seven RDA survey categories, filter/search, compare published
+2024 per-10a gross receipts, operating/management costs, income and
+owner/hired work hours. The page uses the existing brown-and-sage design,
+with a source-referenced clickable plot; it **does not** rank the crops
+as real 3,000-pyeong investment alternatives or auto-apply reported prices.
+
+The tracked 51-crop dataset is
+[`data/reported/rda_2024_all_51_crop_candidates.csv`](data/reported/rda_2024_all_51_crop_candidates.csv).
+The workflow is explained in
+[`docs/CROP_DISCOVERY_PROTOCOL.md`](docs/CROP_DISCOVERY_PROTOCOL.md).
+2024 nominal incomes are third-party reported reference values (R),
+not 2026-real or new-facility NPV. The 4-year ginseng entry is not
+annualized. These 51 are **all crops in the provided 2024 report**,
+not every possible crop/planting system in Korea.
+
+```bash
+python scripts/refresh_crop_discovery.py --check
+# Refresh only when the source registry has been reviewed and changed:
+python scripts/refresh_crop_discovery.py --refresh
+```
+
 ## Offline treemap dashboard
 
 Open [dashboard/index.html](dashboard/index.html) locally in a browser.
@@ -81,7 +109,7 @@ transactions or a validated investment forecast. All committed tests use
 
 ## Model scope
 
-- **Land:** 3,000 pyeong independent from the pear orchard; spring potato and scallion trials, candidate cucumber greenhouse (build vs lease).
+- **Land:** 3,000 pyeong independent from the pear orchard; no crop yet chosen. Potato/scallion and cucumber greenhouse models are illustrative trials only.
 - **Observed:** ASOS year-level weather patterns sampled as whole years; retain hot/wet/cold correlation.
 - **Hypothetical:** pest occurrence/damage, prices, greenhouse quote, hired labor rate, taxes and insurance.
 - **Accounting:** distinguish pre-financing project NPV, equity cashflow and owner-hours opportunity cost. Own work is **not** a cash labor expense. Loan principal is **not** business revenue.
