@@ -119,6 +119,17 @@ jobs:
             output/physical-operations.json
             output/physical-operations.html
           retention-days: 14
+      - name: Screen farm log CSV and explicit price-yield-resource stresses (synthetic)
+        run: |
+          python scripts/analyze_farm_reality.py --portfolio data/templates/portfolio_SYNTHETIC.json --stress data/templates/farm_stresses_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-reality-synthetic.json --html output/farm-reality-synthetic.html
+      - name: Upload nonprivate log + stress preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-redacted-log-and-stress-synthetic
+          path: |
+            output/farm-reality-synthetic.json
+            output/farm-reality-synthetic.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
