@@ -18,3 +18,14 @@ jobs:
         run: python -m farm_strategy.audit --annual data/processed/annual_asos_jeonju_2006_2025.csv --metadata data/metadata/asos_v10_archive_audit.json
       - name: Validate existing simulation input
         run: farm-strategy validate
+      - name: Produce paired model-only screening
+        run: |
+          farm-strategy compare --seed 42 --paths 300 --stress-matrix --output output/screening-model-only.json --csv output/screening-model-only.csv
+      - name: Upload non-validated screening outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-model-only-comparison
+          path: |
+            output/screening-model-only.json
+            output/screening-model-only.csv
+          retention-days: 14
