@@ -10,6 +10,7 @@
 | --- | --- |
 | 현재 완료/미완료와 다음 PR 범위 | [프로젝트 상태 — 유일한 현재 상태 기준](STATUS.md) |
 | 새 세션/개발자 시작 | [빠른 시작과 CI 명령](how-to/GET_STARTED.md) |
+| 목표를 다음 세션부터 이어서 실행 | [세션별 목표·선행조건·완료 기준](sessions/README.md) |
 | 코드 책임·공통 검증·리팩터링 경계 | [코드 구조와 개선 근거](explanation/CODE_STRUCTURE.md) |
 | 농지·자금·통계·판로의 실제 확인처는? | [P0/P1 공식 정보처·해결 절차](how-to/P0_P1_OFFICIAL_SOURCE_PLAYBOOK.md) — 지번·계약·계좌는 GitHub에 올리지 않음 |
 | 작목은 어떻게 정하나? | [51개 작목 탐색 원칙](CROP_DISCOVERY_PROTOCOL.md) |
