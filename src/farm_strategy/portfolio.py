@@ -176,6 +176,8 @@ def simulate_portfolio(payload):
             if any(p in occupied for p in range(first, last+1)):
                 raise ValueError("Overlapping occupation windows within a single crop")
             occupied.update(range(first, last+1))
+        if any(plots_used[plant["plot_id"]][p] + case["area_m2"] > capacities[plant["plot_id"]] + 1e-7 for p in occupied):
+            raise ValueError("Overlapping crop land exceeds available plot area")
         for event in case["operations"]+case["sales"]:
             if _period(event["year"], event["month"], years) not in occupied:
                 raise ValueError("Every field operation and crop dispatch must fit its plot occupation")
