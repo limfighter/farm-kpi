@@ -50,6 +50,20 @@ If accepting a deliberate model change, update the tracked CSV snapshot
 and HTML together, then review the diff. Do not publish raw/private
 farm receipts, land addresses, or source hourly observations.
 
+## Private evidence calibration preview (review-gated)
+
+To compare candidate crop receipts, actual field costs, labor quotes or
+greenhouse construction quotes with the *hypothetical* baseline, use
+[`docs/PRIVATE_CALIBRATION_PREVIEW.md`](docs/PRIVATE_CALIBRATION_PREVIEW.md).
+
+An independent human review and SHA256-locked local manifest are **required**
+before running `farm-strategy calibration-preview`. It creates only ignored
+`output/calibration/what-if-config.json` and `what-if-impact.json`;
+`configs/base.json` and the published brown-and-sage dashboard remain unchanged.
+This is a self-attested **what-if** calculation, not authentication of farm
+transactions or a validated investment forecast. All committed tests use
+**synthetic-only** receipts/quotes.
+
 ## Model scope
 
 - **Land:** 3,000 pyeong independent from the pear orchard; spring potato and scallion trials, candidate cucumber greenhouse (build vs lease).
