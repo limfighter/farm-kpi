@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "disclaimer": "전체 숫자와 작업 월은 계산 구조 점검용 A(가정)이며 실제 농가·전주 필지·견적·출하 실적과 무관합니다. 작물 추천, 투자수익률, 승인 판단에 사용 금지.",
+  "cases": [
+    {
+      "id": "example-potato-field",
+      "crop": "감자 (가상)",
+      "facility": "노지 (가상)",
+      "region": "가상 전국",
+      "basis_year": 2027,
+      "area_m2": 1000,
+      "owner_available_hours_by_month": null,
+      "operations": [
+        {
+          "name": "토양·경운·파종 (예시)",
+          "month": 3,
+          "owner_hours_per_10a": 18,
+          "hired_hours_per_10a": 10,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 650000,
+          "contractor_krw_per_10a": 400000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "비료·방제·관리 (예시)",
+          "month": 4,
+          "owner_hours_per_10a": 16,
+          "hired_hours_per_10a": 12,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 350000,
+          "contractor_krw_per_10a": 150000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "수확·선별 작업 (예시)",
+          "month": 6,
+          "owner_hours_per_10a": 20,
+          "hired_hours_per_10a": 25,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 190000,
+          "contractor_krw_per_10a": 190000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        }
+      ],
+      "harvests": [
+        {
+          "name": "감자 출하 (예시)",
+          "month": 6,
+          "yield_kg_per_10a": 2300,
+          "marketable_fraction": 0.85,
+          "price_krw_per_kg": 1200,
+          "commission_fraction": 0.07,
+          "buyer_deduction_krw_per_kg": 100,
+          "transport_krw_per_10a": 130000,
+          "settlement_lag_months": 1,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not buyer terms"
+        }
+      ],
+      "facility_events": [
+        {
+          "name": "노지 장비·시설 준비 (예시)",
+          "month": 2,
+          "kind": "CAPEX",
+          "amount_krw": 500000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        }
+      ]
+    },
+    {
+      "id": "example-cucumber-new-house",
+      "crop": "오이 (가상)",
+      "facility": "시설 신축 (가상)",
+      "region": "가상 전국",
+      "basis_year": 2027,
+      "area_m2": 1000,
+      "owner_available_hours_by_month": null,
+      "operations": [
+        {
+          "name": "준비·육묘·정식 (예시)",
+          "month": 2,
+          "owner_hours_per_10a": 12,
+          "hired_hours_per_10a": 18,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 900000,
+          "contractor_krw_per_10a": 400000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "생육·방제·환경관리 (예시)",
+          "month": 4,
+          "owner_hours_per_10a": 26,
+          "hired_hours_per_10a": 30,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 1400000,
+          "contractor_krw_per_10a": 180000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "수확·선별·포장 작업 (예시)",
+          "month": 7,
+          "owner_hours_per_10a": 55,
+          "hired_hours_per_10a": 65,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 380000,
+          "contractor_krw_per_10a": 140000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        }
+      ],
+      "harvests": [
+        {
+          "name": "시설오이 예시 출하 1",
+          "month": 7,
+          "yield_kg_per_10a": 3400,
+          "marketable_fraction": 0.85,
+          "price_krw_per_kg": 2100,
+          "commission_fraction": 0.07,
+          "buyer_deduction_krw_per_kg": 100,
+          "transport_krw_per_10a": 130000,
+          "settlement_lag_months": 1,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not buyer terms"
+        },
+        {
+          "name": "시설오이 예시 출하 2",
+          "month": 8,
+          "yield_kg_per_10a": 2800,
+          "marketable_fraction": 0.85,
+          "price_krw_per_kg": 2000,
+          "commission_fraction": 0.07,
+          "buyer_deduction_krw_per_kg": 100,
+          "transport_krw_per_10a": 130000,
+          "settlement_lag_months": 2,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not buyer terms"
+        }
+      ],
+      "facility_events": [
+        {
+          "name": "하우스 건축 (예시)",
+          "month": 1,
+          "kind": "CAPEX",
+          "amount_krw": 48000000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·관수 설치 (예시)",
+          "month": 2,
+          "kind": "CAPEX",
+          "amount_krw": 6800000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 3,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 4,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 5,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 6,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 7,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 8,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "전기·수도·관리 (예시)",
+          "month": 9,
+          "kind": "OPERATING",
+          "amount_krw": 360000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        }
+      ]
+    },
+    {
+      "id": "example-cucumber-leased",
+      "crop": "오이 (가상)",
+      "facility": "시설 임대 (가상)",
+      "region": "가상 전국",
+      "basis_year": 2027,
+      "area_m2": 1000,
+      "owner_available_hours_by_month": null,
+      "operations": [
+        {
+          "name": "준비·육묘·정식 (예시)",
+          "month": 2,
+          "owner_hours_per_10a": 12,
+          "hired_hours_per_10a": 18,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 900000,
+          "contractor_krw_per_10a": 400000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "생육·방제·환경관리 (예시)",
+          "month": 4,
+          "owner_hours_per_10a": 26,
+          "hired_hours_per_10a": 30,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 1400000,
+          "contractor_krw_per_10a": 180000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        },
+        {
+          "name": "수확·선별·포장 작업 (예시)",
+          "month": 7,
+          "owner_hours_per_10a": 55,
+          "hired_hours_per_10a": 65,
+          "hired_wage_krw_per_hour": 12000,
+          "materials_krw_per_10a": 380000,
+          "contractor_krw_per_10a": 140000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not field data"
+        }
+      ],
+      "harvests": [
+        {
+          "name": "시설오이 예시 출하 1",
+          "month": 7,
+          "yield_kg_per_10a": 3400,
+          "marketable_fraction": 0.85,
+          "price_krw_per_kg": 2100,
+          "commission_fraction": 0.07,
+          "buyer_deduction_krw_per_kg": 100,
+          "transport_krw_per_10a": 130000,
+          "settlement_lag_months": 1,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not buyer terms"
+        },
+        {
+          "name": "시설오이 예시 출하 2",
+          "month": 8,
+          "yield_kg_per_10a": 2800,
+          "marketable_fraction": 0.85,
+          "price_krw_per_kg": 2000,
+          "commission_fraction": 0.07,
+          "buyer_deduction_krw_per_kg": 100,
+          "transport_krw_per_10a": 130000,
+          "settlement_lag_months": 2,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not buyer terms"
+        }
+      ],
+      "facility_events": [
+        {
+          "name": "임차 보증금 지급 (예시)",
+          "month": 1,
+          "kind": "DEPOSIT_PAID",
+          "amount_krw": 4000000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "시설 정비 (예시)",
+          "month": 2,
+          "kind": "CAPEX",
+          "amount_krw": 1300000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 1,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 2,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 3,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 4,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 5,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 6,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 7,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 8,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 9,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 10,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 11,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차료·공과금 (예시)",
+          "month": 12,
+          "kind": "OPERATING",
+          "amount_krw": 450000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        },
+        {
+          "name": "임차 보증금 반환 (예시)",
+          "month": 12,
+          "kind": "DEPOSIT_RETURN",
+          "amount_krw": 4000000,
+          "source_kind": "A",
+          "source_ref": "SYNTHETIC DEMO ONLY; not vendor quote"
+        }
+      ]
+    }
+  ]
+}
