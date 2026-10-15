@@ -50,7 +50,7 @@ def test_regional_observation_cannot_reuse_national_source(tmp_path):
     def alter(rows):
         rows[0]["region"] = "JEONBUK"
     file = snapshot(tmp_path, alter)
-    with pytest.raises(ValueError, match="regional source"):
+    with pytest.raises(ValueError, match="national source"):
         check(SOURCES, file)
 
 
