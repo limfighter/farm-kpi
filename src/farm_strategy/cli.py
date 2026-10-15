@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from .model import PLANS, SCENARIOS, read_config, read_weather, simulate
 from .cashflow import validate_cashflow_config
+from .comparison import compare_plans, save_comparison_csv
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -18,6 +19,11 @@ def main(argv=None):
         sp.add_argument("--seed", type=int, default=42)
         sp.add_argument("--paths", type=int, default=1000)
         sp.add_argument("--output", type=Path)
+        if cmd == "compare":
+            sp.add_argument("--stress-matrix", action="store_true",
+                            help="Compare every available stress scenario (assumptions only)")
+            sp.add_argument("--csv", type=Path,
+                            help="Write a flat scenario-by-plan comparison table")
         if cmd == "forecast":
             sp.add_argument("--plan", choices=PLANS, default="new_cucumber_house")
             sp.add_argument("--monthly-details", action="store_true",
@@ -38,10 +44,12 @@ def main(argv=None):
                   "monthly_cashflow_status": config["monthly_cashflow"]["status"],
                   "assumed_annual_inflation_rate": config["finance"]["assumed_annual_inflation_rate"]}
     elif args.cmd == "compare":
-        result = {"runs": [simulate(plan, args.scenario, observed, config,
-                                    seed=args.seed, paths=args.paths,
-                                    window=args.window) for plan in PLANS],
-                  "warning": "Only weather input is observed; price/pest/loss/quotes unvalidated"}
+        result = compare_plans(
+            observed, config, seed=args.seed, paths=args.paths,
+            scenario=args.scenario, window=args.window,
+            stress_matrix=args.stress_matrix)
+        if args.csv:
+            save_comparison_csv(result, args.csv)
     else:
         result = simulate(args.plan, args.scenario, observed, config,
                           seed=args.seed, paths=args.paths, window=args.window,
