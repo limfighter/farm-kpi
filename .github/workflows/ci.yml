@@ -23,6 +23,10 @@ jobs:
       - name: Produce paired model-only screening
         run: |
           farm-strategy compare --seed 42 --paths 300 --stress-matrix --output output/screening-model-only.json --csv output/screening-model-only.csv
+      - name: Check dashboard snapshot and publish offline HTML
+        run: |
+          python scripts/build_dashboard.py --csv output/screening-model-only.csv --html dashboard/index.html --check
+          python scripts/build_dashboard.py --csv output/screening-model-only.csv --html dashboard/index.html --output output/farm-kpi-dashboard.html
       - name: Upload non-validated screening outputs
         uses: actions/upload-artifact@v4
         with:
@@ -30,4 +34,5 @@ jobs:
           path: |
             output/screening-model-only.json
             output/screening-model-only.csv
+            output/farm-kpi-dashboard.html
           retention-days: 14
