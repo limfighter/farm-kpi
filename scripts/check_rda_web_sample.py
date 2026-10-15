@@ -23,11 +23,11 @@ INTEGERS = ("gross_receipts_krw_per_10a", "management_cost_krw_per_10a",
 EMPTY_FIELDS = INTEGERS + ("yield_unit",)
 STATUSES = ("OBSERVED_WEB_TABLE", "NO_DETAIL_ROW_SHOWN")
 FIXTURE = {
-    ("2022", "RDA2024-37"): ("7065740", "3703532", "3362208"),
-    ("2023", "RDA2024-37"): ("8852139", "3823247", "5028892"),
-    ("2022", "RDA2024-18"): ("5286603", "2639349", "2647255"),
-    ("2023", "RDA2024-18"): ("5381476", "2406276", "2975199"),
-    ("2023", "RDA2024-24"): ("22729042", "12018109", "10710933"),
+    ("2022", "RDA2024-37"): ("7065740", "3703532", "3362208", "2313", "3054"),
+    ("2023", "RDA2024-37"): ("8852139", "3823247", "5028892", "2066", "4286"),
+    ("2022", "RDA2024-18"): ("5286603", "2639349", "2647255", "1777", "2975"),
+    ("2023", "RDA2024-18"): ("5381476", "2406276", "2975199", "1760", "3049"),
+    ("2023", "RDA2024-24"): ("22729042", "12018109", "10710933", "9974", "2279"),
 }
 
 
@@ -90,7 +90,7 @@ def check(path=SAMPLE):
         revenue, cost, income, qty, price = values
         if min(values) <= 0 or abs(revenue - cost - income) > 2:
             raise ValueError("Invalid crop income reconciliation")
-        if key not in FIXTURE or tuple(r[k] for k in INTEGERS[:3]) != FIXTURE[key]:
+        if key not in FIXTURE or tuple(r[k] for k in INTEGERS) != FIXTURE[key]:
             raise ValueError("Manual official web-table amounts differ from captured source")
         present += 1
     required = {(str(y), crop) for y in YEARS for crop in PAIRS}

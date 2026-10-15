@@ -10,7 +10,8 @@ import random
 from pathlib import Path
 
 from .cashflow import validate_cashflow_config
-from .model import PLANS, SCENARIOS, one_path, quantile
+from .model import PLANS, SCENARIOS, one_path
+from .sampling import choose_pool, quantile
 
 BASELINE_PLAN = "field_trial"
 KPI_KEYS = (
@@ -47,15 +48,6 @@ def describe(values, negative_fraction=False, positive_fraction=False):
         item["positive_fraction_model_only"] = round(
             sum(v > 0 for v in values) / len(values), 4)
     return item
-
-
-def choose_pool(weather, window):
-    if window not in ("recent10", "all20"):
-        raise ValueError("window must be recent10 or all20")
-    pool = [row for row in weather if window == "all20" or row["year"] >= 2016]
-    if len(pool) < 5:
-        raise ValueError("Need >=5 annual observations")
-    return pool
 
 
 def compare_plans(weather, config, *, seed=42, paths=1000, scenario="base",

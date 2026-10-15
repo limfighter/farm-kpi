@@ -10,6 +10,7 @@ import random
 from pathlib import Path
 from statistics import median
 from .cashflow import month_ledger, nominal_to_real, validate_cashflow_config
+from .sampling import choose_pool, quantile
 
 PLANS = ("field_trial", "pause_after_trial", "new_cucumber_house",
          "leased_cucumber_house", "new_cucumber_premium")
@@ -78,13 +79,6 @@ def weather_loss(w, scale):
         min(0.60, scale * (0.025 * wet_autumn + 0.009 * hot_autumn)),
         min(0.60, scale * (0.004 * heat + 0.035 * severe_rain + 0.01 * frost)),
     )
-
-
-def quantile(v, q):
-    a = sorted(v)
-    p = (len(a) - 1) * q
-    lo, hi = math.floor(p), math.ceil(p)
-    return a[lo] if lo == hi else a[lo] * (hi - p) + a[hi] * (p - lo)
 
 
 def one_path(plan, scenario, pool, config, rng, include_months=False):
@@ -248,9 +242,7 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
 def simulate(plan, scenario, weather, config, seed=42, paths=1000, window="recent10",
              include_monthly_details=False):
     if not (1 <= paths <= 100000): raise ValueError("paths must be 1–100,000")
-    if window not in ("all20", "recent10"): raise ValueError("Invalid window")
-    pool = [row for row in weather if window == "all20" or row["year"] >= 2016]
-    if len(pool) < 5: raise ValueError("Need >=5 annual observations")
+    pool = choose_pool(weather, window, invalid_window_message="Invalid window")
     rng = random.Random(seed)
     runs = [one_path(plan, scenario, pool, config, rng) for _ in range(paths)]
     keys = ("project_npv", "equity_npv",

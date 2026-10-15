@@ -7,16 +7,18 @@ import argparse
 import csv
 import hashlib
 import json
-import math
 from pathlib import Path
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from farm_strategy.reported import CATEGORIES, validate_rows  # noqa: E402
+
 CROPS = ROOT / 'data/reported/rda_2024_all_51_crop_candidates.csv'
 READINESS = ROOT / 'data/derived/crop_readiness_51.csv'
 TEMPLATE = ROOT / 'dashboard/feasibility/template.html'
 HTML = ROOT / 'dashboard/feasibility/index.html'
-CATS = {'식량작물': 7, '노지채소': 12, '시설채소': 17,
-        '노지과수': 9, '시설과수': 1, '화훼': 1, '특용·약용': 4}
+CATS = CATEGORIES
 GATES = (
     'soil_and_drainage',
     'water_supply',
@@ -34,39 +36,26 @@ STATUS = 'UNKNOWN_NOT_EVALUATED'
 def read_crops(path=CROPS):
     with Path(path).open(encoding='utf-8-sig', newline='') as handle:
         data = list(csv.DictReader(handle))
-    if len(data) != 51 or len({x['crop_id'] for x in data}) != 51:
-        raise ValueError('Expected 51 unique crop IDs')
-    if {c: sum(x['category'] == c for x in data) for c in CATS} != CATS:
-        raise ValueError('RDA 2024 category composition changed')
+    try:
+        validated = validate_rows(data)
+    except ValueError as exc:
+        # Preserve the readiness diagnostic used by existing callers.
+        if str(exc).startswith('Income reconciliation failed'):
+            raise ValueError('Income not reconciled') from exc
+        raise
     out = []
-    for x in data:
-        if x['data_kind'] != 'R':
-            raise ValueError('Only reported RDA crop sources are supported')
+    for x, normalized in zip(data, validated):
         if not x['crop'].strip():
             raise ValueError('Crop name missing')
+        # Readiness callers historically receive text for yield/rate/pages.
+        # Validate all fields, but normalize only the legacy numeric columns.
         row = dict(x)
         for key in ('revenue_krw_per_10a', 'management_cost_krw_per_10a',
-                    'income_krw_per_10a', 'cycle_years'):
-            try:
-                row[key] = int(x[key])
-            except (TypeError, ValueError) as exc:
-                raise ValueError(f'Invalid {key}') from exc
-        for key in ('labor_total_hours_per_10a', 'labor_hired_hours_per_10a',
+                    'income_krw_per_10a', 'cycle_years',
+                    'labor_total_hours_per_10a', 'labor_hired_hours_per_10a',
                     'labor_owner_hours_per_10a'):
-            row[key] = float(x[key])
-            if not math.isfinite(row[key]) or row[key] < 0:
-                raise ValueError('Invalid labor input')
-        if abs(row['revenue_krw_per_10a'] - row['management_cost_krw_per_10a'] -
-               row['income_krw_per_10a']) > 2:
-            raise ValueError('Income not reconciled')
-        if abs(row['labor_owner_hours_per_10a'] + row['labor_hired_hours_per_10a'] -
-               row['labor_total_hours_per_10a']) > 0.11:
-            raise ValueError('Labor not reconciled')
-        if row['cycle_years'] not in (1, 4):
-            raise ValueError('Unexpected crop cycle year value')
+            row[key] = normalized[key]
         out.append(row)
-    if [x['crop'] for x in out if x['cycle_years'] == 4] != ['인삼(4년근)']:
-        raise ValueError('Four-year ginseng must be retained as its own cycle')
     return out
 
 

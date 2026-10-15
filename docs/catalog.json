@@ -67,6 +67,12 @@
       "lifecycle": "active"
     },
     {
+      "path": "docs/explanation/CODE_STRUCTURE.md",
+      "type": "explanation",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
       "path": "docs/explanation/DOCS_DESIGN_SOURCES.md",
       "type": "explanation",
       "owner": "maintainer",
