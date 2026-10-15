@@ -59,7 +59,15 @@
 - [농사로 경영자료실](https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaLst.ps?menuId=PS03213): 농업경영기록장 및 소득조사 구조.
 - [농업경영 표준진단 공공데이터](https://www.data.go.kr/data/15155804/fileData.do): 설명상 **122종 표준진단 품목**으로 51개 소득통계와 다른 모집단. 이 링크는 신규 작목 수익 실측을 의미하지 않는다.
 
-## 6. 감사 실행
+## 6. 동일 농장 조건의 대안 간 차액을 실제로 계산
+
+시설 신축/임대·기계화 방식·판매채널 등 **같은 작물, 같은 필지 지역, 경작 면적, 시작연도, 투자기간, 할인율, 자가노동 가치 및 월별 가용 노동 한도**인 두 운영 시나리오만 [증분 비교 함수](../../src/farm_strategy/option_tradeoffs.py)로 비교할 수 있다. 대안−기준의 예상 순정산액, 운영현금비, 영업 기여액, CAPEX, 기말 현금, 최대 월말 자금 부족, 사업/경제적 NPV, 자가·고용 노동 및 피크 과부하를 따로 보고한다.
+
+**경고:** 비교사례가 둘 다 가상이면 결과도 가상차이다. 시설 임대가 CAPEX를 줄이면 운영비는 늘 수 있으며, 생산량을 임의로 증가시키지 않는다. 같은 작물 비교라도 물 공급/실제 구매처/토양 적합성·시세/재해확률·주간 인력·진짜 공사비가 확인되지 않으면 유리한 사업이라는 결론을 내리지 않는다. 면적이나 시간 가정이 다르면 비교 자체를 거절한다.
+
+실행: python scripts/compare_options.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/paired-option-deltas.json --html output/paired-option-deltas.html
+
+## 7. 감사 실행
 
 - python -m pytest -q tests/test_operational_factors.py
 - python -m farm_strategy.operational_factors --check --output output/decision-factor-audit.json --html output/decision-factor-audit.html

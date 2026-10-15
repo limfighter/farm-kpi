@@ -75,6 +75,17 @@ jobs:
             output/decision-factor-audit.json
             output/decision-factor-audit.html
           retention-days: 14
+      - name: Quantify incremental crop/facility operating advantages with synthetic paired data
+        run: |
+          python scripts/compare_options.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/paired-option-deltas.json --html output/paired-option-deltas.html
+      - name: Upload matched-case option tradeoffs (synthetic only)
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-paired-option-tradeoffs-synthetic
+          path: |
+            output/paired-option-deltas.json
+            output/paired-option-deltas.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
