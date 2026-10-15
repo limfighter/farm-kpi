@@ -31,6 +31,12 @@
       "lifecycle": "active"
     },
     {
+      "path": "docs/how-to/P0_P1_OFFICIAL_SOURCE_PLAYBOOK.md",
+      "type": "how-to",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
       "path": "docs/how-to/UPDATE_REPORTED_DATA.md",
       "type": "how-to",
       "owner": "research",
