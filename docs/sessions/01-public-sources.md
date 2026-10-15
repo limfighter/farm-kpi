@@ -36,6 +36,7 @@
 python scripts/verify_rda_pdf_source.py --check
 python scripts/check_crop_income_history.py --check
 python scripts/check_rda_web_sample.py --check
+python scripts/check_off_survey_candidates.py --check
 python scripts/build_rda_web_sample_board.py --check
 python scripts/check_docs.py --check
 ```

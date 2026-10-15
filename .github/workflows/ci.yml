@@ -22,6 +22,8 @@ jobs:
         run: python scripts/verify_rda_pdf_source.py --check
       - name: Verify RDA national/regional publication registry and 2024-only long-form observations
         run: python scripts/check_crop_income_history.py --check
+      - name: Validate off-survey discovery registry (pending is not verified)
+        run: python scripts/check_off_survey_candidates.py --check
       - name: Validate partial 2022-2023 official RDA web observations
         run: python scripts/check_rda_web_sample.py --check
       - name: Ensure offline source coverage dashboard is reproducible

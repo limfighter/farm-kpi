@@ -8,6 +8,7 @@
 | --- | --- | --- | --- |
 | [2024년 51개 작목](../../data/reported/rda_2024_all_51_crop_candidates.csv) | RDA 2024 보고 통계 **R**, PDF 요약 17–19/노동 127–177쪽 | 명목 원/10a/작기, 노동 h/10a | 전국 단면, 실제 전주 필지 실적/ROI 아님 |
 | [다년도 전국·지역 출처](../../data/metadata/rda_income_source_registry.json) 및 [장기형 현재 관측](../../data/reported/rda_income_long.csv) | 2022~2024 공식 출처 공표 존재 확인, 정확한 값은 2024 전국 51행만 전사 | 2024 명목 원/10a/작기, region=NATIONAL | 2022/2023 및 2024 전북 숫자 없음/미확인. 게시물 존재는 개별 전북 품목 값 존재 증명이 아님. [검증 기준](RDA_MULTYEAR_SOURCE_REGISTRY.md) |
+| [조사 밖 후보 등록부](../../data/metadata/off_survey_candidate_registry.json) | 2024년 RDA 51개 조사 작목 외 잠재 후보의 발견 메타데이터; 기본 **0개** | 작목명·재배체계·출처 URL, 수치 없음 | `source_available=false`, `status=PENDING_EVIDENCE`만 허용. 조사 통계 R·현장 적합성·소득 검증이 아니며 51개 잠금 데이터와 병합 금지 |
 | [2022~2023 웹 원문 정밀 수치 표본](../../data/reported/rda_web_2022_2023_sample.csv) | 공식 농사로 공개 작목별 HTML 표시값 **R**; [검증 절차](RDA_WEB_EVIDENCE_SAMPLE.md) | 명목 원/10a/해당 작기, 5행 표시·1개 조회 코드 공백 | PDF/노동시간 독립 대조 미완료; 2022 시설오이 화면 공백은 0원 아님. 기존 2024 잠금 통계 또는 실제 농지 수익과 미혼합 |
 | [원본 대조 메타데이터](../../data/metadata/rda_2024_source_verification.json) | 사용자가 준 2024년 PDF의 SHA256 + 51개 행 해시 | 해시/정수 | 전사 정합성만 확인. 통계 작성기관 서명·정확도 인증 아님 |
 | [작목 준비도](../../data/derived/crop_readiness_51.csv) | 위 보고 통계에서 분류 기반 파생 | 8개 필지 조건 상태 값 | 현장 실제 자료 없음, 모든 게이트 UNKNOWN |
@@ -58,3 +59,14 @@
 - [개발 환경 시작](../how-to/GET_STARTED.md)
 - [RDA/현장정보 자세한 기준](../RDA_AUDIT_AND_SITE_INTAKE.md)
 - [근본적인 회계 경계](../explanation/MODEL_BOUNDARIES.md)
+
+## 조사 밖 후보 등록부 계약 (세션 01)
+
+`data/metadata/off_survey_candidate_registry.json`은 RDA 2024 전국 51개 작목·장기형 자료와 **분리된 후보 발견 메타데이터**입니다. `schema_version=1`, `purpose`, `candidates` 배열을 사용합니다. 후보는 `id`(`OFF-0001` 형식), `crop_name`, `cultivation_system`, `discovery_source_url`(공개 HTTPS), `discovery_source_title`, `discovery_source_year`(출처 게시연도 또는 `null`), `source_available=false`, `status=PENDING_EVIDENCE`, `missing_evidence`를 반드시 가집니다. 게시연도는 **작물 소득 조사연도와 다릅니다**.
+
+`missing_evidence`에는 반드시 `COMPARABLE_INCOME`이 포함되며, 필요하면 `CROP_CYCLE_AND_UNITS`, `REGIONAL_COMPARABILITY`, `SITE_FEASIBILITY`, `BUYER_TERMS`, `FACILITY_QUOTES`, `MONTHLY_LABOR`를 추가합니다. 현 스키마는 수익·수량·필지 적합성·검증 완료 값을 허용하지 않습니다. 실제 비교 가능한 수치가 확보되더라도 **독립적인 출처/원문/단위/지역/작기/노동 검토와 스키마 변경** 없이 이 등록부를 재무 순위에 투입하지 않습니다. 허가/판로/실측 자료가 없다는 뜻은 `UNKNOWN`이지 부적합이나 0이 아닙니다.
+
+```bash
+python scripts/check_off_survey_candidates.py --check
+python -m pytest -q tests/test_off_survey_candidates.py
+```
