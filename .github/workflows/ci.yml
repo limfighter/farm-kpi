@@ -86,6 +86,17 @@ jobs:
             output/paired-option-deltas.json
             output/paired-option-deltas.html
           retention-days: 14
+      - name: Simulate weekly labor peaks and grade-specific cash (synthetic)
+        run: |
+          python scripts/assess_execution.py --input data/templates/execution_detail_SYNTHETIC.json --output output/execution-detail-example.json --html output/execution-detail-example.html
+      - name: Upload synthetic labor and grade details
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-weekly-labor-grade-experiment
+          path: |
+            output/execution-detail-example.json
+            output/execution-detail-example.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)

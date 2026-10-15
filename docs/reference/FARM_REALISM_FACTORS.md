@@ -7,7 +7,7 @@
 - [단년 모델](../../src/farm_strategy/workflow.py): 상위 필드 10개, 작업 사건 필드 9개, 범용 판매 사건 필드 12개, 시설 사건 필드 6개.
 - [다년 모델](../../src/farm_strategy/lifecycle.py): 상위 필드 **14개**, 작업 사건 필드 **10개**, 판매 사건 필드 **13개**, 시설 사건 필드 **7개**.
 - [현장 조사 모듈](../../src/farm_strategy/site_intake.py): 공통 현장 게이트 **12개**, 단일 수치 항목 **4개**, 운영자 월별 가용시간 **12개 슬롯**.
-- [현실 농사 요인 등록부](../../data/metadata/decision_factor_registry.json)는 **8개 분야 51개 별도 검토 요인**을 나눈다. 이 51개와 농촌진흥청 통계의 **51개 작목**은 전혀 다른 숫자다. **계산 입력 가능 17개 / 조사 항목만 12개 / 현재 미구현 22개**.
+- [현실 농사 요인 등록부](../../data/metadata/decision_factor_registry.json)는 **8개 분야 51개 별도 검토 요인**을 나눈다. 이 51개와 농촌진흥청 통계의 **51개 작목**은 전혀 다른 숫자다. **계산 입력 가능 19개 / 조사 항목만 12개 / 현재 미구현 20개**.
 - 위 필드 수는 **스키마 키**이다. 이름·월·출처ID도 포함하며 독립 경제변수의 수나 실제 실측·검증 완료율이 아니다. 계산할 수 있다는 뜻은 시설 난방비를 현금원장에 입력할 수 있다는 정도이며 난방 부하와 전력 용량을 물리적으로 검증한 것은 아니다.
 
 ## 2. 수익률보다 먼저 확인할 실무 조건
@@ -67,7 +67,15 @@
 
 실행: python scripts/compare_options.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/paired-option-deltas.json --html output/paired-option-deltas.html
 
-## 7. 감사 실행
+## 7. 수확기 주간 노동과 등급별 실수취
+
+[추가 계산 모듈](../../src/farm_strategy/execution_detail.py)은 수확·관리 작업의 실제 날짜별 자가/고용 노동을 월 원장과 대조하고, 주별 실제 가용시간이 확인된 때만 초과분을 계산합니다. 미기재 주간 공급은 UNKNOWN입니다. 등급별 상품 판매수량 합계는 원래 출하 수량×상품화율과 정확히 같아야 하며 기존 판매를 교체합니다. 출하 시 포장비와 수수료·공제를 나누어 입금 월에 반영합니다. 냉장·저장·반품은 아직 별도 모델 미구현입니다.
+
+방법 참고: [농사로 2026 농산물소득조사표](https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=845&pageIndex=1), [농촌진흥청 적기 수확·선별 안내](https://www.rda.go.kr/board/board.do?dataNo=100000811620&mode=view&prgId=day_farmlcltinfoEntry). 원문 조사표/안내가 이 모델의 합성 노동·가격을 검증했다는 뜻이 아닙니다.
+
+실행: `python scripts/assess_execution.py --input data/templates/execution_detail_SYNTHETIC.json --output output/execution-detail-example.json --html output/execution-detail-example.html`.
+
+## 8. 감사 실행
 
 - python -m pytest -q tests/test_operational_factors.py
 - python -m farm_strategy.operational_factors --check --output output/decision-factor-audit.json --html output/decision-factor-audit.html

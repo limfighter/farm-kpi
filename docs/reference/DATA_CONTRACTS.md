@@ -126,3 +126,9 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 ## 현실 농사·변수 감사(신뢰도와 별개의 기능 커버리지)
 
 [51개 실제 농사 검토 요인](../../data/metadata/decision_factor_registry.json)은 소득 수치/기상값/필지 실측이 아니라 구현 기능 감사 목록입니다. MODELED는 실제 다년 모델 입력키, INTAKE_ONLY는 현장 조사 게이트·운영제약 키, NOT_MODELED는 새 모델 미지원으로 표기합니다. 검증 스크립트는 코드 필드에 실제 매핑하는지 검사합니다. 시설비 숫자를 넣는 기능은 난방·관수·토양을 계산하는 과학모형과 다릅니다. 51요인은 RDA 전국 51작목과 별개이며, 각 항목 P0/P1/P2, 필수조건/경영/위험/조건부 이점을 구별합니다. [해석·근거](FARM_REALISM_FACTORS.md) 참고.
+
+## 농작업 주간 노동/상품 등급 세분화
+
+[합성 입력](../../data/templates/execution_detail_SYNTHETIC.json)을 `src/farm_strategy/execution_detail.py`로 평가합니다. `weekly_allocations[]`는 작업 `operation_index`(0부터), `work_date`(YYYY-MM-DD), 전체 경작 면적에 대한 `owner_hours`, `hired_hours`를 모두 기재하고 기존 연도/월·시간 합계와 일치시켜야 합니다. 주는 월요일부터 시작하며 `weekly_capacity[]`의 자가/고용 가용시간은 각각 null 허용; 미입력은 UNKNOWN이고 0이나 고용 확정이 아닙니다.
+
+`grade_lots[]`는 `sale_index`, `grade`, `sold_quantity_per_10a`, `quantity_unit`, `price_krw_per_unit`, `commission_fraction`, `buyer_deduction_krw_per_unit`, `packing_krw_per_unit`, `source_kind`, `source_ref`의 명시 자료입니다. 모든 출하 사건을 구성하는 등급별 수량 합은 원래 수량×상품화율과 일치해야 하며, 기존 출하를 **대체**해 추가 매출을 중복 계산하지 않습니다. 기존 운송비는 한 번, 포장비는 출하월 운영비에 별도, 등급별 판매대금은 원래 정산월에 기록합니다. 유통 등급·작업주간은 실측 검증 없이 전부 A 가정입니다. 냉장·반품·실제 농가 인원·하루 단위 충돌은 이 모델이 아직 검증하지 않습니다.

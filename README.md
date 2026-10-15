@@ -19,9 +19,15 @@
 
 ## 현실 농사 변수·사업 이점
 
-[현실 농사 변수·조건부 이점 51항목](docs/reference/FARM_REALISM_FACTORS.md)은 **작목 51종과 별개**로, 계산필드 17개·현장 체크리스트 12개·미구현 22개를 구분합니다. 토양·용수·법규·실수취가·피크 주간 노동·현금 위험을 검증하지 않은 작목에 수익 순위를 확정하지 않습니다. 17개 입력필드의 존재는 실농가 데이터 검증을 뜻하지 않습니다.
+[현실 농사 변수·조건부 이점 51항목](docs/reference/FARM_REALISM_FACTORS.md)은 **작목 51종과 별개**로, 계산필드 19개·현장 체크리스트 12개·미구현 20개를 구분합니다. 토양·용수·법규·실수취가·피크 주간 노동·현금 위험을 검증하지 않은 작목에 수익 순위를 확정하지 않습니다. 17개 입력필드의 존재는 실농가 데이터 검증을 뜻하지 않습니다.
 
 **시설/방식별 이점의 계산:** 동일 작물·면적·기간을 대상으로 [증분 비용·매출·노동 비교](src/farm_strategy/option_tradeoffs.py)를 구현했습니다. 신축·임대 예제는 전부 가상이며 시설로 수량이 자동 증가하지 않습니다. `python scripts/compare_options.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/paired-option-deltas.json --html output/paired-option-deltas.html`로 결과를 확인합니다.
+
+## 수확기 주간 노동 및 등급별 현금(가정형)
+
+`src/farm_strategy/execution_detail.py`와 `scripts/assess_execution.py`가 작업별 실제 날짜를 ISO 주 단위로 나눠 **월별 노동합계와 주간 노동을 대조**하고, 등급별 수량·가격·공제·포장비로 기존 출하 현금을 **대체**합니다. 포장비는 출하월, 판매대금은 정산월에 기록합니다. 가용 노동시간 미입력은 UNKNOWN이며 실측 사례는 없습니다.
+
+`python scripts/assess_execution.py --input data/templates/execution_detail_SYNTHETIC.json --output output/execution-detail-example.json --html output/execution-detail-example.html`
 
 ## 오프라인 브라운·세이지 화면
 
