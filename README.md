@@ -1,202 +1,45 @@
-# Farm KPI | Jeonju Farm Strategy
+# Farm KPI | 전주 독립 농지 데이터 기반 작목 선택
 
-**Private decision-support system** for an independent 3,000-pyeong agricultural land project near Jeonju. The established family pear orchard and separate forest mushroom pilot are **not included** in land-profit calculations.
+약 **3,000평 규모의 전주 인근 독립 농지**에서 **작물·작부면적·노지/시설 신축/임대 여부를 아직 정하지 않은 상태**로 후보를 넓게 검증하기 위한 비공개 의사결정 지원 프로젝트입니다. 기존 가족 배 과수원과 별도 산림 버섯사업은 이 모델 범위에 포함하지 않습니다.
 
-> Research prototype, **NOT** an investment forecast or loan eligibility confirmation.
-> Weather variables use derived KMA ASOS Jeonju (station 146) 2006–2025 records. Actual farmgate prices, pest/yield loss functions, contractor quotes, tax, insurance and policy loan eligibility are NOT calibrated.
-> **KAMIS is excluded.**
+**현장 적합성·판매계약·투자수익·대출 가능성이 검증된 서비스가 아닙니다.** 감자·쪽파·오이를 대상으로 한 기존 다섯 전략 시뮬레이션은 예시이고 특정 작물 추천이 아닙니다. 농촌진흥청 2024년 작목 소득은 전국 보고 통계이지 해당 농지의 실제 실적이 아닙니다. **KAMIS는 제외**합니다.
 
-## CLI
+## 여기서 시작
 
-```bash
-python -m pip install -e '.[dev]'
-farm-strategy validate
-farm-strategy compare --seed 42 --paths 1000 --stress-matrix --output output/compare-model-only.json --csv output/compare-model-only.csv
-farm-strategy evidence-check --file data/templates/private_evidence_TEMPLATE.csv
-farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000
-farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000 --monthly-details --output output/monthly-example.json
-pytest -q
-```
+| 필요한 것 | 읽을 문서/실행 화면 |
+| --- | --- |
+| **전체 문서 탐색** | **[Farm KPI 문서 허브](docs/README.md)** |
+| 현재 진행 상태·미확인 사항 | [STATUS — 현재 상태의 단일 기준](docs/STATUS.md) |
+| 별도 세션에서 빠르게 재현 | [빠른 시작](docs/how-to/GET_STARTED.md) |
+| 계획과 다음 개발 순서 | [8주 실행 로드맵](docs/FARM_DECISION_EXECUTION_PLAN.md) |
+| 문서 추가·검증·PR 운영 | [기여 규칙](docs/CONTRIBUTING_DOCS.md) |
+| 이전 세션 기록 | [2026-10-15 인수인계 스냅샷](docs/SESSION_HANDOFF_2026-10-15.md) |
 
-If you have original user-supplied ASOS files, keep them **locally** in `data/raw` (gitignored); do **not** upload them to GitHub. Derived yearly weather records are included for reproducibility.
+## 오프라인 브라운·세이지 화면
 
-## Evidence-first execution roadmap
+- **[51개 작목 탐색기](dashboard/crop-discovery/index.html)** — 농촌진흥청 2024 전국 작목의 소득·경영비·노동시간을 *보고 통계*로 표시.
+- **[작목별 준비도](dashboard/feasibility/index.html)** — 51개 작목 각각의 8개 현장 확인 질문, 모두 미확인에서 시작.
+- **[농지 현장정보 입력](dashboard/site-intake/index.html)** — 12개 공통 조사 항목 및 월별 가용시간을 로컬 JSON으로 저장. 외부 전송 없음.
+- **[기존 모델 트리맵](dashboard/index.html)** — 가상 가격/피해/비용 가정으로 만든 5개 **예시** 전략의 현금흐름·위험 비교.
 
-**Starting a separate ChatGPT session?** Read the
-[2026-10-15 project handoff](docs/SESSION_HANDOFF_2026-10-15.md)
-first. It lists completed code, file entrypoints, unverified sources,
-outstanding site constraints and the next P1-01 task. Work from the
-latest GitHub `main` state; use a **new PR** for subsequent changes.
+## 개발 시작 및 검사
 
-No crop, planting area, greenhouse construction or lease is selected.
-The [**8-week indicative decision workplan**](docs/FARM_DECISION_EXECUTION_PLAN.md)
-lists CI/data-quality fixes, parcel verification, buyer/net revenue and capital
-requirements, generic crop-cycle simulation, and an evidence-gated pilot/decision.
-The timetable is contingent on external sources and responses; **unknown is not zero**.
+Python **3.11** 권장. 원본 영수증, 정확한 농지 주소/지번, 대출자료, API 키, ASOS 시간별 원자료는 Git에 올리지 않습니다.
 
-## Source verification and private site intake (Weeks 1–2)
-
-The user-supplied RDA 2024 book was compared with all **51 aggregate
-income triplets and 51 labor-page totals**. The reviewed PDF's SHA256
-and a canonical 51-row digest are stored as source metadata; the PDF
-itself remains **untracked**. Repeat the digest check:
-
-```bash
-python scripts/verify_rda_pdf_source.py --check
-```
-
-Open the [**offline brown/sage parcel intake form**](dashboard/site-intake/index.html)
-locally to enter all 12 site facts and optionally import/export a private JSON.
-The form requires no server and does not transmit data.
-
-The [parcel and operations intake guide](docs/RDA_AUDIT_AND_SITE_INTAKE.md)
-describes how to record **unknown** usable area, soil/water/power/permit
-statuses, 12 months of owner availability and capital limits safely.
-There is no crop selection or verified parcel suitability yet.
-
-```bash
-cp data/templates/private_site_intake_TEMPLATE.json data/private/site-facts.json
-farm-strategy site-check --file data/private/site-facts.json --output output/site-status-redacted.json
-```
-
-The report contains only missingness and gate status counts. Private facts
-cannot be imported into the tracked crop dashboard or hypothetical
-five-plan model through this command.
-
-## Crop discovery: 51 open options, no crop selected
-
-**No crop type, planting area split, facility decision, or harvesting schedule is
-currently selected.** The five existing potato/scallion/cucumber strategies are
-illustrative model examples only, not a recommended shortlist.
-
-Open [the 51-crop offline explorer](dashboard/crop-discovery/index.html):
-browse all seven RDA survey categories, filter/search, compare published
-2024 per-10a gross receipts, operating/management costs, income and
-owner/hired work hours. The page uses the existing brown-and-sage design,
-with a source-referenced clickable plot; it **does not** rank the crops
-as real 3,000-pyeong investment alternatives or auto-apply reported prices.
-
-The tracked 51-crop dataset is
-[`data/reported/rda_2024_all_51_crop_candidates.csv`](data/reported/rda_2024_all_51_crop_candidates.csv).
-The workflow is explained in
-[`docs/CROP_DISCOVERY_PROTOCOL.md`](docs/CROP_DISCOVERY_PROTOCOL.md).
-2024 nominal incomes are third-party reported reference values (R),
-not 2026-real or new-facility NPV. The 4-year ginseng entry is not
-annualized. These 51 are **all crops in the provided 2024 report**,
-not every possible crop/planting system in Korea.
-
-```bash
+\`\`\`bash
+python -m pip install -e ".[dev]"
+python -m pytest -q
+python scripts/check_docs.py --check
 python scripts/refresh_crop_discovery.py --check
-# Refresh only when the source registry has been reviewed and changed:
-python scripts/refresh_crop_discovery.py --refresh
-```
+python scripts/build_feasibility.py --check
+python scripts/verify_rda_pdf_source.py --check
+farm-strategy validate
+\`\`\`
 
-## Before choosing a crop: evidence-readiness board
+자세한 현장 데이터 입력, 보고 통계 갱신, 모형·단위의 한계는 [문서 허브](docs/README.md)를 따라가세요.
 
-Open [the 51-crop parcel-feasibility checklist](dashboard/feasibility/index.html)
-after viewing the statistical crop explorer. All **51** alternatives remain open:
-2024 national income/management-cost/labor observations are R reported values,
-**not** plot-specific suitability or 2026-real investment NPV.
+## 데이터·의사결정 원칙
 
-The new browser-only board tracks **eight always-unknown parcel evidence gates**:
-soil/drainage, irrigation, plot crop climate, land-use restrictions,
-initial investment quotes, peak monthly work, buyer/net settlement,
-and cultivable area/rotation. Facility labels, orchard labels and the
-four-year ginseng crop require additional, **not automatically satisfied**,
-reviews. Interested crops, self-attested status changes and non-sensitive
-notes can be exported to a **local private JSON**; no user data is uploaded.
+**O** 관측 · **R** 외부 보고 통계 · **T** 실제 거래 · **Q** 서면 견적 · **A** 가정. 자료가 없으면 **UNKNOWN**, 수치 0이나 재배 부적합과는 다릅니다. 2024 명목 원/10a/작기 통계를 2026년 불변 만원 단위의 새 시설 투자 NPV로 자동 변환하지 않습니다.
 
-Source-derived, fully **unknown-first** checklist CSV:
-[`data/derived/crop_readiness_51.csv`](data/derived/crop_readiness_51.csv).
-Verification command: `python scripts/build_feasibility.py --check`.
-The editable HTML template and builder are included for reproducibility;
-CI fails if the source and offline page drift. See
-[`docs/CROP_SITE_READINESS.md`](docs/CROP_SITE_READINESS.md) for
-official portal links to soil mapping, land-use rules and observed climate.
-**No crop, site suitability or financing decision has been approved.**
-
-## Offline treemap dashboard
-
-Open [dashboard/index.html](dashboard/index.html) locally in a browser.
-The **brown + sage** dashboard uses two embedded SVG treemaps; it does not need a CDN,
-Plotly or a running web server. Click any group or leaf to inspect descriptions,
-switch between the six model-only scenarios, and change the KPI comparison view.
-
-The tracked dataset is [dashboard/data/screening-model-only.csv](dashboard/data/screening-model-only.csv):
-**seed 42, 300 paired paths, recent10, 6 scenarios x 5 plans**. It is an
-illustrative model output, **not an observed farm result**.
-
-Regenerate and verify the static offline page after changing the model:
-
-```bash
-farm-strategy compare --seed 42 --paths 300 --window recent10 --stress-matrix \
-  --output output/screening-model-only.json \
-  --csv output/screening-model-only.csv
-python scripts/build_dashboard.py --csv output/screening-model-only.csv \
-  --html dashboard/index.html --check
-# When the check says stale, review the changes before accepting new assumptions:
-python scripts/build_dashboard.py --csv output/screening-model-only.csv \
-  --html dashboard/index.html --output output/farm-kpi-dashboard.html
-```
-
-The GitHub Actions workflow runs the same check and publishes
-`farm-kpi-dashboard.html` as a downloadable **CI artifact**.
-If accepting a deliberate model change, update the tracked CSV snapshot
-and HTML together, then review the diff. Do not publish raw/private
-farm receipts, land addresses, or source hourly observations.
-
-## Uploaded RDA benchmark (R: reported statistic, not actual receipts)
-
-Public 2024 crop-income benchmarks for spring/autumn potatoes, field scallion,
-and greenhouse cucumber are recorded in read-only
-[`data/reported/rda_2024_crop_income_10a.csv`](data/reported/rda_2024_crop_income_10a.csv);
-the model-to-OpenAPI identifiers (codes only, **not** live API data) are in
-[`data/reported/rda_income_api_crop_crosswalk.csv`](data/reported/rda_income_api_crop_crosswalk.csv).
-All 2024 numbers are **nominal KRW per 10a / one crop**, not 2026-real
-KRW 10,000 for your farm; existing finance assumptions remain unchanged.
-
-See [`docs/RDA_2024_SOURCE_REVIEW.md`](docs/RDA_2024_SOURCE_REVIEW.md)
-for original PDF pages, key accounting mismatches, 2026 method/form status,
-and the notable arithmetic match between 300-pyeong cucumber receipts and
-the existing hypothetical configuration.
-
-## Private evidence calibration preview (review-gated)
-
-To compare candidate crop receipts, actual field costs, labor quotes or
-greenhouse construction quotes with the *hypothetical* baseline, use
-[`docs/PRIVATE_CALIBRATION_PREVIEW.md`](docs/PRIVATE_CALIBRATION_PREVIEW.md).
-
-An independent human review and SHA256-locked local manifest are **required**
-before running `farm-strategy calibration-preview`. It creates only ignored
-`output/calibration/what-if-config.json` and `what-if-impact.json`;
-`configs/base.json` and the published brown-and-sage dashboard remain unchanged.
-This is a self-attested **what-if** calculation, not authentication of farm
-transactions or a validated investment forecast. All committed tests use
-**synthetic-only** receipts/quotes.
-
-## Model scope
-
-- **Land:** 3,000 pyeong independent from the pear orchard; no crop yet chosen. Potato/scallion and cucumber greenhouse models are illustrative trials only.
-- **Observed:** ASOS year-level weather patterns sampled as whole years; retain hot/wet/cold correlation.
-- **Hypothetical:** pest occurrence/damage, prices, greenhouse quote, hired labor rate, taxes and insurance.
-- **Accounting:** distinguish pre-financing project NPV, equity cashflow and owner-hours opportunity cost. Own work is **not** a cash labor expense. Loan principal is **not** business revenue.
-- **Investment policy:** no large greenhouse build or new borrowing until actual project quotes, working capital, labor cover and buyers are validated.
-
-## Monthly financing and liquidity (scenario assumptions)
-
-Scenario summaries report both annual year-end and month-end **minimum starting cash buffers** (2026-constant KRW 10,000). Optional `--monthly-details` exports 120 months from **one seeded sample path**, not a median or verified cash budget. Month-of-sale, costs, build payments and loan-draw schedules are assumptions defined in `configs/base.json`.
-
-The hypothetical 1.5% **nominal** loan uses an assumed 2% annual inflation deflator when combined with 2026-constant project cashflows. Nominal draw, repayment and outstanding debt remain separately visible. A monthly cash buffer is not evidence of eligibility for financing, nor is it a validated working-capital requirement.
-
-## Governance
-
-1. Data quality levels: Observed (O), external reported statistics (R), real transactions (T), assumption (A).
-2. Each investment decision gets a dated decision record and sensitivity analysis.
-3. CI tests run on pushes and pull requests. There is **no monthly scheduled workflow** and no automatic live-observation retrieval or investment execution.
-4. Never commit exact private land addresses, IDs, bank records, personally uploaded hourly ASOS originals, or API credentials.
-
-See `docs/ASOS_AUDIT_AND_ROADMAP.md` for the data audit, unresolved assumptions, and next steps.
-
-**Units**: monetary cash figures are 2026-constant KRW 10,000; time range 2027–2036. End-year nominal debt is labeled separately. Nominal loan cash is deflated using an unverified 2% annual inflation assumption and discounted on the existing real-rate basis; the bank's actual payment schedule and real input calibration remain unresolved.
-
-See [strategy comparison and private evidence intake](docs/STRATEGY_COMPARISON_AND_EVIDENCE.md) for model-only risk comparisons, CSV outputs, and how to prepare private source evidence without overwriting scenario assumptions.
+현재 작물·시설·면적·금융 의사결정은 모두 미정/미승인입니다. 실물 투자/대출 판단은 검증된 현장·가격·판로·서면 견적과 별도 검토 후에만 진행합니다.
