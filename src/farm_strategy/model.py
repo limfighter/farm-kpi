@@ -149,6 +149,7 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
 
         own_hours = hired_hours = 0.0
         hired_by_month = [0.0] * 12
+        repair_cost = 0.0
         if field:
             own_hours, hired_hours, hired_by_month = month_labor(f, house)
             cost = (f["potato_operating_cost_excluding_hired_labor"]
@@ -162,7 +163,9 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
                 if plan == "new_cucumber_premium": cost += 170
                 chance = min(1, r["major_repair_base_prob"]
                              + r["major_repair_wet_sensitivity"] * wet)
-                if repair_draw < chance: cost += f["facility_major_repair_cost"]
+                if repair_draw < chance:
+                    repair_cost = f["facility_major_repair_cost"]
+                    cost += repair_cost
         else:
             cost = f["land_maintenance_if_idle"]
         cost += unresolved["annual_tax_cash"] + unresolved["annual_insurance_premium_cash"]
@@ -193,7 +196,7 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
             potato=potato, scallion=scallion, cucumber=cucumber,
             annual_cash_cost=cost, field_capex=field_capex, house_capex=house_capex,
             lease_capex=lease_capex, terminal=terminal,
-            real_loan_draw=draw, real_loan_payment=repayment)
+            repair_cost=repair_cost, real_loan_draw=draw, real_loan_payment=repayment)
         for key, annual_total in (("revenue", revenue), ("cash_cost", cost),
                                   ("capex", investment), ("project_cash", project_cash),
                                   ("loan_draw", draw), ("loan_payment", repayment),
@@ -216,6 +219,7 @@ def one_path(plan, scenario, pool, config, rng, include_months=False):
         economic_npv += (project_cash - own_hours * f["owner_hour_economic_value"]) / factor
         results.append({"year": year, "sampled_weather_year": int(w["year"]),
                         "revenue": revenue, "cash_cost": cost, "capex": investment,
+                        "facility_major_repair_cash_cost": repair_cost,
                         "owner_hours": own_hours, "hired_hours": hired_hours,
                         "project_cash": project_cash, "loan_draw": draw,
                         "loan_payment": repayment,
