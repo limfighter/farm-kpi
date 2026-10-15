@@ -48,6 +48,30 @@ python scripts/refresh_crop_discovery.py --check
 python scripts/refresh_crop_discovery.py --refresh
 ```
 
+## Before choosing a crop: evidence-readiness board
+
+Open [the 51-crop parcel-feasibility checklist](dashboard/feasibility/index.html)
+after viewing the statistical crop explorer. All **51** alternatives remain open:
+2024 national income/management-cost/labor observations are R reported values,
+**not** plot-specific suitability or 2026-real investment NPV.
+
+The new browser-only board tracks **eight always-unknown parcel evidence gates**:
+soil/drainage, irrigation, plot crop climate, land-use restrictions,
+initial investment quotes, peak monthly work, buyer/net settlement,
+and cultivable area/rotation. Facility labels, orchard labels and the
+four-year ginseng crop require additional, **not automatically satisfied**,
+reviews. Interested crops, self-attested status changes and non-sensitive
+notes can be exported to a **local private JSON**; no user data is uploaded.
+
+Source-derived, fully **unknown-first** checklist CSV:
+[`data/derived/crop_readiness_51.csv`](data/derived/crop_readiness_51.csv).
+Verification command: `python scripts/build_feasibility.py --check`.
+The editable HTML template and builder are included for reproducibility;
+CI fails if the source and offline page drift. See
+[`docs/CROP_SITE_READINESS.md`](docs/CROP_SITE_READINESS.md) for
+official portal links to soil mapping, land-use rules and observed climate.
+**No crop, site suitability or financing decision has been approved.**
+
 ## Offline treemap dashboard
 
 Open [dashboard/index.html](dashboard/index.html) locally in a browser.
