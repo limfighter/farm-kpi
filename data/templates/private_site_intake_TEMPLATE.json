@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "approx_gross_area_pyeong": 3000,
+  "site_gates": {
+    "soil_and_drainage": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "irrigation_water": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "local_weather_exposure": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "land_use_and_permits": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "electricity_supply": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "road_access": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "existing_facility": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "storage_and_logistics": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "startup_capex_quotes": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "peak_monthly_labor": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "buyer_and_settlement": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    },
+    "plantable_area_and_rotation": {
+      "status": "UNKNOWN",
+      "source_kind": null,
+      "source_ref": null,
+      "checked_on": null
+    }
+  },
+  "operating_constraints": {
+    "usable_area_pyeong": null,
+    "available_capital_krw_10000": null,
+    "max_buffer_tolerance_krw_10000": null,
+    "max_months_until_first_receipt": null,
+    "owner_hours_available_by_month": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "decisions": {
+    "crop_selection": "UNDECIDED",
+    "facility_choice": "UNDECIDED"
+  }
+}
