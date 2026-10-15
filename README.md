@@ -20,6 +20,36 @@ pytest -q
 
 If you have original user-supplied ASOS files, keep them **locally** in `data/raw` (gitignored); do **not** upload them to GitHub. Derived yearly weather records are included for reproducibility.
 
+## Offline treemap dashboard
+
+Open [dashboard/index.html](dashboard/index.html) locally in a browser.
+The **brown + sage** dashboard uses two embedded SVG treemaps; it does not need a CDN,
+Plotly or a running web server. Click any group or leaf to inspect descriptions,
+switch between the six model-only scenarios, and change the KPI comparison view.
+
+The tracked dataset is [dashboard/data/screening-model-only.csv](dashboard/data/screening-model-only.csv):
+**seed 42, 300 paired paths, recent10, 6 scenarios x 5 plans**. It is an
+illustrative model output, **not an observed farm result**.
+
+Regenerate and verify the static offline page after changing the model:
+
+```bash
+farm-strategy compare --seed 42 --paths 300 --window recent10 --stress-matrix \
+  --output output/screening-model-only.json \
+  --csv output/screening-model-only.csv
+python scripts/build_dashboard.py --csv output/screening-model-only.csv \
+  --html dashboard/index.html --check
+# When the check says stale, review the changes before accepting new assumptions:
+python scripts/build_dashboard.py --csv output/screening-model-only.csv \
+  --html dashboard/index.html --output output/farm-kpi-dashboard.html
+```
+
+The GitHub Actions workflow runs the same check and publishes
+`farm-kpi-dashboard.html` as a downloadable **CI artifact**.
+If accepting a deliberate model change, update the tracked CSV snapshot
+and HTML together, then review the diff. Do not publish raw/private
+farm receipts, land addresses, or source hourly observations.
+
 ## Model scope
 
 - **Land:** 3,000 pyeong independent from the pear orchard; spring potato and scallion trials, candidate cucumber greenhouse (build vs lease).
