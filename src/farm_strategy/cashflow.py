@@ -46,13 +46,18 @@ def spread(amount, weights):
 def month_ledger(*, year, config, plan, field, house, hired_by_month,
                  wage_factor, potato, scallion, cucumber, annual_cash_cost,
                  field_capex, house_capex, lease_capex, terminal,
-                 real_loan_draw, real_loan_payment):
-    """Allocate each annual cash item to month ends without changing annual totals."""
+                 repair_cost, real_loan_draw, real_loan_payment):
+    """Allocate stated costs only; never conceal reconciliation drift as repairs."""
     f = config["finance"]
     m = config["monthly_cashflow"]
     validate_cashflow_config(f, m)
     if len(hired_by_month) != 12:
         raise ValueError("Expected 12 months of hired hours")
+    if (isinstance(repair_cost, bool) or not isinstance(repair_cost, (int, float))
+            or not math.isfinite(repair_cost) or repair_cost < 0):
+        raise ValueError("Repair cost must be a finite nonnegative amount")
+    if not house and repair_cost:
+        raise ValueError("No facility can incur the facility major-repair event")
 
     revenues = [
         potato * m["potato_sales"][i]
@@ -90,8 +95,13 @@ def month_ledger(*, year, config, plan, field, house, hired_by_month,
             config["tax_and_insurance"]["annual_tax_cash"]
             + config["tax_and_insurance"]["annual_insurance_premium_cash"]
         ) / 12
-    # Difference is typically an event-driven major repair; keep it in a stated month.
-    monthly_costs[m["repair_month"] - 1] += annual_cash_cost - sum(monthly_costs)
+    # Post the separately sampled major-repair event, not an unexplained residual.
+    monthly_costs[m["repair_month"] - 1] += repair_cost
+    if not all(math.isfinite(c) and c >= 0 for c in monthly_costs):
+        raise ValueError("Invalid negative/nonfinite monthly operating cash costs")
+    if not math.isclose(sum(monthly_costs), annual_cash_cost,
+                        rel_tol=1e-10, abs_tol=1e-7):
+        raise ValueError("Unexplained annual-to-monthly cost drift; do not hide as repairs")
 
     capex = [0.0] * 12
     capex[m["field_capex_month"] - 1] += field_capex
@@ -107,6 +117,7 @@ def month_ledger(*, year, config, plan, field, house, hired_by_month,
         rows.append({
             "year": year, "month": i + 1,
             "revenue": revenues[i], "cash_cost": monthly_costs[i],
+            "facility_major_repair_cash_cost": (repair_cost if i + 1 == m["repair_month"] else 0.0),
             "capex": capex[i], "terminal": terminal_cash,
             "project_cash": project_cash, "loan_draw": draw,
             "loan_payment": payment, "equity_cash": project_cash + draw - payment,
