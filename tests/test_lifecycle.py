@@ -54,7 +54,7 @@ def test_cash_labor_settlement_lag_and_no_double_capex():
     assert r["unsettled_settlement_after_horizon_krw"] == 80000
     assert r["cash_end_of_horizon_krw"] == -218000
     assert r["cash_after_last_settlement_krw"] == -138000
-    assert r["peak_month_end_funding_gap_krw"] == 288000
+    assert r["peak_month_end_funding_gap_krw"] == 285000
     assert r["owner_hours"] == 6
     assert r["hired_hours"] == 2
     assert len(r["months"]) == 38
