@@ -119,7 +119,7 @@ def content(crops_path=CROPS, template_path=TEMPLATE):
 def csv_bytes(rows):
     import io
     buf = io.StringIO(newline='')
-    writer = csv.DictWriter(buf, fieldnames=list(rows[0]))
+    writer = csv.DictWriter(buf, fieldnames=list(rows[0]), lineterminator='\n')
     writer.writeheader()
     writer.writerows(rows)
     return buf.getvalue().encode('utf-8')
