@@ -39,6 +39,15 @@
 
 **완료 조건:** 출처/연도/지역/단위/작기 차이가 비교표에 드러나고, 실경작 가능성이 미확인인 작물이 자동으로 '부적합' 판정을 받지 않으며, 검증된 자료 없이 특정 작물을 권하지 않습니다.
 
+## 미완료 증빙 추적 (GitHub Issues)
+
+- [#5 P0-03 — 독립 농지·용수·법적 제한](https://github.com/limfighter/farm-kpi/issues/5): 실제 자료 없음, **현장 검증 필요**.
+- [#6 P0-04 — 12개월 노동·자금 가능 범위](https://github.com/limfighter/farm-kpi/issues/6): 실측 운영 제약 입력 없음.
+- [#7 P1-01 — 2022~2024 PDF·전북 원문 검증](https://github.com/limfighter/farm-kpi/issues/7): 전국 웹 통계 일부만 예비 확인; 지역·노동시간·원문 쪽수 미검증.
+- [#8 P1-02/03 — 실수취·시설 신축/임대 견적](https://github.com/limfighter/farm-kpi/issues/8): 계약조건·비용 증빙 없음.
+
+이 Issue들은 완료가 아닌 **근거 수집용 과제**입니다. 개인의 정확한 농지 위치·계약·자금 정보는 Issue 본문에 올리지 않습니다.
+
 ## 작업 현황을 확인하는 곳
 
 - [전체 실행 로드맵](FARM_DECISION_EXECUTION_PLAN.md) — 기간 목표, 선행조건, 미완료 작업
