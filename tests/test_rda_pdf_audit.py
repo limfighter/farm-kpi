@@ -83,6 +83,10 @@ def test_data_cannot_mutate_into_inconsistent_or_negative_values(tmp_path,key,va
     assert reason in result.stderr
 
 
-def test_pdf_remains_untracked_and_optional():
-    assert not (ROOT / "data/raw/2024_농산물소득자료집.pdf").exists()
+def test_local_pdf_folder_is_gitignored_not_forbidden():
+    # Users may legitimately keep their original source PDF locally.
+    # Tests must not fail just because the ignored raw file exists.
+    ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    assert "data/raw/" in ignore
+    assert "*.pdf" in ignore
     assert METADATA.is_file()
