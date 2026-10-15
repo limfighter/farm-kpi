@@ -1,0 +1,24 @@
+{
+  "source": "User-supplied 2024 농산물소득자료집.pdf",
+  "source_kind": "R_REPORTED_NATIONAL_NOT_PARCEL",
+  "pdf_sha256": "0bd85164ad387228e7034deb502f3f436a05336e1cf2c30326a5257fb3dff6ab",
+  "pdf_pages": 287,
+  "csv_canonical_row_sha256": "84af74a22722018ff04e1e262ecc8db5c6bd77f1ab719b2edccd5d34d49521a9",
+  "crop_records": 51,
+  "matching_overview_amount_triplets": 51,
+  "matching_labor_page_summary_values": 51,
+  "checked_pages": {
+    "overview": [
+      17,
+      18,
+      19
+    ],
+    "labor_range": [
+      127,
+      177
+    ]
+  },
+  "verification_scope": "Text extraction matched three consecutive aggregate values and three labor totals on referenced PDF pages. This checks transcription, not crop/parcel comparability, source signing, regional representativeness, receipt validity or annual NPV.",
+  "timing_exception": "인삼(4년근) is 4-year one crop; do not annualize",
+  "status": "SUPPLIED_PDF_TRANSCRIPTION_CROSSCHECK_NOT_FARM_CALIBRATION"
+}
