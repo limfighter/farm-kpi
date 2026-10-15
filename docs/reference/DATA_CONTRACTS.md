@@ -1,90 +1,11 @@
-# 데이터 계약·출처 분류·단위 참고표
+undefined
 
-**대상:** 파이프라인, 문서, 대시보드, CI 구현자. **현재 입력 구조 설명**이지 미확인 자료를 사실로 만드는 규칙이 아닙니다.
+### 51작목 전체·조사 밖 후보 탐색과 워크플로우 입력
 
-## 데이터 계층
-
-| 파일/객체 | 출처·시점 | 단위/기간 | 의미·금지사항 |
-| --- | --- | --- | --- |
-| [2024년 51개 작목](../../data/reported/rda_2024_all_51_crop_candidates.csv) | RDA 2024 보고 통계 **R**, PDF 요약 17–19/노동 127–177쪽 | 명목 원/10a/작기, 노동 h/10a | 전국 단면, 실제 전주 필지 실적/ROI 아님 |
-| [다년도 전국·지역 출처](../../data/metadata/rda_income_source_registry.json) 및 [장기형 현재 관측](../../data/reported/rda_income_long.csv) | 2022~2024 공식 출처 공표 존재 확인, 정확한 값은 2024 전국 51행만 전사 | 2024 명목 원/10a/작기, region=NATIONAL | 2022/2023 및 2024 전북 숫자 없음/미확인. 게시물 존재는 개별 전북 품목 값 존재 증명이 아님. [검증 기준](RDA_MULTYEAR_SOURCE_REGISTRY.md) |
-| [조사 밖 후보 등록부](../../data/metadata/off_survey_candidate_registry.json) | 2024년 RDA 51개 조사 작목 외 잠재 후보의 발견 메타데이터; 기본 **0개** | 작목명·재배체계·출처 URL, 수치 없음 | `source_available=false`, `status=PENDING_EVIDENCE`만 허용. 조사 통계 R·현장 적합성·소득 검증이 아니며 51개 잠금 데이터와 병합 금지 |
-| [2022~2023 웹 원문 정밀 수치 표본](../../data/reported/rda_web_2022_2023_sample.csv) | 공식 농사로 공개 작목별 HTML 표시값 **R**; [검증 절차](RDA_WEB_EVIDENCE_SAMPLE.md) | 명목 원/10a/해당 작기, 5행 표시·1개 조회 코드 공백 | PDF/노동시간 독립 대조 미완료; 2022 시설오이 화면 공백은 0원 아님. 기존 2024 잠금 통계 또는 실제 농지 수익과 미혼합 |
-| [원본 대조 메타데이터](../../data/metadata/rda_2024_source_verification.json) | 사용자가 준 2024년 PDF의 SHA256 + 51개 행 해시 | 해시/정수 | 전사 정합성만 확인. 통계 작성기관 서명·정확도 인증 아님 |
-| [작목 준비도](../../data/derived/crop_readiness_51.csv) | 위 보고 통계에서 분류 기반 파생 | 8개 필지 조건 상태 값 | 현장 실제 자료 없음, 모든 게이트 UNKNOWN |
-| [비공개 농지 입력 양식](../../data/templates/private_site_intake_TEMPLATE.json) | 사용자 현장정보용 **빈 양식** | 대략 평, 만원, h/월, null | 12개 게이트, 작물과 시설 미정. 정확한 주소·좌표 비허용 |
-| [ASOS 파생 연간 자료](../../data/processed/annual_asos_jeonju_2006_2025.csv) | KMA ASOS 전주 관측 파생 **O**, 2006–2025 | 연/기상 특성 | 필지/작목별 생산손실 확률 아님 |
-| [가정 재무 설정](../../configs/base.json) | **A**, 2027–2036 모델 가정 | 대체로 2026 불변 만원 | 실제 영수증·공사계약·대출 승인 수치 아님 |
-| [가정 기반 5전략 비교](../../dashboard/data/screening-model-only.csv) | 합성 경로 seed 42, paths 300 | 2026 불변 만원, 일부 명목부채 | 6시나리오 × 5예시 계획, 51개 작물 투자 순위 아님 |
-
-## 증거 상태 표
-
-| 값 | 뜻 | 자동 확정 가능? |
-| --- | --- | --- |
-| O | 원본 자료에 근거한 관측 | 해당 관측 범위 한정 |
-| R | 기관/제3자가 보고한 통계 | 필지 사실이 되지 않음 |
-| T | 실제 정산 거래 | 원본·작목·기간·면적 검토 필요 |
-| Q | 서면 견적 | 거래·계약·현금 지급이 아님 |
-| A | 시뮬레이션 가정 | 관측 확률이나 확정 가격 아님 |
-| UNKNOWN/null | 자료를 확인하지 못함 | 숫자 0·부적합과 다름 |
-
-## 51개 작목 CSV 필수 의미
-
-| 필드 | 뜻 |
-| --- | --- |
-| \`crop_id\`, \`crop\`, \`category\` | 행 식별자, 공표 작목·재배방식 명칭, 7개 부류 |
-| \`revenue_krw_per_10a\` | 해당 작기의 명목 총수입 |
-| \`management_cost_krw_per_10a\` | 해당 작기의 명목 경영비, 고용노동·시설 감가상각 등 포함 가능 |
-| \`income_krw_per_10a\`, \`income_rate_pct\` | 수입-경영비 소득 및 수입 대비 비율 |
-| \`yield_quantity\`, \`yield_unit\` | 단위·작기와 결합해야 의미 있는 생산량 |
-| \`cycle_years\` | 작기 연수. **인삼(4년근)=4**, 나머지 자료 작기는 원본 요약 관행과 일치 |
-| \`labor_owner_hours_per_10a\`, \`labor_hired_hours_per_10a\`, \`labor_total_hours_per_10a\` | 자가, 고용, 합계 시간. 현장 월별 노동이 아님 |
-| \`source_pdf_page\`, \`labor_source_pdf_page\`, \`data_kind\` | PDF 페이지(0이 아닌 실제 책 쪽)와 \`R\` 출처 구분 |
-
-원본 소득 2024와 시뮬레이션을 합산하려면 **조사 작기, 10a↔실제 경작지, 2024 명목↔2026 실질, 비용의 감가상각↔현금 투자**를 별도 조정해야 합니다. 현재 자동 조정하지 않습니다.
-
-## 비공개 입력 계약
-
-- \`site_gates\`: 공통 **12개**. \`UNKNOWN\`, \`FOLLOWUP_NEEDED\`, \`DOCUMENT_COLLECTED_UNVERIFIED\`, \`USER_REPORTED_CONSTRAINT\`만 입력 가능. **VERIFIED_FEASIBLE 자동 금지.**
-- \`operating_constraints\`: \`usable_area_pyeong\` 등 4개 nullable 수치와 \`owner_hours_available_by_month\` 12개 nullable 값.
-- \`decisions\`: \`crop_selection=UNDECIDED\`, \`facility_choice=UNDECIDED\`.
-- \`source_kind\` 수집 시 원본 문서 유형 \`O/R/Q/T\`와 **비식별 로컬 참조ID** 사용.
-- 실측 값을 입력했더라도 해당 값은 기록/형식 검증만 되며 **외부 자료의 진위·필지 적합성을 승인하지 않습니다.**
-
-## 사용법과 검증
-
-2024 전국 51작목의 파싱·검증 규칙은 `farm_strategy.reported`에서 공유합니다. 탐색기·준비도·장기형 이력 검사에 같은 수치·노동·PDF 페이지·작기 조건을 적용하며, 준비도 출력의 기존 필드 표현은 유지합니다. 2022~2023 웹 표본은 별도 검증기로 수입·경영비·소득·수량·가격 다섯 캡처 수치를 비교합니다. 이 검사는 기존 기록의 변경을 탐지하며 원문 진위나 PDF/노동시간 검증을 대신하지 않습니다.
-
-- [데이터 갱신 절차](../how-to/UPDATE_REPORTED_DATA.md)
-- [개발 환경 시작](../how-to/GET_STARTED.md)
-- [RDA/현장정보 자세한 기준](../RDA_AUDIT_AND_SITE_INTAKE.md)
-- [근본적인 회계 경계](../explanation/MODEL_BOUNDARIES.md)
-
-## 조사 밖 후보 등록부 계약 (세션 01)
-
-`data/metadata/off_survey_candidate_registry.json`은 RDA 2024 전국 51개 작목·장기형 자료와 **분리된 후보 발견 메타데이터**입니다. `schema_version=1`, `purpose`, `candidates` 배열을 사용합니다. 후보는 `id`(`OFF-0001` 형식), `crop_name`, `cultivation_system`, `discovery_source_url`(공개 HTTPS), `discovery_source_title`, `discovery_source_year`(출처 게시연도 또는 `null`), `source_available=false`, `status=PENDING_EVIDENCE`, `missing_evidence`를 반드시 가집니다. 게시연도는 **작물 소득 조사연도와 다릅니다**.
-
-`missing_evidence`에는 반드시 `COMPARABLE_INCOME`이 포함되며, 필요하면 `CROP_CYCLE_AND_UNITS`, `REGIONAL_COMPARABILITY`, `SITE_FEASIBILITY`, `BUYER_TERMS`, `FACILITY_QUOTES`, `MONTHLY_LABOR`를 추가합니다. 현 스키마는 수익·수량·필지 적합성·검증 완료 값을 허용하지 않습니다. 실제 비교 가능한 수치가 확보되더라도 **독립적인 출처/원문/단위/지역/작기/노동 검토와 스키마 변경** 없이 이 등록부를 재무 순위에 투입하지 않습니다. 허가/판로/실측 자료가 없다는 뜻은 `UNKNOWN`이지 부적합이나 0이 아닙니다.
-
-```bash
-python scripts/check_off_survey_candidates.py --check
-python -m pytest -q tests/test_off_survey_candidates.py
-```
-
-## 농작업 기반 작목×시설 월별 시뮬레이터 (가정형 1차)
-
-- 코드: `src/farm_strategy/workflow.py` / 실행: `scripts/compare_workflows.py`.
-- 입력 양식: [가상 3대안](../../data/templates/workflow_scenarios_SYNTHETIC.json). **작업월·수확량·판매가·자재비·노동비·시설비는 모두 검증되지 않은 A**이며 실제 작물 추천이나 전주 농가 실적이 아닙니다.
-- `cases[]`: `id`, `crop`, `facility`, `region`, `basis_year`(단일 명목 원화 기준연도), `area_m2`(모형상의 실제 운영 면적), `owner_available_hours_by_month`(12값 또는 `null`), `operations[]`, `harvests[]`, `facility_events[]`.
-- 작업별 `operations[]`: 작업명·월·자가/고용 노동 `h/10a`, 고용 단가 `KRW/h`, 자재비·외주비 `KRW/10a`, 출처 분류/참조. 자가노동의 경제적 기회비용은 현재 결과에 **미포함**.
-- 판매별 `harvests[]`: 수확월, 생산량 `kg/10a`, 상품화 비율, 가격 `KRW/kg`, 위탁수수료율·공제액 `KRW/kg`, 운송비 `KRW/10a`, 정산 지연(0~6개월), 출처. 출하 시 운송비 지출, 순정산액은 **입금월**에 기록. 연말 미수금은 매출 0이 아님.
-- `facility_events[]`: `OPERATING`(운영 지출), `CAPEX`(투자), `DEPOSIT_PAID`, `DEPOSIT_RETURN` 별도 기록. 반환액은 이미 지급한 보증금 이하여야 하고, 보증금·CAPEX는 운영 기여액 비용으로 중복 반영하지 않음.
-- 출력: `operating_contribution_before_owner_labor_tax_depreciation_krw`(**회계상 순이익 아님**), `december_cash_balance_krw`, `unsettled_receivables_after_december_krw`, `peak_month_end_funding_gap_krw`, 자가/고용 노동, 출처 사건 계수와 월별 원장. 잔액은 **초기 현금 0·차입 0이라는 계산 기준**으로 본 월말 누적치이며 실금융 필요액을 확정하지 않음.
-- 제한: 연도별 물가·장기 시설 잔존가/감가상각/세금·보험/대출/연작·작부체계 중첩/재배 리스크/하루 안의 현금 격차/필지 적합성은 **미구현**. 서로 다른 명목 기준연도 사례는 비교 거부. 이 1년형 사례를 시설 투자 회수기간이나 ROI로 변환 금지.
-- 모든 운영/판매/시설 사건은 `source_kind`(`R/O/T/Q/A`)와 `source_ref`(개인정보 없는 참조ID)를 가짐. 분류 표시는 원문 검증을 대체하지 않으며 실제 소득 근거 심사는 별도 수행.
-
-```bash
-python -m pytest -q tests/test_workflow.py tests/test_workflow_cli.py
-python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html
-```
-
+- [범용 오프라인 작물×시설 입력 화면](../../dashboard/universe/index.html)은 [원본 51작목 보고 통계](../../data/reported/rda_2024_all_51_crop_candidates.csv)로 생성합니다. `python scripts/build_crop_universe.py --check`로 목록·단위·PDF 페이지의 잠금 및 화면 일치를 검사합니다.
+- 최초 목록에 **51개 RDA 조사 작형을 전부 포함**하며, [별도 등록부](../../data/metadata/off_survey_candidate_registry.json)에 공개 정보로 등재된 조사 밖 작목은 UNKNOWN으로 함께 표시합니다. HTML에서 직접 추가한 후보는 브라우저 내에서만 만들며 원본 CSV/통계에 혼합하지 않습니다.
+- RDA 2024 전국 `income`, 노동 h/10a/작기, `yield_unit`, 소득·노동 PDF 쪽수는 **참고 정보(R)**입니다. 이를 아래 재무 사례의 노동·판매·운영비에 **자동 복사하지 않습니다**.
+- UI에서는 작업별 `operations[]`, 출하 `harvests[]`, 시설/보증금 `facility_events[]`의 숫자를 필수로 입력해야 계산합니다. 빈 값은 0으로 채우지 않으며 입력 사례는 로컬 JSON으로 내보내 `scripts/compare_workflows.py`에 전달할 수 있습니다. JSON 파일에 주소·계좌·거래처 실명을 넣어 Git에 커밋하지 않습니다.
+- `harvests[]`는 기존 kg 전용 형식도 유지하고, 신규 범용 형식의 `yield_quantity_per_10a`, `yield_unit`, `price_krw_per_unit`, `buyer_deduction_krw_per_unit`을 추가 지원합니다. **수확수량의 단위와 판매/공제 단위는 반드시 동일**해야 하며 자동 kg 환산은 하지 않습니다. 단위 입력은 시뮬레이터가 단위의 진실성을 인증하는 것은 아닙니다.
+- **다년 작기/작기 미확인** 후보는 1년 입력 화면에서 현금흐름 계산을 막고, **과수 신규 식재**는 성목 보고 수익을 신설 첫해 매출로 취급하지 않도록 기본 차단합니다. 기존 성목 포장이라는 사용자의 별도 확인 없이는 과수 단년 계산을 허용하지 않습니다. 다년 작기·신규 과수의 생육/비생산 연도와 시설 수명/감가상각을 추적할 범용 다년 모델은 아직 **미구현**입니다.
+- 이 탐색/계산 화면은 현재 브라우저 안에서만 처리하며 서버 전송이 없습니다. RDA 출처의 공식 2024 전국값은 전주 필지 성과나 작목 선정 추천 결과가 아닙니다.

@@ -14,6 +14,7 @@
 | `src/farm_strategy/workflow.py` | 작업/판매/시설 사건 기반 1년 작물×시설 비교(가정/근거 표지) | 기존 5전략 몬테카를로와 별개. 감가상각·대출·장기 ROI 미구현; 진짜 작목 적합성 인증 금지 |
 | `src/farm_strategy/cashflow.py` | 월별 배분, 명목→실질 변환, 비용 정합성 | 설명되지 않은 차액은 오류; 수리비로 흡수 금지 |
 | `src/farm_strategy/evidence.py`, `calibration.py`, `site_intake.py` | 비공개 증빙 형식, 검토 기반 미리보기, 현장 누락정보 | 기존 개인정보·해시·출력 경로 제한 유지 |
+| `scripts/build_crop_universe.py`, `dashboard/universe/` | 51개 공표 작목 전수+사용자 입력 작목 탐색, 오프라인 시뮬레이터 폼/JSON 생성 | 보고값(R)과 모델 입력(A/T/Q 등)을 혼합하지 않음; CSV→HTML 정합성 CI 검사 |
 | `scripts/` | 문서·출처 감사와 오프라인 화면 생성 | 재사용하는 51작목 검증은 패키지에 위임 |
 
 주요 계산 의존성은 `cli → calibration → comparison → model → cashflow`입니다. `model`과 `comparison`은 `sampling`을 사용하고, 작목 탐색·준비도·장기형 이력 검사기는 `reported`를 사용합니다. 공통 모듈이 CLI나 화면 생성 스크립트를 역으로 참조하지 않습니다.
