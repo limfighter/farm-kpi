@@ -7,6 +7,7 @@ import argparse
 import csv
 from datetime import datetime, timedelta
 import json
+import math
 from pathlib import Path
 
 COLUMNS = {
@@ -52,6 +53,8 @@ def audit_hourly(paths, station="146", start="2006-01-01 00:00", end="2025-12-31
                         obs[field] = None
                     else:
                         val = float(raw)
+                        if not math.isfinite(val):
+                            raise ValueError(f"Nonfinite ASOS {field} at {at}")
                         if field == "rain" and val < 0:
                             raise ValueError(f"Negative ASOS rainfall at {at}")
                         obs[field] = val
@@ -59,10 +62,12 @@ def audit_hourly(paths, station="146", start="2006-01-01 00:00", end="2025-12-31
                     duplicate_count += 1
                     old = seen[at]
                     for key in COLUMNS:
-                        if old[key] is not None and obs[key] is not None and old[key] != obs[key]:
+                        if old[key] is None and obs[key] is not None:
+                            # Complementary valid fields must survive deduplication.
+                            old[key] = obs[key]
+                        elif old[key] is not None and obs[key] is not None and old[key] != obs[key]:
+                            # Retain the first valid reading; report every conflict.
                             conflicts[key] += 1
-                    if sum(v is not None for v in obs.values()) > sum(v is not None for v in old.values()):
-                        seen[at] = obs
                 else:
                     seen[at] = obs
     expected = int((hi - lo) / timedelta(hours=1)) + 1
