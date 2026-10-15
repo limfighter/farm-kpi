@@ -16,6 +16,10 @@ jobs:
         run: python -m pytest -q
       - name: Verify 51-source crop exploration dataset and offline page
         run: python scripts/refresh_crop_discovery.py --check
+      - name: Verify locked 2024 RDA PDF transcription registry
+        run: python scripts/verify_rda_pdf_source.py --check
+      - name: Validate empty non-identifying private parcel intake
+        run: farm-strategy site-check --file data/templates/private_site_intake_TEMPLATE.json --output output/site-status-redacted.json
       - name: Check all 51 parcel-readiness gates and offline HTML
         run: python scripts/build_feasibility.py --check
       - name: Reaudit derived ASOS annual data
