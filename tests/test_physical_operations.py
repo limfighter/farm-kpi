@@ -41,6 +41,12 @@ def test_loan_grace_and_real_interest_monthly_no_fictional_rate():
     first_principal=next(e for e in events if e["kind"]=="PRINCIPAL")
     assert first_principal["month"]==5
     assert first_principal["amount_krw"]==pytest.approx(1000000/12)
+    assert x["generated_event_source_kind"]=="A"
+    terms=deepcopy(t)
+    terms["source_kind"]="Q"
+    q=amortization_events(d["portfolio"]["site"],terms)
+    assert q["input_terms_source_kind"]=="Q"
+    assert all(e["source_kind"]=="A" for e in q["events"])
 
 
 def test_maturity_beyond_horizon_not_fictional_bullet_payoff():

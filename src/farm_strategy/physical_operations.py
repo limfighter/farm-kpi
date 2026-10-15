@@ -94,7 +94,9 @@ def amortization_events(site, terms):
         raise ValueError("Loan draw month outside horizon")
     draw = (y-1)*12 + m-1
     horizon=yrs*12
-    common={"source_kind":terms["source_kind"],"source_ref":terms["source_ref"]}
+    # Derived installments are assumptions, never observed transactions or
+    # verbatim written lender quotes even if the INPUT terms cite Q or T.
+    common={"source_kind":"A","source_ref":"CALCULATED_FROM_"+terms["source_kind"]+": "+terms["source_ref"]}
     def event(i,kind,amount):
         return {**common, "name":terms["name"]+" "+kind,
                 "year":i//12+1,"month":i%12+1,
@@ -118,6 +120,8 @@ def amortization_events(site, terms):
         "remaining_principal_after_horizon_krw":outstanding_at_end,
         "maturity_extends_beyond_horizon":(draw+total_due >= horizon),
         "annual_real_rate_input":real_rate,
+        "input_terms_source_kind":terms["source_kind"],
+        "generated_event_source_kind":"A",
         "assumption":"Monthly simple real interest r/12 on opening principal. Not nominal bank APR, not bank-approved or actual lender billing."
     }
 
