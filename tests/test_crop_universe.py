@@ -89,3 +89,19 @@ def test_invalid_template_slot_and_bad_source_fail(tmp_path):
                       encoding="utf-8")
     with pytest.raises(ValueError):
         catalog(broken, OFF)
+
+
+def test_all_crop_browser_links_source_reviewed_work_calendar_only():
+    rows = catalog()
+    assert len([x for x in rows if x["calendar"] is not None]) == 10
+    assert rows[0]["calendar"] is None  # no arbitrary calendar attached
+    potato = next(x for x in rows if x["id"] == "RDA2024-06")
+    assert potato["calendar"]["source_kind"] == "R"
+    assert potato["calendar"]["stages"][0]["window_months"] == []  # month unknown
+    strawberry = next(x for x in rows if x["id"] == "RDA2024-22")
+    assert strawberry["calendar"]["stages"][-1]["crosses_calendar_year"]
+    page = HTML.read_text(encoding="utf-8")
+    assert "농촌진흥청 농사로 원문 확인" in page
+    assert "작업명과 월 범위는 원문" in page
+    assert "다음 해까지 이어지는 작기" in page
+    assert '"official_title":"감자"' in page

@@ -34,11 +34,11 @@
 
 ```bash
 python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html
-python scripts/build_crop_universe.py --check
+python scripts/build_crop_universe.py --check  # 51개 작목 및 10개 공식 작업 달력 참조의 정합성
 # 이후 output/workflow-example.html 을 브라우저에서 오프라인으로 열기
 ```
 
-대금 정산 지연과 보증금은 월별 현금으로 반영하되, 초기 투자비를 운영비로 재차 차감하지 않습니다. 출력의 운영 기여액은 **자기노동·세금·감가상각·대출을 반영한 순이익이 아니며**, 1년 작업+이후 미수금 수령만 추적하므로 장기 시설 투자 회수/NPV는 아직 계산하지 않습니다. 실제 농장·농사로 농작업일정·농가 영농기록과 견적 자료를 연결하는 것이 다음 과제입니다. [상세 계약](docs/reference/DATA_CONTRACTS.md).
+대금 정산 지연과 보증금은 월별 현금으로 반영하되, 초기 투자비를 운영비로 재차 차감하지 않습니다. 출력의 운영 기여액은 **자기노동·세금·감가상각·대출을 반영한 순이익이 아니며**, 1년 작업+이후 미수금 수령만 추적하므로 장기 시설 투자 회수/NPV는 아직 계산하지 않습니다. 농사로 공식 농작업일정은 현재 51개 조사 작목 중 **10개 조사 작형에 참조 연결**했으며, 작형/지역의 상세 일치는 추가 검토 중입니다. 이 10개 작물의 실제 원가·현장 작업량·시설 견적과 나머지 41개 일정 자료를 확보하는 것이 다음 과제입니다. [상세 계약](docs/reference/DATA_CONTRACTS.md).
 
 ## 개발 시작 및 검사
 

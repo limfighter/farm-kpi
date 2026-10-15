@@ -97,3 +97,15 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 - `harvests[]`는 기존 kg 전용 형식도 유지하고, 신규 범용 형식의 `yield_quantity_per_10a`, `yield_unit`, `price_krw_per_unit`, `buyer_deduction_krw_per_unit`을 추가 지원합니다. **수확수량의 단위와 판매/공제 단위는 반드시 동일**해야 하며 자동 kg 환산은 하지 않습니다. 단위 입력은 시뮬레이터가 단위의 진실성을 인증하는 것은 아닙니다.
 - **다년 작기/작기 미확인** 후보는 1년 입력 화면에서 현금흐름 계산을 막고, **과수 신규 식재**는 성목 보고 수익을 신설 첫해 매출로 취급하지 않도록 기본 차단합니다. 기존 성목 포장이라는 사용자의 별도 확인 없이는 과수 단년 계산을 허용하지 않습니다. 다년 작기·신규 과수의 생육/비생산 연도와 시설 수명/감가상각을 추적할 범용 다년 모델은 아직 **미구현**입니다.
 - 이 탐색/계산 화면은 현재 브라우저 안에서만 처리하며 서버 전송이 없습니다. RDA 출처의 공식 2024 전국값은 전주 필지 성과나 작목 선정 추천 결과가 아닙니다.
+
+## 작목별 농작업 일정의 출처 근거 (비수치 참조)
+
+- [작업일정 출처 레지스트리](../../data/metadata/crop_work_calendar_sources.json)는 위 2024년 RDA 51개 품목 식별자와 10개 농사로 작목별 작업일정 원문을 **별도로 연결**합니다. 41개 조사 작목은 여전히 일정 미검토입니다. 등록이 없는 것은 작목 부재나 부적합이 아니라 자료 미검토 상태입니다.
+- `official_title` / `source_url` / `variant` / `match_level` / `region_scope` / `reviewed_on` / `season_notes` / `stages[]`는 **원문 재배력/작형 설명을 간략화한 참조**입니다. 원문 발행연도 확인 전에는 `source_year=null`로 둡니다. 화면은 2024년 소득 조사시점과 재배력 게시연도를 동일하다고 표시하지 않습니다.
+- `stages[].window_months`는 원문에 달이 명시된 경우에만 목록으로 기록합니다. 미기재 월은 `[]`로 남깁니다. `crosses_calendar_year=true`면 다음 연도까지 걸친 작기(시설딸기 11~5월 등)로, 현 단년 HTML에 한 작기 수확량을 자동 생성하지 않습니다. 비교적 긴 기간은 월별 작업량 분배 자료가 **아닙니다**.
+- `match_level`: `CROP_SYSTEM_REFERENCE`(작목/노지·시설 분류 참조), `VARIANT_REFERENCE`(작형 변형 중 하나), `CROP_FAMILY_ONLY`(작물 일치하지만 작형/토양·수경 등을 별도 확인해야 함). 이 세 값 모두 실제 농가 작형·지역·필지 적합성 인증은 아닙니다.
+- 원문에는 **KOGL 공공누리 2유형(출처표시 + 상업적 이용금지)** 조건을 표시한 페이지가 있습니다. 프로젝트는 짧은 단계명/월 범위와 URL·검토 메타데이터만 관리하고, 원문 PDF/표/그림을 재배포하지 않습니다. 향후 상품화 전에 개별 원문의 라이선스와 사용허가를 검토합니다.
+- 사용자가 원문 단계 이름으로 새 입력 행을 생성해도 **자가·고용 노동, 자재·외주비, 생산량, 가격, 시설비는 자동 입력되지 않고 UNKNOWN**입니다. 새 행의 `source_kind=A`는 사용자가 나중에 입력할 재무값의 출처 분류이며, 농사로 단계 자체의 출처는 `source_ref`로 연결합니다.
+- 수동 또는 승인 받은 API 방식의 향후 일정 갱신 후보: [농촌진흥청 농작업일정 정보 공공데이터](https://www.data.go.kr/data/15033498/openapi.do)와 [농사로 공개 API 목록](https://www.nongsaro.go.kr/portal/ps/psn/psnj/openApiLst.ps?menuId=PS65428). 인증·개별 이용조건·작형 매핑 전에는 자동 수집하거나 라이선스 미확인 원문을 저장하지 않습니다.
+
+실행 검사: `python -m pytest -q tests/test_work_calendar.py tests/test_crop_universe.py` / `python scripts/build_crop_universe.py --check`.
