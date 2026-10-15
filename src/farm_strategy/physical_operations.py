@@ -146,6 +146,8 @@ def assess_daily_farm(portfolio, detail):
     min_gap=lim["minimum_turnaround_days"]
     if type(min_gap) is not int or not 0<=min_gap<=60:
         raise ValueError("Turnaround days must be 0..60")
+    if detail["loan_terms"] is not None and portfolio["financing_events"]:
+        raise ValueError("Cannot combine generated amortization with manual loan cash events")
     # Baseline model applies strict month collision checks and validates crop
     # operations, site-supply vectors, debt and business cash independently.
     base=simulate_portfolio(portfolio)
