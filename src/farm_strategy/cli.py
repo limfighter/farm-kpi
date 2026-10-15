@@ -5,6 +5,7 @@ from pathlib import Path
 from .model import PLANS, SCENARIOS, read_config, read_weather, simulate
 from .cashflow import validate_cashflow_config
 from .comparison import compare_plans, save_comparison_csv
+from .evidence import validate_evidence
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -12,6 +13,10 @@ def main(argv=None):
     p = argparse.ArgumentParser(prog="farm-strategy")
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("validate", help="Check input data source and uncertainty status")
+    ev = sub.add_parser("evidence-check",
+                        help="Validate private evidence metadata; do not import amounts")
+    ev.add_argument("--file", required=True, type=Path)
+    ev.add_argument("--output", type=Path)
     for cmd in ("compare", "forecast"):
         sp = sub.add_parser(cmd)
         sp.add_argument("--scenario", choices=SCENARIOS, default="base")
@@ -31,10 +36,15 @@ def main(argv=None):
     p.add_argument("--config", type=Path, default=ROOT / "configs/base.json")
     p.add_argument("--weather", type=Path, default=ROOT / "data/processed/annual_weather.csv")
     args = p.parse_args(argv)
-    config = read_config(args.config)
-    observed = read_weather(args.weather)
-    validate_cashflow_config(config["finance"], config["monthly_cashflow"])
-    if args.cmd == "validate":
+    if args.cmd == "evidence-check":
+        result = validate_evidence(args.file)
+    else:
+        config = read_config(args.config)
+        observed = read_weather(args.weather)
+        validate_cashflow_config(config["finance"], config["monthly_cashflow"])
+    if args.cmd == "evidence-check":
+        pass  # report populated without changing simulation configuration
+    elif args.cmd == "validate":
         result = {"n_weather_years": len(observed),
                   "years": [int(x["year"]) for x in observed],
                   "weather_source": config["metadata"]["weather_source"],
