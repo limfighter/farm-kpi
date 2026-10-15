@@ -22,6 +22,10 @@ jobs:
         run: python scripts/verify_rda_pdf_source.py --check
       - name: Verify RDA national/regional publication registry and 2024-only long-form observations
         run: python scripts/check_crop_income_history.py --check
+      - name: Validate partial 2022-2023 official RDA web observations
+        run: python scripts/check_rda_web_sample.py --check
+      - name: Ensure offline source coverage dashboard is reproducible
+        run: python scripts/build_rda_web_sample_board.py --check
       - name: Validate empty non-identifying private parcel intake
         run: farm-strategy site-check --file data/templates/private_site_intake_TEMPLATE.json --output output/site-status-redacted.json
       - name: Check all 51 parcel-readiness gates and offline HTML

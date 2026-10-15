@@ -17,6 +17,7 @@
 
 ## 오프라인 브라운·세이지 화면
 
+- **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).
 - **[51개 작목 탐색기](dashboard/crop-discovery/index.html)** — 농촌진흥청 2024 전국 작목의 소득·경영비·노동시간을 *보고 통계*로 표시.
 - **[작목별 준비도](dashboard/feasibility/index.html)** — 51개 작목 각각의 8개 현장 확인 질문, 모두 미확인에서 시작.
 - **[농지 현장정보 입력](dashboard/site-intake/index.html)** — 12개 공통 조사 항목 및 월별 가용시간을 로컬 JSON으로 저장. 외부 전송 없음.
