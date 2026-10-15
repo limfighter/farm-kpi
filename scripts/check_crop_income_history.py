@@ -122,7 +122,7 @@ def main():
                 raise ValueError("Refusing to overwrite independently transcribed historical rows")
         fields, rows = expected_2024()
         with LONG.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\\n")
+            writer = csv.DictWriter(handle, fieldnames=fields, lineterminator="\n")
             writer.writeheader()
             writer.writerows(rows)
     n = check()
