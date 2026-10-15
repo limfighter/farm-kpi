@@ -1,0 +1,12 @@
+{
+  "evidence_sha256": "REPLACE_WITH_SHA256_OF_THE_EXACT_PRIVATE_CSV",
+  "reviewer_id": "REPLACE_WITH_LOCAL_REVIEWER_ID",
+  "reviewed_on": "2026-10-15",
+  "approved_reference_ids": [],
+  "review_checklist": {
+    "original_documents_checked": false,
+    "area_grade_season_reconciled": false,
+    "net_fees_reconciled": false,
+    "constant_2026_currency_checked": false
+  }
+}

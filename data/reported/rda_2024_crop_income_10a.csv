@@ -1,0 +1,5 @@
+reference_kind,observation_year,crop_code,crop_label,area_m2,cropping_basis,revenue_krw_per_10a,management_cost_krw_per_10a,income_krw_per_10a,yield_kg_per_10a,farmgate_price_krw_per_kg,hired_hours_per_10a,owner_hours_per_10a,hired_labor_cost_krw_per_10a,report_pdf_page,report_print_page,source_title,status
+R,2024,FC05050100050101,봄감자,1000,1_crop_per_year,2693175,1443511,1249665,2263,1190,23.1,34.4,354340,25,19,2024_농산물소득자료집,READ_ONLY_REPORTED_STATISTIC
+R,2024,FC05050100050103,가을감자,1000,1_crop_per_year,2631152,1685251,945902,1894,1389,24.5,15.0,375704,26,20,2024_농산물소득자료집,READ_ONLY_REPORTED_STATISTIC
+R,2024,VC04120200120202,노지쪽파,1000,1_crop_per_year,5873196,2791661,3081534,1614,3638,42.8,116.8,629275,37,31,2024_농산물소득자료집,READ_ONLY_REPORTED_STATISTIC
+R,2024,VC01090100090108,시설오이,1000,1_crop_per_year,25183583,12299942,12883641,10505,2397,160.1,369.5,2004907,43,37,2024_농산물소득자료집,READ_ONLY_REPORTED_STATISTIC

@@ -1,0 +1,5 @@
+model_crop,crop_label,crop_code,crop_category_code,crop_category_label,region_label,region_code,reference_source,data_status
+potato_spring,봄감자,FC05050100050101,KIN01,일반작물,전북특별자치도,CM0145,농산물소득정보OpenAPI_제공코드.xlsx,CODEBOOK_ONLY
+potato_autumn,가을감자,FC05050100050103,KIN01,일반작물,전북특별자치도,CM0145,농산물소득정보OpenAPI_제공코드.xlsx,CODEBOOK_ONLY
+scallion_field,노지쪽파,VC04120200120202,KIN11,노지채소,전북특별자치도,CM0145,농산물소득정보OpenAPI_제공코드.xlsx,CODEBOOK_ONLY
+cucumber_greenhouse,시설오이,VC01090100090108,KIN12,시설채소,전북특별자치도,CM0145,농산물소득정보OpenAPI_제공코드.xlsx,CODEBOOK_ONLY
