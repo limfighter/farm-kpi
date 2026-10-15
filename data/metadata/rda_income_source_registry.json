@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-15",
+  "publisher": "농촌진흥청 (농사로)",
+  "use_constraints": "Public source metadata only. RDA website marks content as KOGL Type 2 (attribution + non-commercial). Check reuse terms before redistribution.",
+  "method": "Verified official publication detail pages. Existence of a PDF attachment does not validate its numerical contents or an open API.",
+  "sources": [
+    {
+      "id": "rda-2022-national",
+      "year": 2022,
+      "scope": "NATIONAL",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=819",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "NOT_TRANSCRIBED",
+      "verified_observation_rows": 0,
+      "notes": "National report attachment shown; values not copied or compared."
+    },
+    {
+      "id": "rda-2022-regional",
+      "year": 2022,
+      "scope": "REGIONAL_PUBLICATION",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=819",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "NOT_TRANSCRIBED",
+      "verified_observation_rows": 0,
+      "notes": "Regional publication exists; Jeonbuk crop coverage and values not yet audited."
+    },
+    {
+      "id": "rda-2023-national",
+      "year": 2023,
+      "scope": "NATIONAL",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=833",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "NOT_TRANSCRIBED",
+      "verified_observation_rows": 0,
+      "notes": "National report attachment shown; values not copied or compared."
+    },
+    {
+      "id": "rda-2023-regional",
+      "year": 2023,
+      "scope": "REGIONAL_PUBLICATION",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=833",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "NOT_TRANSCRIBED",
+      "verified_observation_rows": 0,
+      "notes": "Regional publication exists; Jeonbuk crop coverage and values not yet audited."
+    },
+    {
+      "id": "rda-2024-national",
+      "year": 2024,
+      "scope": "NATIONAL",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=842",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "USER_SUPPLIED_PDF_51_ROWS_RECONCILED",
+      "verified_observation_rows": 51,
+      "notes": "Existing 51-row PDF transcription and labor source pages reconciled in prior work; not site-specific data."
+    },
+    {
+      "id": "rda-2024-regional",
+      "year": 2024,
+      "scope": "REGIONAL_PUBLICATION",
+      "url": "https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=842",
+      "publication_status": "OFFICIAL_ATTACHMENT_CONFIRMED",
+      "transcription_status": "NOT_TRANSCRIBED",
+      "verified_observation_rows": 0,
+      "notes": "Regional publication exists; Jeonbuk crop coverage and exact values not yet audited."
+    }
+  ]
+}
