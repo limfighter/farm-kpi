@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Farm KPI · 농지 현장정보 입력</title>
+<style>
+:root{--brown:#604432;--brown2:#88654c;--sage:#71866a;--sage2:#dbe4d7;--cream:#f5efe8;--paper:#fffcf8;--ink:#2f281f;--muted:#756a5d;--line:#d9c9ba}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);font-family:system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink)}
+main{max-width:1160px;margin:auto;padding:20px}
+header{background:var(--brown);color:#fff;padding:25px;border-radius:22px}
+header h1{margin:3px 0 9px;font-size:clamp(24px,3vw,34px)}
+header p{margin:0;line-height:1.7;color:#f4e9de}
+header .tag{display:inline-block;background:var(--sage);border-radius:30px;padding:5px 12px;font-size:12px;font-weight:700}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:#fff;border:1px solid var(--line);padding:12px 17px;border-radius:15px;flex:1;min-width:135px}
+.stat b{font-size:22px;display:block;color:var(--brown)}.stat small{color:var(--muted)}
+section{background:var(--paper);border:1px solid var(--line);border-radius:19px;padding:20px;margin-top:17px;box-shadow:0 5px 15px #60443208}
+h2{font-size:21px;margin:0 0 8px;color:var(--brown)}
+p.note{color:var(--muted);margin:6px 0 18px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+label{font-size:13px;font-weight:700;color:var(--brown)}
+input,select{width:100%;border:1px solid var(--line);border-radius:9px;background:white;padding:10px;font:inherit;color:var(--ink)}
+input:disabled,select:disabled{background:#eee8df;color:#8d8076}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--sage);outline-offset:1px}
+.gate{padding:13px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:#fff}
+.gate .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.gate .head strong{color:var(--brown)}
+.gate .detail{display:grid;grid-template-columns:1fr 2fr 1fr;gap:9px;margin-top:10px}
+.gate .status{max-width:280px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
+button{border:0;border-radius:12px;padding:13px 19px;font:inherit;font-weight:750;cursor:pointer}
+.primary{background:var(--brown);color:#fff}.secondary{background:var(--sage);color:white}.quiet{background:#e9e0d6;color:var(--brown)}
+.warn{padding:14px 16px;background:#edf1ea;border-left:5px solid var(--sage);border-radius:8px;line-height:1.7}
+code{background:#eae1d7;padding:2px 4px;border-radius:4px}
+footer{font-size:12px;color:var(--muted);margin:20px 6px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.gate .detail{grid-template-columns:1fr 1fr}}
+@media(max-width:550px){main{padding:10px}.grid,.gate .detail{grid-template-columns:1fr}.gate .head{display:block}.gate .status{max-width:none;margin-top:10px}}
+</style></head><body><main>
+<header>
+<span class="tag">증빙 수집 1단계 · 작물 선정 전</span>
+<h1>농지 현장정보 입력</h1>
+<p>약 3,000평 독립 농지의 재배방식을 아직 결정하지 않은 상태에서<br/>
+토양·용수·전기·인허가·노동·자본 여력을 차례대로 확인하는 로컬 조사표입니다.</p>
+</header>
+<div class="stats">
+<div class="stat"><b id="unknownCount">12</b><small>확인되지 않은 항목</small></div>
+<div class="stat"><b id="docCount">0</b><small>자료 수집(미검증)</small></div>
+<div class="stat"><b id="hoursCount">0/12</b><small>입력된 월별 노동 가능시간</small></div>
+<div class="stat"><b>미정</b><small>작물·시설 방식</small></div>
+</div>
+<section>
+<h2>농지의 규모와 운영 한계</h2>
+<p class="note">빈칸은 미확인(null)입니다. 실제 0이 아니라면 0을 입력하지 마세요. 정확한 주소·필지번호·개인정보는 기입하지 마세요.</p>
+<div class="grid">
+<div class="field"><label for="gross">전체 면적 추정(평)</label><input id="gross" type="number" min="0.01" step="any" value="3000"/></div>
+<div class="field"><label for="usable_area_pyeong">실제 경작 가능 면적(평)</label><input id="usable_area_pyeong" type="number" min="0" step="any" placeholder="미확인"/></div>
+<div class="field"><label for="available_capital_krw_10000">가용 자기자금(만원)</label><input id="available_capital_krw_10000" type="number" min="0" step="any" placeholder="미확인"/></div>
+<div class="field"><label for="max_buffer_tolerance_krw_10000">허용 현금부족 완충액(만원)</label><input id="max_buffer_tolerance_krw_10000" type="number" min="0" step="any" placeholder="미확인"/></div>
+<div class="field"><label for="max_months_until_first_receipt">첫 판매정산까지 허용 개월</label><input id="max_months_until_first_receipt" type="number" min="0" step="any" placeholder="미확인"/></div>
+</div>
+<h2 style="margin-top:22px">월별 자가 노동 가능시간</h2>
+<p class="note">보통 주당 시간이 아니라 해당 월의 총 가용시간을 입력합니다. 고용노동/월별 필요시간과는 다른 값입니다.</p>
+<div id="hours" class="grid"></div>
+</section>
+<section>
+<h2>12개 현장·시장 검증 항목</h2>
+<p class="note">문서가 생겼더라도 ‘자료 수집(미검증)’입니다. 이 화면에서 ‘적합 판정’이나 ‘허가 완료’ 상태를 만들 수 없습니다.</p>
+<div id="gates"></div>
+</section>
+<section>
+<h2>검토기록 보관</h2>
+<div class="warn">모든 입력은 이 브라우저에서만 처리합니다. 외부 서비스로 전송하거나 자동 저장하지 않습니다.
+<br/>저장한 JSON은 GitHub에 올리지 말고 프로젝트의 <code>data/private/</code>에 보관하세요.
+<br/>원본 증빙, 정확한 위치·주소, 은행정보는 별도로 안전하게 관리하세요.</div>
+<div class="controls">
+<button class="primary" id="download">JSON 저장</button>
+<button class="secondary" id="import">이전 JSON 불러오기</button>
+<button class="quiet" id="reset">입력 초기화</button>
+<input type="file" id="chooseFile" accept=".json,application/json" hidden/>
+</div>
+<p class="note">파일 형식 검증: <code>farm-strategy site-check --file data/private/site-facts.json --output output/site-status-redacted.json</code></p>
+<div id="feedback" role="status" aria-live="polite"></div>
+</section>
+<footer>Farm KPI · Brown + Sage · Offline / zero-tracking · 본 조사표는 현장 적성평가나 투자추천을 제공하지 않습니다.</footer>
+</main>
+<script>
+"use strict";
+const keys = [
+["soil_and_drainage","토양·배수"],
+["irrigation_water","관개수·용수"],
+["local_weather_exposure","필지별 기상·침수·서리 위험"],
+["land_use_and_permits","토지이용·시설 인허가"],
+["electricity_supply","전기 인입·용량"],
+["road_access","진입로·농기계 접근"],
+["existing_facility","현재 시설 유무·상태"],
+["storage_and_logistics","저장·선별·운송"],
+["startup_capex_quotes","시설·장비 초기 견적"],
+["peak_monthly_labor","농번기 노동인력"],
+["buyer_and_settlement","구매처·정산조건"],
+["plantable_area_and_rotation","경작가능면적·윤작·작기"]];
+const states = [
+["UNKNOWN","미확인"],
+["FOLLOWUP_NEEDED","추가 조사 필요"],
+["DOCUMENT_COLLECTED_UNVERIFIED","자료 확보(미검증)"],
+["USER_REPORTED_CONSTRAINT","이용자 보고 제약(검증 전)"]];
+const $=s=>document.getElementById(s);
+const gateEls={};
+for(let i=1;i<=12;i++){
+ const l=document.createElement("label");l.className="field";l.textContent=i+"월";
+ const inp=document.createElement("input");inp.type="number";inp.min="0";inp.max="744";inp.step="any";inp.placeholder="미확인";inp.id="hour"+i;
+ l.appendChild(inp);$("hours").appendChild(l);
+ inp.addEventListener("input",stats);
+}
+for(const [k,label] of keys){
+ const g=document.createElement("div");g.className="gate";
+ const head=document.createElement("div");head.className="head";
+ const title=document.createElement("strong");title.textContent=label;
+ const sel=document.createElement("select");sel.className="status";sel.setAttribute("aria-label",label+" 상태");
+ for(const [value,text] of states){const op=document.createElement("option");op.value=value;op.textContent=text;sel.appendChild(op)}
+ head.append(title,sel);g.appendChild(head);
+ const detail=document.createElement("div");detail.className="detail";
+ const fields=[];
+ for(const [caption,type,placeholder] of [
+  ["자료 구분 (O/R/Q/T)","select",""],["비식별 자료 참조ID","text","예: soil-test-01"],["확인 날짜","date",""]]){
+  const wrap=document.createElement("label");wrap.className="field";wrap.textContent=caption;
+  let inp;
+  if(type==="select"){
+   inp=document.createElement("select");
+   for(const v of ["","O","R","Q","T"]){const o=document.createElement("option");o.value=v;o.textContent=v||"선택";inp.appendChild(o)}
+  }else{inp=document.createElement("input");inp.type=type;if(placeholder)inp.placeholder=placeholder}
+  wrap.appendChild(inp);detail.appendChild(wrap);fields.push(inp)
+ }
+ g.appendChild(detail);$("gates").appendChild(g);
+ gateEls[k]={sel,fields};
+ function lock(){
+  const enabled=sel.value==="DOCUMENT_COLLECTED_UNVERIFIED";
+  for(const f of fields){f.disabled=!enabled;if(!enabled)f.value=""}
+  stats();
+ }
+ sel.addEventListener("change",lock);lock();
+}
+function optionalNumber(id,cap){
+ const s=$(id).value.trim();if(s==="")return null;
+ const v=Number(s);if(!Number.isFinite(v)||v<0||(cap!==undefined&&v>cap))throw Error(id+"의 값이 범위를 벗어났습니다");
+ return v;
+}
+function collect(){
+ const gross=optionalNumber("gross");if(gross===null||gross<=0)throw Error("전체 면적은 양수로 입력하세요");
+ const usable=optionalNumber("usable_area_pyeong");if(usable!==null&&usable>gross)throw Error("경작 면적은 총면적 이하이어야 합니다");
+ const facts={};
+ for(const [k] of keys){
+  const {sel,fields}=gateEls[k];
+  const status=sel.value;
+  const collected=status==="DOCUMENT_COLLECTED_UNVERIFIED";
+  const kind=collected?fields[0].value:null,ref=collected?fields[1].value.trim():null,dt=collected?fields[2].value:null;
+  if(collected&&(!["O","R","Q","T"].includes(kind)||!/^[A-Za-z0-9][A-Za-z0-9_.:-]{2,79}$/.test(ref)||!dt))
+    throw Error(k+" 항목은 자료 구분·비식별 참조ID·확인 날짜가 필요합니다");
+  if(collected&&dt>new Date().toISOString().slice(0,10))throw Error(k+": 미래 날짜는 사용할 수 없습니다");
+  facts[k]={status,source_kind:collected?kind:null,source_ref:ref,checked_on:collected?dt:null};
+ }
+ const hours=Array.from({length:12},(_,i)=>optionalNumber("hour"+(i+1),744));
+ return {
+  schema_version:1,
+  approx_gross_area_pyeong:gross,
+  site_gates:facts,
+  operating_constraints:{
+   usable_area_pyeong:usable,
+   available_capital_krw_10000:optionalNumber("available_capital_krw_10000"),
+   max_buffer_tolerance_krw_10000:optionalNumber("max_buffer_tolerance_krw_10000"),
+   max_months_until_first_receipt:optionalNumber("max_months_until_first_receipt"),
+   owner_hours_available_by_month:hours},
+  decisions:{crop_selection:"UNDECIDED",facility_choice:"UNDECIDED"}};
+}
+function stats(){
+ const values=keys.map(([k])=>gateEls[k]?.sel.value||"UNKNOWN");
+ $("unknownCount").textContent=values.filter(s=>s==="UNKNOWN"||s==="FOLLOWUP_NEEDED").length;
+ $("docCount").textContent=values.filter(s=>s==="DOCUMENT_COLLECTED_UNVERIFIED").length;
+ $("hoursCount").textContent=Array.from({length:12},(_,i)=>$("hour"+(i+1)).value.trim()).filter(Boolean).length+"/12";
+}
+function message(t){$("feedback").textContent=t}
+$("download").addEventListener("click",()=>{
+ try{
+  const obj=collect(),blob=new Blob([JSON.stringify(obj,null,2)+"\n"],{type:"application/json"});
+  const a=document.createElement("a"),url=URL.createObjectURL(blob);
+  a.href=url;a.download="site-facts.json";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);message("로컬 JSON을 저장했습니다. Git에 올리지 마세요.");
+ }catch(e){message("저장 거부: "+e.message)}
+});
+$("import").addEventListener("click",()=>$("chooseFile").click());
+$("chooseFile").addEventListener("change",async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{
+  const d=JSON.parse(await file.text());
+  if(d.schema_version!==1||!d.site_gates||!d.operating_constraints||!d.decisions||Object.keys(d.site_gates).length!==keys.length)throw Error("지원되지 않는 입력 형식");
+  if(d.decisions.crop_selection!=="UNDECIDED"||d.decisions.facility_choice!=="UNDECIDED")throw Error("작물·시설은 미정이어야 합니다");
+  $("gross").value=d.approx_gross_area_pyeong??"";
+  for(const key of ["usable_area_pyeong","available_capital_krw_10000","max_buffer_tolerance_krw_10000","max_months_until_first_receipt"])$(key).value=d.operating_constraints[key]??"";
+  if(!Array.isArray(d.operating_constraints.owner_hours_available_by_month)||d.operating_constraints.owner_hours_available_by_month.length!==12)throw Error("월별 노동시간 12개 필요");
+  for(let i=0;i<12;i++)$("hour"+(i+1)).value=d.operating_constraints.owner_hours_available_by_month[i]??"";
+  for(const [key] of keys){
+   const drow=d.site_gates[key],g=gateEls[key];
+   if(!drow||!states.some(([v])=>v===drow.status))throw Error("상태가 잘못됨: "+key);
+   g.sel.value=drow.status;g.sel.dispatchEvent(new Event("change"));
+   if(drow.status==="DOCUMENT_COLLECTED_UNVERIFIED"){
+    g.fields[0].value=drow.source_kind??"";
+    g.fields[1].value=drow.source_ref??"";
+    g.fields[2].value=drow.checked_on??"";
+   }
+  }
+  collect();stats();message("로컬 JSON을 불러왔습니다.");
+ }catch(ex){message("불러오기 실패: "+ex.message)}
+ e.target.value="";
+});
+$("reset").addEventListener("click",()=>{
+ if(!confirm("현재 화면의 입력을 모두 초기화할까요?"))return;
+ $("gross").value="3000";
+ for(const k of ["usable_area_pyeong","available_capital_krw_10000","max_buffer_tolerance_krw_10000","max_months_until_first_receipt"])$(k).value="";
+ for(let i=1;i<=12;i++)$("hour"+i).value="";
+ for(const [key] of keys){gateEls[key].sel.value="UNKNOWN";gateEls[key].sel.dispatchEvent(new Event("change"))}
+ message("초기화했습니다.");
+});
+stats();
+</script></body></html>
