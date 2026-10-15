@@ -97,6 +97,17 @@ jobs:
             output/execution-detail-example.json
             output/execution-detail-example.html
           retention-days: 14
+      - name: Simulate multi-crop plots, shared inputs and explicit credit cash
+        run: |
+          python scripts/compare_portfolio.py --input data/templates/portfolio_SYNTHETIC.json --output output/portfolio-synthetic.json --html output/portfolio-synthetic.html
+      - name: Upload synthetic multi-crop portfolio report
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-multicrop-portfolio-synthetic
+          path: |
+            output/portfolio-synthetic.json
+            output/portfolio-synthetic.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
