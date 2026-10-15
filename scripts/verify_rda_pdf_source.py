@@ -38,7 +38,7 @@ def rows_and_digest(path=CSV):
 def overview_matches(text, row):
     """Match the three adjacent published integer KRW amounts in correct order."""
     vals = [f'{int(row[k]):,}' for k in OVERVIEW_KEYS]
-    return bool(re.search(r"(?<![0-9])" + r"\\s+".join(
+    return bool(re.search(r"(?<![0-9])" + r"\s+".join(
         re.escape(v) for v in vals) + r"(?![0-9])", text))
 
 
