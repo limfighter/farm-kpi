@@ -64,6 +64,17 @@ jobs:
             output/multiyear-model-only.json
             output/multiyear-model-only.html
           retention-days: 14
+      - name: Audit practical farm input gaps and conditional advantages
+        run: |
+          python -m farm_strategy.operational_factors --check --output output/decision-factor-audit.json --html output/decision-factor-audit.html
+      - name: Upload farm realism audit (not field feasibility)
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-realism-variable-audit-not-field-validation
+          path: |
+            output/decision-factor-audit.json
+            output/decision-factor-audit.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)

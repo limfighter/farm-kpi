@@ -122,3 +122,7 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 - 비교는 같은 `start_year`, `horizon_years`, 할인율 입력일 때만 허용합니다. 다년 모델의 프로젝트 NPV나 운영 기여액은 근거 수치가 전부 실측되지 않은 상황에서 작목별 수익성 순위를 자동 결정할 수 없습니다.
 
 실행: `python -m pytest -q tests/test_lifecycle.py tests/test_multiyear_cli.py` 후 `python scripts/compare_multiyear.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/multiyear-model-only.json --html output/multiyear-model-only.html`.
+
+## 현실 농사·변수 감사(신뢰도와 별개의 기능 커버리지)
+
+[51개 실제 농사 검토 요인](../../data/metadata/decision_factor_registry.json)은 소득 수치/기상값/필지 실측이 아니라 구현 기능 감사 목록입니다. MODELED는 실제 다년 모델 입력키, INTAKE_ONLY는 현장 조사 게이트·운영제약 키, NOT_MODELED는 새 모델 미지원으로 표기합니다. 검증 스크립트는 코드 필드에 실제 매핑하는지 검사합니다. 시설비 숫자를 넣는 기능은 난방·관수·토양을 계산하는 과학모형과 다릅니다. 51요인은 RDA 전국 51작목과 별개이며, 각 항목 P0/P1/P2, 필수조건/경영/위험/조건부 이점을 구별합니다. [해석·근거](FARM_REALISM_FACTORS.md) 참고.

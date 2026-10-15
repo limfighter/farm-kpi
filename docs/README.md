@@ -13,6 +13,7 @@
 | 목표를 다음 세션부터 이어서 실행 | [세션별 목표·선행조건·완료 기준](sessions/README.md) |
 | 코드 책임·공통 검증·리팩터링 경계 | [코드 구조와 개선 근거](explanation/CODE_STRUCTURE.md) |
 | 농지·자금·통계·판로의 실제 확인처는? | [P0/P1 공식 정보처·해결 절차](how-to/P0_P1_OFFICIAL_SOURCE_PLAYBOOK.md) — 지번·계약·계좌는 GitHub에 올리지 않음 |
+| 실제 농사 변수와 경쟁우위는? | [51개 현장·경영 검토 요인](reference/FARM_REALISM_FACTORS.md) — 기능 대비 검증 필요 목록 |
 | 작목은 어떻게 정하나? | [51개 작목 탐색 원칙](CROP_DISCOVERY_PROTOCOL.md) |
 | 농지 조사를 어디에 입력하나? | [현장정보 입력 가이드](RDA_AUDIT_AND_SITE_INTAKE.md) · [오프라인 양식](../dashboard/site-intake/index.html) |
 | 보고자료를 고쳐야 하나? | [보고 통계 갱신 절차](how-to/UPDATE_REPORTED_DATA.md) |
