@@ -107,7 +107,8 @@
       40,
       17,
       0
-    ]
+    ],
+    "assumed_annual_inflation_rate": 0.02
   },
   "loan": {
     "enabled_for_new_house": true,
@@ -116,7 +117,7 @@
     "draw_year": 2028,
     "grace_years": 5,
     "amortization_years": 20,
-    "status": "HYPOTHETICAL; not approved; nominal-vs-real consistency pending"
+    "status": "HYPOTHETICAL, NOT APPROVED; 1.5% nominal interest, with 2% assumed inflation deflator; annual December debt service is illustrative"
   },
   "risk": {
     "price_common_sigma": 0.1,
@@ -149,5 +150,57 @@
     "annual_insurance_premium_cash": 0,
     "annual_insurance_payout_cash": 0,
     "status": "UNKNOWN: zeros are placeholders NOT tax exemptions or free insurance"
+  },
+  "monthly_cashflow": {
+    "potato_sales": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0.75,
+      0.25,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "scallion_sales": [
+      0,
+      0,
+      0,
+      0.1,
+      0.15,
+      0.15,
+      0,
+      0,
+      0.2,
+      0.25,
+      0.15,
+      0
+    ],
+    "cucumber_sales": [
+      0,
+      0,
+      0,
+      0,
+      0.1,
+      0.2,
+      0.2,
+      0.2,
+      0.2,
+      0.1,
+      0,
+      0
+    ],
+    "field_capex_month": 3,
+    "house_capex_month": 3,
+    "lease_capex_month": 3,
+    "loan_draw_month": 3,
+    "loan_payment_month": 12,
+    "repair_month": 8,
+    "terminal_month": 12,
+    "status": "HYPOTHETICAL timing weights, not empirical harvest sales or cash transactions"
   }
 }
