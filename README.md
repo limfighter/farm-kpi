@@ -30,9 +30,9 @@ If you have original user-supplied ASOS files, keep them **locally** in `data/ra
 
 1. Data quality levels: Observed (O), external reported statistics (R), real transactions (T), assumption (A).
 2. Each investment decision gets a dated decision record and sensitivity analysis.
-3. CI tests run on changes. A monthly scheduled workflow checks model consistency; **it does not fetch live observations or make autonomous investments**.
+3. CI tests run on pushes and pull requests. There is **no monthly scheduled workflow** and no automatic live-observation retrieval or investment execution.
 4. Never commit exact private land addresses, IDs, bank records, personally uploaded hourly ASOS originals, or API credentials.
 
-See `docs/ROADMAP.md`, `docs/DATA_POLICY.md` and `docs/decisions/`.
+See `docs/ASOS_AUDIT_AND_ROADMAP.md` for the data audit, unresolved assumptions, and next steps.
 
 **Units**: monetary figures are 2026-constant KRW 10,000; time range 2027–2036. Nominal loan rate vs real discount-rate modeling is a known limitation to be fixed.
