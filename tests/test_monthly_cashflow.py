@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from farm_strategy.cashflow import nominal_to_real, validate_cashflow_config
-from farm_strategy.model import PLANS, one_path, read_config, read_weather, simulate
+from farm_strategy.cashflow import month_ledger, nominal_to_real, validate_cashflow_config
+from farm_strategy.model import PLANS, month_labor, one_path, read_config, read_weather, simulate
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = read_config(ROOT / "configs/base.json")
@@ -105,3 +105,47 @@ def test_monthly_timing_and_inflation_config_reject_invalid_values():
     cfg["finance"]["assumed_annual_inflation_rate"] = -1
     with pytest.raises(ValueError, match="inflation"):
         validate_cashflow_config(cfg["finance"], cfg["monthly_cashflow"])
+
+
+def test_unexplained_cash_residual_cannot_be_disguised_as_august_repair():
+    cfg = deepcopy(CONFIG)
+    finance = cfg["finance"]
+    _, hired, hired_monthly = month_labor(finance, False)
+    cost = (finance["potato_operating_cost_excluding_hired_labor"]
+            + finance["scallion_operating_cost_excluding_hired_labor"]
+            + finance["site_overhead"] + hired * finance["hired_hour_rate"]
+            + cfg["tax_and_insurance"]["annual_tax_cash"]
+            + cfg["tax_and_insurance"]["annual_insurance_premium_cash"])
+    args = dict(year=2027, config=cfg, plan="field_trial", field=True, house=False,
+                hired_by_month=hired_monthly, wage_factor=1.0,
+                potato=0, scallion=0, cucumber=0,
+                annual_cash_cost=cost, field_capex=0, house_capex=0, lease_capex=0,
+                terminal=0, repair_cost=0, real_loan_draw=0, real_loan_payment=0)
+    rows = month_ledger(**args)
+    assert all(row["facility_major_repair_cash_cost"] == 0 for row in rows)
+    assert math.isclose(sum(row["cash_cost"] for row in rows), cost)
+    with pytest.raises(ValueError, match="Unexplained annual-to-monthly cost drift"):
+        month_ledger(**{**args, "annual_cash_cost": cost + 150})
+    with pytest.raises(ValueError, match="Unexplained annual-to-monthly cost drift"):
+        month_ledger(**{**args, "annual_cash_cost": cost - 150})
+    with pytest.raises(ValueError, match="No facility"):
+        month_ledger(**{**args, "repair_cost": 150})
+    with pytest.raises(ValueError, match="nonnegative"):
+        month_ledger(**{**args, "repair_cost": -1})
+
+
+def test_forced_repair_event_is_separate_and_only_in_stated_month():
+    cfg = deepcopy(CONFIG)
+    cfg["risk"]["major_repair_base_prob"] = 1.0
+    house_repair = cfg["finance"]["facility_major_repair_cost"]
+    path = one_path("new_cucumber_house", "base", WEATHER, cfg, random.Random(9),
+                    include_months=True)
+    for y in path["years"]:
+        yearly = [m for m in path["months"] if m["year"] == y["year"]]
+        expected = house_repair if y["year"] >= 2028 else 0.0
+        assert y["facility_major_repair_cash_cost"] == expected
+        assert math.isclose(
+            sum(m["facility_major_repair_cash_cost"] for m in yearly), expected)
+        assert all(m["facility_major_repair_cash_cost"] == 0
+                   for m in yearly if m["month"] != cfg["monthly_cashflow"]["repair_month"])
+        assert all(m["cash_cost"] >= 0 for m in yearly)
