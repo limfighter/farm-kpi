@@ -1,9 +1,42 @@
 {
   "schema_version": 1,
-  "purpose": "Short research pointers to original RDA Nongsaro crop-work calendars; never validated parcel/month costs or all-51 stage coverage. Crop cycles and official variety and locality differ.",
+  "purpose": "Reviewed pointers to original RDA Nongsaro work calendars for 20 of 51 source survey crop systems, not parcel evidence, financial facts, or a complete management calendar.",
   "reviewed_on": "2026-10-15",
   "source_license_notice": "Nongsaro pages may carry KOGL Type 2 attribution + noncommercial. This file records short summaries and links; do not copy official page content into redistributed products.",
   "references": [
+    {
+      "crop_id": "RDA2024-04",
+      "official_title": "옥수수",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30709&menuId=PS00087",
+      "variant": "보통직파재배·무피복(찰옥수수 참조)",
+      "match_level": "CROP_FAMILY_ONLY",
+      "region_scope": "전국",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문은 찰옥수수 재배력이며 농산물소득조사 노지풋옥수수와 상품종·시설분류 동등성 미검증. 원문의 무피복 보통 직파재배 4월 중순, 7월 하순~8월 상순 수확을 월 범위로 요약",
+      "stages": [
+        {
+          "action": "보통 직파",
+          "window_months": [
+            4
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확",
+          "window_months": [
+            7,
+            8
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
     {
       "crop_id": "RDA2024-05",
       "official_title": "고구마",
@@ -72,6 +105,122 @@
             5,
             6
           ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-07",
+      "official_title": "감자",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30699&menuId=PS00087",
+      "variant": "가을재배(제주도·남부 해안)",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "제주도, 남부 해안지대",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "가을재배 원문 권장 지역은 제주도 및 남부 해안으로 전주 인근 필지 적합성 입증하지 않음. 파종 8월 중하순, 수확 11월 상하순; 조기 발아 준비는 절대 월 미확인",
+      "stages": [
+        {
+          "action": "씨감자 준비",
+          "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "가을감자 파종",
+          "window_months": [
+            8
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "가을감자 수확",
+          "window_months": [
+            11
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-09",
+      "official_title": "무",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30614&menuId=PS00087",
+      "variant": "가을무 노지",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반 가을 작형",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "가을무 원문 파종 7월 중순~9월 상순, 수확 9월 상순~12월 중순. 같은 RDA 무 이름이어도 고랭지무·봄무 일정은 다름",
+      "stages": [
+        {
+          "action": "가을무 파종",
+          "window_months": [
+            7,
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "가을무 수확",
+          "window_months": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-16",
+      "official_title": "양배추",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30634&menuId=PS00087",
+      "variant": "가을 양배추 작형",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반 가을 작형",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문 작형별 파종은 7~8월, 아주심기는 9월. 원문의 계통·출하형 자료가 여러 품종 혼합이라 본 작형의 수확월은 UNKNOWN으로 보존",
+      "stages": [
+        {
+          "action": "가을재배 파종",
+          "window_months": [
+            7,
+            8
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "가을재배 아주심기",
+          "window_months": [
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "수확 적기 확인",
+          "window_months": [],
           "crosses_calendar_year": false,
           "precision": "MONTH_WINDOW",
           "source_data_only": true
@@ -324,6 +473,250 @@
         {
           "action": "수확",
           "window_months": [],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-30",
+      "official_title": "가지",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30770&menuId=PS00087",
+      "variant": "반촉성 시설가지",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반(전주 필지 미확인)",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "반촉성 작형 원문 12월 상순~다음해 1월 하순 씨뿌림, 3~4월 정식, 4~7월 수확. 단년 농장 장부에 12월 파종+같은 해 4월 수확 자동 결합 금지",
+      "stages": [
+        {
+          "action": "반촉성 씨뿌림",
+          "window_months": [
+            12,
+            1
+          ],
+          "crosses_calendar_year": true,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "반촉성 아주심기",
+          "window_months": [
+            3,
+            4
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "반촉성 수확",
+          "window_months": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-31",
+      "official_title": "파프리카",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30649&menuId=PS00087",
+      "variant": "겨울재배·착색단고추",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 시설형",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "겨울재배 원문 7월 중하순 파종, 8월 중순~9월 상순 정식, 11월 상순~다음해 7월 상순 수확. 연중 가온비와 난방일수 UNKNOWN",
+      "stages": [
+        {
+          "action": "겨울재배 씨뿌림",
+          "window_months": [
+            7
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "겨울재배 아주심기",
+          "window_months": [
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "겨울재배 수확",
+          "window_months": [
+            11,
+            12,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "crosses_calendar_year": true,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-38",
+      "official_title": "배",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30661&menuId=PS00087",
+      "variant": "중생종 성목 과원",
+      "match_level": "CROP_FAMILY_ONLY",
+      "region_scope": "원문 일반 과원",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "중생종 품종별 수확은 9월 중순~10월 중순. 원문은 품종/성숙 과원 실적이며 신규 식재 1~여러 해 수익으로 추정 금지. 가족 배 과수원 독립 필지 계산 제외",
+      "stages": [
+        {
+          "action": "중생종 수확",
+          "window_months": [
+            9,
+            10
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-40",
+      "official_title": "포도(무가온)",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=30669&menuId=PS00087",
+      "variant": "노지 포도 캠벨얼리·거봉",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 일반 노지",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "캠벨얼리는 8월 하순, 거봉은 9월 중순 수확으로 서로 품종이 다름. 성숙 수목 시기 자료만 기록, 신식재 비생산 기간 미검증",
+      "stages": [
+        {
+          "action": "발아",
+          "window_months": [
+            4
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "개화",
+          "window_months": [
+            6
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "노지포도 수확",
+          "window_months": [
+            8,
+            9
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-44",
+      "official_title": "블루베리",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=258549&menuId=PS00087",
+      "variant": "일반재배 성목 과원",
+      "match_level": "CROP_FAMILY_ONLY",
+      "region_scope": "원문 일반 재배",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문 일반재배는 3월 발아·4월 개화·6월 성출하; 심은 직후 1~2년은 열매가 달리지 않게 관리하도록 안내. 신규 포장 첫해 매출을 만들지 않음",
+      "stages": [
+        {
+          "action": "밑거름",
+          "window_months": [
+            3
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "웃거름",
+          "window_months": [
+            5
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "성출하기",
+          "window_months": [
+            6
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        }
+      ]
+    },
+    {
+      "crop_id": "RDA2024-46",
+      "official_title": "포도(표준가온)",
+      "source_url": "https://www.nongsaro.go.kr/portal/ps/psb/psbl/workScheduleDtl.ps?cntntsNo=258613&menuId=PS00087",
+      "variant": "가온 시설포도",
+      "match_level": "VARIANT_REFERENCE",
+      "region_scope": "원문 표준가온",
+      "reviewed_on": "2026-10-15",
+      "source_kind": "R",
+      "source_year": null,
+      "season_notes": "원문 발아 2월 중순, 개화 3월 중순, 수확 6월 하순 표준가온 작형; 가온 난방시설비/에너지비·신규 포장 비수확 기간 자료 없음",
+      "stages": [
+        {
+          "action": "표준가온 발아",
+          "window_months": [
+            2
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "표준가온 개화",
+          "window_months": [
+            3
+          ],
+          "crosses_calendar_year": false,
+          "precision": "MONTH_WINDOW",
+          "source_data_only": true
+        },
+        {
+          "action": "표준가온 수확",
+          "window_months": [
+            6
+          ],
           "crosses_calendar_year": false,
           "precision": "MONTH_WINDOW",
           "source_data_only": true
