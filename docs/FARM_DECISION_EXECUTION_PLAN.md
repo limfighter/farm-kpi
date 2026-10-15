@@ -18,9 +18,28 @@
 | Weather | KMA Jeonju ASOS 2006–2025 derived annual features | Original hourly ASOS audit unverified without source file; climate station is **not** parcel or crop-specific damage rate |
 | Finance | Preliminary paired Monte Carlo across five **example** potato/scallion/cucumber plans; annual and month-end liquidity | No calibrated cost/yield/price/loan/contract; separate costs and facility build not yet transferable to other 46 crop systems |
 | Governance | R/T/Q/O category separation, private self-attested calibration preview, offline dashboards, CI | No actual signed review of transactions; `main` untouched and draft PR unmerged |
-| CI health | Earlier model and 51-crop checks passed | **Latest Draft PR head failed:** `tests/test_crop_feasibility.py::test_cached_files_match_generator_and_support_offline_navigation` — generated `dashboard/feasibility/index.html` differs from Python generator in GitHub Actions Python 3.11; local Python 3.13 check alone is insufficient. Fix and rerun PR & push checks first. |
+| CI health | Earlier model and 51-crop checks passed | The formerly failing feasibility HTML/source hash drift was fixed by reconciling tracked CSV line endings. Push/PR CI green at prior head `fa4c7009`; source regression, parcel intake and PDF audits are now added, with their newest CI status checked separately. |
 
 Critical accounting distinctions: RDA `income = gross_receipts - management_costs` is **neither** project NPV **nor** cash balance. Reported management costs include hired labor and facility depreciation, so blindly copying them into a model that separately prices labor, building capex and maintenance would double count. 2024 nominal KRW are not 2026-constant modeled KRW; **4-year ginseng** values must not be silently annualized; existing mature-orchard returns are not establishment-phase cash flows.
+
+## Development progress recorded 2026-10-15
+
+- **P0-01 DONE:** fixed 51-crop feasible-HTML stale source; preceding PR & push Actions both green.
+- **P0-02 IMPLEMENTED:** verified all 51 RDA 2024 PDF overview gross/cost/income
+  triplets and 51 per-crop labor summary values against the locally supplied
+  287-page book. CSV digest/source PDF SHA256 saved without uploading the PDF.
+  CI now checks the canonical 51-row lock and arithmetic/percentage/labor guards.
+  This does not authenticate the underlying institution data.
+- **P0-03 PREPARED ONLY:** created a private non-identifying parcel facts
+  template and `farm-strategy site-check`. All real site gates remain UNKNOWN;
+  the user's soil/water/permit facts have **not** been provided.
+- **P0-04 PREPARED ONLY:** 12 nullable owner-hour inputs, nullable usable
+  area/investable funds/buffer/wait-period constraints. No amount is assumed.
+- **P1–P3 OPEN:** multi-year/regional price evidence, buyers, real quotations,
+  site-specific risks, comparable new crop-system cashflows and pilot decision.
+- Details and CLI usage: `docs/RDA_AUDIT_AND_SITE_INTAKE.md`.
+- **Current review state:** selected crop NONE, facility choice NONE,
+  financing NONE; no additional farm profitability claims.
 
 ## 1. Non-negotiable decision principles
 
