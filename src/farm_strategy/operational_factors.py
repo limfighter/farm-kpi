@@ -148,7 +148,7 @@ a{color:#266441}.muted{color:#627568;font-size:12px}
         for key, value in metrics)
     result += """</div><section><p class=warn><b>읽는 법:</b> 계산 입력이 있다는 것은 검증됐다는 뜻이 아닙니다.
 예: 시설 난방비는 임의 금액의 OPERATING 사건으로 입력 가능하지만 난방 부하·전력 수급은 계산하지 않습니다.
-필지의 토양·법규·관수·노동·실구매처 검증 전에는 작물·시설 추천을 보류합니다.
+필지의 토양·법규·관수·노동·실구매처 검증 전에는 작목·시설 추천을 보류합니다.
 장점은 추가 매출·원가 절감이 유지비·인건비·자금 압박·실패 위험을 넘는 경우에만 인정합니다.</p>
 <div class=filters><input id=q placeholder="변수명·효과·제약 검색" aria-label="검색">
 <select id=group><option value="">전체 분야</option>"""
