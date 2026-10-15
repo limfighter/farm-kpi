@@ -227,6 +227,12 @@
       "type": "how-to",
       "owner": "operator",
       "lifecycle": "active"
+    },
+    {
+      "path": "docs/reference/FARM_REALISM_FACTORS.md",
+      "type": "reference",
+      "owner": "model",
+      "lifecycle": "active"
     }
   ]
 }

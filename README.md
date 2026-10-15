@@ -17,6 +17,12 @@
 
 개발 자동화·MCP 작업 규칙은 [루트 AGENTS.md](AGENTS.md)에 있습니다. 현재 결정 상태의 기준 문서는 [docs/STATUS.md](docs/STATUS.md)입니다.
 
+## 현실 농사 변수·사업 이점
+
+[현실 농사 변수·조건부 이점 51항목](docs/reference/FARM_REALISM_FACTORS.md)은 **작목 51종과 별개**로, 계산필드 17개·현장 체크리스트 12개·미구현 22개를 구분합니다. 토양·용수·법규·실수취가·피크 주간 노동·현금 위험을 검증하지 않은 작목에 수익 순위를 확정하지 않습니다. 17개 입력필드의 존재는 실농가 데이터 검증을 뜻하지 않습니다.
+
+**시설/방식별 이점의 계산:** 동일 작물·면적·기간을 대상으로 [증분 비용·매출·노동 비교](src/farm_strategy/option_tradeoffs.py)를 구현했습니다. 신축·임대 예제는 전부 가상이며 시설로 수량이 자동 증가하지 않습니다. `python scripts/compare_options.py --input data/templates/multiyear_scenarios_SYNTHETIC.json --output output/paired-option-deltas.json --html output/paired-option-deltas.html`로 결과를 확인합니다.
+
 ## 오프라인 브라운·세이지 화면
 
 - **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).
