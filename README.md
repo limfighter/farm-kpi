@@ -11,7 +11,8 @@
 ```bash
 python -m pip install -e '.[dev]'
 farm-strategy validate
-farm-strategy compare --seed 42 --paths 1000 --output output/compare.json
+farm-strategy compare --seed 42 --paths 1000 --stress-matrix --output output/compare-model-only.json --csv output/compare-model-only.csv
+farm-strategy evidence-check --file data/templates/private_evidence_TEMPLATE.csv
 farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000
 farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000 --monthly-details --output output/monthly-example.json
 pytest -q
@@ -42,4 +43,6 @@ The hypothetical 1.5% **nominal** loan uses an assumed 2% annual inflation defla
 
 See `docs/ASOS_AUDIT_AND_ROADMAP.md` for the data audit, unresolved assumptions, and next steps.
 
-**Units**: monetary figures are 2026-constant KRW 10,000; time range 2027–2036. Nominal loan rate vs real discount-rate modeling is a known limitation to be fixed.
+**Units**: monetary cash figures are 2026-constant KRW 10,000; time range 2027–2036. End-year nominal debt is labeled separately. Nominal loan cash is deflated using an unverified 2% annual inflation assumption and discounted on the existing real-rate basis; the bank's actual payment schedule and real input calibration remain unresolved.
+
+See [strategy comparison and private evidence intake](docs/STRATEGY_COMPARISON_AND_EVIDENCE.md) for model-only risk comparisons, CSV outputs, and how to prepare private source evidence without overwriting scenario assumptions.
