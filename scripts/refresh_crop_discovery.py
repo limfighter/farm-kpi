@@ -43,9 +43,22 @@ def load_source(path):
             d[k] = float(d[k])
             if not math.isfinite(d[k]):
                 raise ValueError("Nonfinite "+k)
+        if any(d[k] <= 0 for k in (
+                "revenue_krw_per_10a", "management_cost_krw_per_10a",
+                "income_krw_per_10a", "yield_quantity", "cycle_years")):
+            raise ValueError("Non-positive RDA amount/cycle/yield for "+d["crop"])
         if abs(d["revenue_krw_per_10a"] - d["management_cost_krw_per_10a"] -
                d["income_krw_per_10a"]) > 2:
             raise ValueError("Income reconciliation failed for "+d["crop"])
+        percent_from_amounts = (
+            100 * d["income_krw_per_10a"] / d["revenue_krw_per_10a"])
+        if abs(percent_from_amounts - d["income_rate_pct"]) > 0.051:
+            raise ValueError("RDA income rate not reconciled for "+d["crop"])
+        if any(d[k] < 0 for k in (
+                "labor_owner_hours_per_10a",
+                "labor_hired_hours_per_10a",
+                "labor_total_hours_per_10a")):
+            raise ValueError("Negative labor hours for "+d["crop"])
         if (abs(d["labor_owner_hours_per_10a"] + d["labor_hired_hours_per_10a"] -
                 d["labor_total_hours_per_10a"]) > .11):
             raise ValueError("Labor reconciliation failed for "+d["crop"])
