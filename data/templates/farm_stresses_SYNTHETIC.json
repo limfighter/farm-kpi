@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "disclaimer": "SYNTHETIC A scenario perturbations only: not local climate/price forecast, calibrated damage probability, yield elasticity or farm investment recommendation.",
+  "scenarios": [
+    {
+      "id": "unchanged_control",
+      "description": "Control identical to the supplied farm portfolio",
+      "case_factors": {},
+      "water_supply_factor": 1,
+      "electricity_supply_factor": 1,
+      "months_affected": [],
+      "source_kind": "A",
+      "source_ref": "SYNTHETIC_CONTROL"
+    },
+    {
+      "id": "bad_price_and_yield",
+      "description": "Both test crops have lower market prices and marketable output; utility supply stressed separately",
+      "case_factors": {
+        "SYNTHETIC SPRING CROP": {
+          "yield_factor": 0.65,
+          "price_factor": 0.8
+        },
+        "SYNTHETIC AUTUMN CROP": {
+          "yield_factor": 0.7,
+          "price_factor": 0.85
+        }
+      },
+      "water_supply_factor": 0.5,
+      "electricity_supply_factor": 0.6,
+      "months_affected": [
+        3,
+        4,
+        5,
+        6,
+        8,
+        9,
+        10,
+        11
+      ],
+      "source_kind": "A",
+      "source_ref": "SYNTHETIC_COMPOUND"
+    },
+    {
+      "id": "scarcity_only",
+      "description": "Irrigation and electricity supply fall, with crop sales unchanged to show noncausal constraints",
+      "case_factors": {},
+      "water_supply_factor": 0.12,
+      "electricity_supply_factor": 0.1,
+      "months_affected": [
+        4,
+        8
+      ],
+      "source_kind": "A",
+      "source_ref": "SYNTHETIC_RESOURCE"
+    }
+  ]
+}
