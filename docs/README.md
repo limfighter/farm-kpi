@@ -13,7 +13,7 @@
 | 작목은 어떻게 정하나? | [51개 작목 탐색 원칙](CROP_DISCOVERY_PROTOCOL.md) |
 | 농지 조사를 어디에 입력하나? | [현장정보 입력 가이드](RDA_AUDIT_AND_SITE_INTAKE.md) · [오프라인 양식](../dashboard/site-intake/index.html) |
 | 보고자료를 고쳐야 하나? | [보고 통계 갱신 절차](how-to/UPDATE_REPORTED_DATA.md) |
-| 출처·통화·단위와 파일 규약 | [데이터 계약과 신뢰도](reference/DATA_CONTRACTS.md) |
+| 출처·통화·단위와 파일 규약 | [데이터 계약과 신뢰도](reference/DATA_CONTRACTS.md) · [2022~2024 전국·지역 출처 등록부](reference/RDA_MULTYEAR_SOURCE_REGISTRY.md) |
 | 기존 시뮬레이션 실행 및 결과 해석 | [전략 비교·증빙](STRATEGY_COMPARISON_AND_EVIDENCE.md) |
 | 새 문서를 작성하거나 바꾸나? | [문서 운영 규칙](CONTRIBUTING_DOCS.md) · [ADR 목록](decisions/README.md) |
 
