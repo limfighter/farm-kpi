@@ -6,6 +6,7 @@ from .model import PLANS, SCENARIOS, read_config, read_weather, simulate
 from .cashflow import validate_cashflow_config
 from .comparison import compare_plans, save_comparison_csv
 from .evidence import validate_evidence
+from .calibration import calibrate_preview, save_preview_outputs
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -17,6 +18,15 @@ def main(argv=None):
                         help="Validate private evidence metadata; do not import amounts")
     ev.add_argument("--file", required=True, type=Path)
     ev.add_argument("--output", type=Path)
+    cp = sub.add_parser("calibration-preview",
+                        help="Human-reviewed, hash-locked PRIVATE evidence what-if; never changes base.json")
+    cp.add_argument("--file", type=Path, required=True)
+    cp.add_argument("--review", type=Path, required=True)
+    cp.add_argument("--output-dir", type=Path, required=True)
+    cp.add_argument("--paths", type=int, default=100)
+    cp.add_argument("--seed", type=int, default=42)
+    cp.add_argument("--scenario", choices=SCENARIOS, default="base")
+    cp.add_argument("--window", choices=("recent10", "all20"), default="recent10")
     for cmd in ("compare", "forecast"):
         sp = sub.add_parser(cmd)
         sp.add_argument("--scenario", choices=SCENARIOS, default="base")
@@ -42,9 +52,15 @@ def main(argv=None):
         config = read_config(args.config)
         observed = read_weather(args.weather)
         validate_cashflow_config(config["finance"], config["monthly_cashflow"])
-    if args.cmd == "evidence-check":
-        pass  # report populated without changing simulation configuration
-    elif args.cmd == "validate":
+    if args.cmd == "calibration-preview":
+        candidate_config, report = calibrate_preview(
+            args.file, args.review, config, observed, seed=args.seed,
+            paths=args.paths, scenario=args.scenario, window=args.window)
+        config_path, report_path = save_preview_outputs(
+            args.output_dir, candidate_config, report, ROOT)
+        print(f"Local what-if saved: {config_path} and {report_path}")
+        return 0
+    if args.cmd == "validate":
         result = {"n_weather_years": len(observed),
                   "years": [int(x["year"]) for x in observed],
                   "weather_source": config["metadata"]["weather_source"],
