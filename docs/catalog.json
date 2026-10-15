@@ -43,6 +43,12 @@
       "lifecycle": "active"
     },
     {
+      "path": "docs/reference/RDA_MULTYEAR_SOURCE_REGISTRY.md",
+      "type": "reference",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
       "path": "docs/explanation/MODEL_BOUNDARIES.md",
       "type": "explanation",
       "owner": "model",
