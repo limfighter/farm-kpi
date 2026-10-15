@@ -43,9 +43,12 @@ unmatched crops are **pending**, not invalid choices.
 **Coverage limit:** 51 surveyed crops are not the set of every possible crop,
 variety, agritourism activity, processing, intercropping, dual-season operation,
 equipment contracting, leased greenhouse or other farming model. Add new
-candidates in a separate registry with `source_available=false` or obtain a
-comparable official dataset before numerical screening; never invent yield
-or income to fill a missing record.
+candidates in the [separate discovery-only registry](../data/metadata/off_survey_candidate_registry.json) with `source_available=false`
+and `status=PENDING_EVIDENCE`; do not merge them into 51 national reported rows.
+This registry currently contains **no asserted candidates**. A public discovery page
+is not proof of income, parcel suitability or a market. Independently audited
+comparable data and a new reviewed contract are needed before numerical screening;
+never invent yield or income to fill a missing record.
 
 ## Why this cannot determine the winning crop today
 
@@ -111,6 +114,7 @@ remain UNKNOWN, not zero or subjective rankings.
 ```bash
 # Open directly: dashboard/crop-discovery/index.html
 python scripts/refresh_crop_discovery.py --check
+python scripts/check_off_survey_candidates.py --check
 # Only after independent review of changed public statistics:
 python scripts/refresh_crop_discovery.py --refresh
 pytest -q
