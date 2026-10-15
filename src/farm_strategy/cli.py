@@ -60,7 +60,9 @@ def main(argv=None):
             args.output_dir, candidate_config, report, ROOT)
         print(f"Local what-if saved: {config_path} and {report_path}")
         return 0
-    if args.cmd == "validate":
+    if args.cmd == "evidence-check":
+        pass  # Preserve schema-only inspection without running simulations.
+    elif args.cmd == "validate":
         result = {"n_weather_years": len(observed),
                   "years": [int(x["year"]) for x in observed],
                   "weather_source": config["metadata"]["weather_source"],
