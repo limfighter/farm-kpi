@@ -328,11 +328,11 @@
       "label": "주/일별 수확기 노동 피크",
       "role": "HARD_GATE",
       "priority": "P0",
-      "implementation": "NOT_MODELED",
-      "model_binding": null,
+      "implementation": "MODELED",
+      "model_binding": "execution.weekly_allocations.owner_hours",
       "evidence_needed": "출하·선별 피크주간 인원/시간",
       "conditional_benefit": "작업 놓침·폐기 방지",
-      "caveat": "월별 h 충분해도 하루 인력이 부족 가능"
+      "caveat": "주간 총량 검증만 구현. 실제 채용확보, 하루 작업량/현장 충돌, 작업 가능성 보장은 아님"
     },
     {
       "id": "machine_access",
@@ -400,11 +400,11 @@
       "label": "품질 등급별 수량·단가",
       "role": "ECONOMIC_DRIVER",
       "priority": "P1",
-      "implementation": "NOT_MODELED",
-      "model_binding": null,
+      "implementation": "MODELED",
+      "model_binding": "execution.grade_lots.sold_quantity_per_10a",
       "evidence_needed": "상/중/하 등급 출하명세서",
       "conditional_benefit": "우수품질 프리미엄 실수취",
-      "caveat": "단일 상품화율이 등급별 소득 차 감춤"
+      "caveat": "사용자가 입력한 등급별 실수취·포장비의 현금 대체 계산만 구현; 실거래 진위와 등급 예측은 미검증"
     },
     {
       "id": "crop_loss",
