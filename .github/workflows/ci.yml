@@ -18,6 +18,8 @@ jobs:
         run: python -m farm_strategy.audit --annual data/processed/annual_asos_jeonju_2006_2025.csv --metadata data/metadata/asos_v10_archive_audit.json
       - name: Validate existing simulation input
         run: farm-strategy validate
+      - name: Validate empty private evidence template (no imported numbers)
+        run: farm-strategy evidence-check --file data/templates/private_evidence_TEMPLATE.csv
       - name: Produce paired model-only screening
         run: |
           farm-strategy compare --seed 42 --paths 300 --stress-matrix --output output/screening-model-only.json --csv output/screening-model-only.csv
