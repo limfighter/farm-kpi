@@ -93,23 +93,14 @@ or to a directory *outside* the repository:
   reviewed candidates replaced. The baseline is untouched.
 - `what-if-impact.json`: paired seeded simulation, the before/after
   medians and p90s for all **five** preliminary plans, source category
-  `T`/`Q`, and a redacted evidence-file hash. Values in this **private**
+  `T`/`Q`, and a SHA256 evidence-file fingerprint (not a source-document ID). Values in this **private**
   report are business-sensitive; never commit or publish it.
   
 Both runs sample matching synthetic weather, pest, crop price and repair
 events, making their **modeled** differences reproducible. This still says
 nothing about verified probability distributions or farm profitability.
-For a separate local inspection, run:
-
-```bash
-farm-strategy compare --config output/calibration/what-if-config.json \
-  --seed 42 --paths 300 --stress-matrix \
-  --output output/calibration/compare-what-if.json \
-  --csv output/calibration/compare-what-if.csv
-```
-
-**Important CLI syntax:** pass `--config` before `compare` if your
-installation requires global flags to precede the command:
+For a separate local inspection of **all six modeled stress scenarios**,
+run the comparison with the global `--config` flag **before** the command:
 
 ```bash
 farm-strategy --config output/calibration/what-if-config.json compare \
