@@ -142,3 +142,17 @@ plots의 각 구획 면적 합은 총 유효 면적 이하여야 하고, plantin
 plantings에 포함된 각 다년 case의 facility_events는 반드시 빈 배열로 두며 공동 CAPEX/임대/보증금은 shared_facility_events로 한 번만 입력합니다. 물/전기비는 resources에서 한번 기록하며 공통 운영비에 또 합치지 않도록 실제 견적·영수증으로 대조해야 합니다. 단년/다년 작물별 수량·가격 자동 가정이나 그 수익의 기계적 재생성은 금지합니다.
 
 financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/source_kind/source_ref를 모두 입력합니다. 원금 초과 상환은 오류, 인출시 이자 사건(0 포함)을 명시해야 합니다. 은행 대출승인이나 완전한 상환기간(10년 이후 포함)을 추론하지 않습니다. 대출은 현금 유동성 지표에만 반영하고 무차입 사업 NPV는 독립적으로 계산합니다. 기초 잔고는 site.initial_unrestricted_cash_krw. 전체 금액은 기준연도 불변 원화로 사용자 입력이 이미 통일되었다는 가정입니다.
+
+## 날짜별 물리 운영·대출 현금 일정 확장 계약 v1
+
+기존 [포트폴리오 계산](../../src/farm_strategy/portfolio.py)을 유지하면서, [합성 상세 사례](../../data/templates/physical_operations_SYNTHETIC.json)를 `src/farm_strategy/physical_operations.py`로 평가합니다. 최상위 `schema_version=1`, `portfolio`, `detail`을 필수로 하며 `detail`은 `schema_version=1`, `disclaimer`, `date_occupancies`, `stage_demands`, `site_peak_limits`, `loan_terms`가 필수입니다.
+
+`date_occupancies[]`: 각 작물의 기존 월 단위 점유 구간마다 `{case_id,plot_id,start_date,end_date}`를 한 번씩 기록. 해당 월 시작/끝이 기존 원장의 구간과 동일해야 하며 실제 날짜는 더 촘촘하게 지정합니다. 같은 구획의 후행 작업 시작일에서 선행 끝 날짜를 차감한 **빈 날짜 수**를 계산해 `site_peak_limits.minimum_turnaround_days`(0..60) 미만이면 오류. 기존 월 단위 면적 충돌 검사는 여전히 우선이며 같은 달 내 실제 일자만 다른 교대는 이 단계에선 허용하지 않습니다.
+
+`stage_demands[]`: `{case_id,stage,start_date,end_date,water_m3_per_day,electricity_kwh_per_day,concurrent_peak_kw,source_kind,source_ref}`. 한 작물의 점유 **모든 날짜**를 정확히 한 번 덮어야 하며, 겹침/공백/점유 밖 데이터는 오류. 날짜별 수요 합은 해당 작물의 기존 `resources[]` 사용량과 각 월마다 수치 대조합니다. 과잉 또는 누락이 있으면 실측을 추측해 채우지 않고 실패시킵니다.
+
+`site_peak_limits`: `pump_capacity_m3_per_hour`, `pumping_hours_available_per_day`, `simultaneous_electric_capacity_kw`(세 값 각각 null 허용) 및 `minimum_turnaround_days`. 펌프 필요 시간=일 물량/가정한 펌프 유량, 부족=필요시간−가용시간. 동시 kW는 작물별 피크를 **보수적으로 동시에 발생하는 것으로 단순 합산**해 비교합니다. 수압, 도달 유량, 사용계약 피크 요금, 펌프 효율/전력 부하 중복, 양액 배출, 수질, 토양 환경 등은 미구현/미검증. 수요 자체는 생육단계별 사용자 입력 가정 또는 외부 현장 로그를 필요로 합니다.
+
+`loan_terms=null`이면 새 금융 원장은 생성하지 않으며 기존 `portfolio.financing_events`는 그대로 사용합니다. `loan_terms`가 있으면 수동 금융 현금 사건은 빈 배열이어야 하며, `{name,draw_year,draw_month,principal_krw,annual_real_interest_rate,grace_months,equal_principal_repayment_months,source_kind,source_ref}`가 필수입니다. 월말 가정 이자=개시원금×입력 실질 연율/12, 인출 다음 달부터 계산, 거치 이후 매월 균등원금. 시뮬레이션 기간 밖에는 상환액을 강제로 당겨 넣지 않고 잔액만 표시. **실제 은행의 명목 약정 금리/연 1회 이자납부/수수료/변동금리/거치시점과 다를 수 있습니다.** 명목 원화 지급·장래 명목원가를 불변 원화에 혼합하면 NPV 무효입니다. 대출 승인/융자 적격을 암시하지 않습니다.
+
+실행: `python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`.

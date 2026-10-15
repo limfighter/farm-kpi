@@ -1,0 +1,497 @@
+{
+  "schema_version": 1,
+  "portfolio": {
+    "schema_version": 1,
+    "disclaimer": "ALL values are synthetic A assumptions, not measured land, water, power, crop outcomes, or credit approval.",
+    "site": {
+      "region": "SYNTHETIC NO PARCEL",
+      "start_year": 2027,
+      "horizon_years": 2,
+      "usable_area_m2": 1200,
+      "annual_real_discount_rate": 0.04,
+      "initial_unrestricted_cash_krw": 100000,
+      "owner_hours_available_by_month": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "hired_hours_available_by_month": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "water_supply_m3_by_month": [
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50,
+        50
+      ],
+      "electricity_supply_kwh_by_month": [
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+      ]
+    },
+    "plots": [
+      {
+        "id": "PLOT-ONE",
+        "area_m2": 1000
+      }
+    ],
+    "plantings": [
+      {
+        "plot_id": "PLOT-ONE",
+        "case": {
+          "id": "SYNTHETIC SPRING CROP",
+          "crop": "SYNTHETIC SPRING CROP",
+          "system": "TEST OPEN FIELD",
+          "region": "SYNTHETIC NO PARCEL",
+          "start_year": 2027,
+          "horizon_years": 2,
+          "area_m2": 1000,
+          "annual_real_discount_rate": 0.04,
+          "owner_hour_value_krw": null,
+          "owner_available_hours_by_month": null,
+          "no_sales_reason": null,
+          "operations": [
+            {
+              "name": "Work SYNTHETIC SPRING CROP",
+              "year": 1,
+              "month": 4,
+              "owner_hours_per_10a": 10,
+              "hired_hours_per_10a": 3,
+              "hired_hour_wage_krw": 10000,
+              "materials_krw_per_10a": 20000,
+              "contractor_krw_per_10a": 5000,
+              "source_kind": "A",
+              "source_ref": "SYNTHETIC"
+            }
+          ],
+          "sales": [
+            {
+              "name": "Synthetic dispatch",
+              "year": 1,
+              "month": 6,
+              "quantity_per_10a": 400,
+              "quantity_unit": "kg",
+              "marketable_fraction": 0.9,
+              "price_krw_per_unit": 1500,
+              "commission_fraction": 0.05,
+              "deduction_krw_per_unit": 20,
+              "transport_krw_per_10a": 10000,
+              "settlement_lag_months": 2,
+              "source_kind": "A",
+              "source_ref": "SYNTHETIC"
+            }
+          ],
+          "facility_events": []
+        },
+        "occupancies": [
+          {
+            "start_year": 1,
+            "start_month": 3,
+            "end_year": 1,
+            "end_month": 6
+          }
+        ],
+        "resources": [
+          {
+            "year": 1,
+            "month": 3,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 4,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 5,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 6,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          }
+        ],
+        "weekly_allocations": [
+          {
+            "operation_index": 0,
+            "work_date": "2027-04-12",
+            "owner_hours": 10,
+            "hired_hours": 3
+          }
+        ]
+      },
+      {
+        "plot_id": "PLOT-ONE",
+        "case": {
+          "id": "SYNTHETIC AUTUMN CROP",
+          "crop": "SYNTHETIC AUTUMN CROP",
+          "system": "TEST OPEN FIELD",
+          "region": "SYNTHETIC NO PARCEL",
+          "start_year": 2027,
+          "horizon_years": 2,
+          "area_m2": 1000,
+          "annual_real_discount_rate": 0.04,
+          "owner_hour_value_krw": null,
+          "owner_available_hours_by_month": null,
+          "no_sales_reason": null,
+          "operations": [
+            {
+              "name": "Work SYNTHETIC AUTUMN CROP",
+              "year": 1,
+              "month": 8,
+              "owner_hours_per_10a": 10,
+              "hired_hours_per_10a": 3,
+              "hired_hour_wage_krw": 10000,
+              "materials_krw_per_10a": 20000,
+              "contractor_krw_per_10a": 5000,
+              "source_kind": "A",
+              "source_ref": "SYNTHETIC"
+            }
+          ],
+          "sales": [
+            {
+              "name": "Synthetic dispatch",
+              "year": 1,
+              "month": 11,
+              "quantity_per_10a": 400,
+              "quantity_unit": "kg",
+              "marketable_fraction": 0.9,
+              "price_krw_per_unit": 1500,
+              "commission_fraction": 0.05,
+              "deduction_krw_per_unit": 20,
+              "transport_krw_per_10a": 10000,
+              "settlement_lag_months": 2,
+              "source_kind": "A",
+              "source_ref": "SYNTHETIC"
+            }
+          ],
+          "facility_events": []
+        },
+        "occupancies": [
+          {
+            "start_year": 1,
+            "start_month": 8,
+            "end_year": 1,
+            "end_month": 11
+          }
+        ],
+        "resources": [
+          {
+            "year": 1,
+            "month": 8,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 9,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 10,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          },
+          {
+            "year": 1,
+            "month": 11,
+            "water_m3": 10,
+            "electricity_kwh": 20,
+            "water_cost_krw": 500,
+            "electricity_cost_krw": 1000,
+            "source_kind": "A",
+            "source_ref": "SYNTHETIC"
+          }
+        ],
+        "weekly_allocations": [
+          {
+            "operation_index": 0,
+            "work_date": "2027-08-16",
+            "owner_hours": 10,
+            "hired_hours": 3
+          }
+        ]
+      }
+    ],
+    "shared_facility_events": [
+      {
+        "name": "One shared pump",
+        "kind": "CAPEX",
+        "amount_krw": 2000000,
+        "year": 1,
+        "month": 2,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC"
+      },
+      {
+        "name": "Shared repair",
+        "kind": "OPERATING",
+        "amount_krw": 15000,
+        "year": 1,
+        "month": 12,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC"
+      }
+    ],
+    "financing_events": [],
+    "weekly_capacity": [
+      {
+        "week_start": "2027-04-12",
+        "owner_available_hours": 8,
+        "hired_available_hours": 5
+      },
+      {
+        "week_start": "2027-08-16",
+        "owner_available_hours": 8,
+        "hired_available_hours": 5
+      }
+    ]
+  },
+  "detail": {
+    "schema_version": 1,
+    "disclaimer": "Completely synthetic crop-stage, daily water/electricity, turnaround, real-rate loan terms; no farm site, pump quote or credit offer.",
+    "date_occupancies": [
+      {
+        "case_id": "SYNTHETIC SPRING CROP",
+        "plot_id": "PLOT-ONE",
+        "start_date": "2027-03-01",
+        "end_date": "2027-06-30"
+      },
+      {
+        "case_id": "SYNTHETIC AUTUMN CROP",
+        "plot_id": "PLOT-ONE",
+        "start_date": "2027-08-01",
+        "end_date": "2027-11-30"
+      }
+    ],
+    "stage_demands": [
+      {
+        "case_id": "SYNTHETIC SPRING CROP",
+        "stage": "establishment",
+        "start_date": "2027-03-01",
+        "end_date": "2027-03-31",
+        "water_m3_per_day": 0.3225806451612903,
+        "electricity_kwh_per_day": 0.6451612903225806,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC SPRING CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-04-01",
+        "end_date": "2027-04-30",
+        "water_m3_per_day": 0.3333333333333333,
+        "electricity_kwh_per_day": 0.6666666666666666,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC SPRING CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-05-01",
+        "end_date": "2027-05-31",
+        "water_m3_per_day": 0.3225806451612903,
+        "electricity_kwh_per_day": 0.6451612903225806,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC SPRING CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-06-01",
+        "end_date": "2027-06-30",
+        "water_m3_per_day": 0.3333333333333333,
+        "electricity_kwh_per_day": 0.6666666666666666,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC AUTUMN CROP",
+        "stage": "establishment",
+        "start_date": "2027-08-01",
+        "end_date": "2027-08-31",
+        "water_m3_per_day": 0.3225806451612903,
+        "electricity_kwh_per_day": 0.6451612903225806,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC AUTUMN CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-09-01",
+        "end_date": "2027-09-30",
+        "water_m3_per_day": 0.3333333333333333,
+        "electricity_kwh_per_day": 0.6666666666666666,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC AUTUMN CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-10-01",
+        "end_date": "2027-10-31",
+        "water_m3_per_day": 0.3225806451612903,
+        "electricity_kwh_per_day": 0.6451612903225806,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      },
+      {
+        "case_id": "SYNTHETIC AUTUMN CROP",
+        "stage": "crop management / harvest",
+        "start_date": "2027-11-01",
+        "end_date": "2027-11-30",
+        "water_m3_per_day": 0.3333333333333333,
+        "electricity_kwh_per_day": 0.6666666666666666,
+        "concurrent_peak_kw": 0.8,
+        "source_kind": "A",
+        "source_ref": "SYNTHETIC DAILY LOAD, NOT MEASURED"
+      }
+    ],
+    "site_peak_limits": {
+      "pump_capacity_m3_per_hour": 2,
+      "pumping_hours_available_per_day": 4,
+      "simultaneous_electric_capacity_kw": 1.5,
+      "minimum_turnaround_days": 7
+    },
+    "loan_terms": {
+      "name": "SYNTHETIC CAPITAL LOAN",
+      "draw_year": 1,
+      "draw_month": 2,
+      "principal_krw": 1000000,
+      "annual_real_interest_rate": 0.04,
+      "grace_months": 2,
+      "equal_principal_repayment_months": 12,
+      "source_kind": "A",
+      "source_ref": "SYNTHETIC REAL RATE, NOT A BANK QUOTE"
+    }
+  }
+}

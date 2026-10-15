@@ -93,3 +93,13 @@
 대출 DRAW, INTEREST, PRINCIPAL은 사용자로부터 각 현금 시점을 명시적으로 받아 계산합니다. 이자·원금 상환은 프로젝트 영업기여/NPV에 합치지 않으며, 차입금 잔액과 유동성 부족을 별도 표시합니다. [농식품부 2025.12 사업지침](https://www.mafra.go.kr/bbs/home/791/593059/download.do)은 대출 대상 선정과 실제 금융기관 승인 여부가 별개임을 안내합니다. 자동 신용심사, 금리/거치기간 가정, 인허가 판단은 수행하지 않습니다.
 
 실행: python scripts/compare_portfolio.py --input data/templates/portfolio_SYNTHETIC.json --output output/portfolio-synthetic.json --html output/portfolio-synthetic.html
+
+## 10. 단계별 수요·펌프 유량·동시전력·실질금리 상환의 수치 검사
+
+[일별 농장 운영 모델](../../src/farm_strategy/physical_operations.py)은 생육단계별 물·전기를 월평균으로 메우지 않고, 각 날짜에 명시된 사용량을 월별 장부와 정확히 대조합니다. 물 공급 원단위 m³/h와 하루 펌핑시간을 따로 측정해야 월별 총 m³가 충분해도 특정 날짜에 관수 가능 여부를 점검할 수 있습니다. 전력 계약은 월 사용량 kWh와 동시에 구동되는 기계의 정격 kW가 다른 단위입니다. 작물별 순간부하가 실제 같은 시간대에 겹치는지는 미확인일 수 있으므로 입력 합산은 보수적 상한 시뮬레이션으로 표시합니다.
+
+공식 현장 기술 맥락: [농사로 지중점적 자동관개 설명](https://www.nongsaro.go.kr/portal/ps/psb/psby/vodPlay.ps?mvpNo=1765)은 토양수분 센서와 유량/압력 계측 및 설비의 초기 비용·막힘 등 유지관리 중요성을 설명합니다. [농사로 샤인머스켓 시기별 관수기술](https://www.nongsaro.go.kr/portal/ps/psb/psbb/farmUseTechDtl.ps?farmPrcuseSeqNo=100000157311&menuId=PS00072&totalSearchYn=Y)은 생육단계별 물관리 목표가 달라지는 작형의 사례입니다. 해당 연구 결과를 모든 작물 또는 해당 농지에 자동 적용하지 않습니다.
+
+대출 원리금 현금은 직접 입력한 실질금리와 균등원금 월납·거치기간으로 생성하지만, 실제 정책자금·시중 금융사의 명목금리 및 납부주기와 동일하다고 주장하지 않습니다. [농식품부 정책자금 지침](https://www.mafra.go.kr/bbs/home/791/593059/download.do)에는 신용/담보심사가 별도로 필요하며 상환조건도 사업별·선정 시점별로 달라집니다. 실제 금융사가 발행한 상환표의 결제일과 지급통화 기준을 확인해야 합니다.
+
+실행: `python scripts/assess_physical_operations.py --input data/templates/physical_operations_SYNTHETIC.json --output output/physical-operations.json --html output/physical-operations.html`.
