@@ -49,3 +49,22 @@ def test_annual_yearly_and_period_stats():
     assert result["rain_numeric_hours"] == 18329
     assert result["period_means"]["2016-2025"]["hot33_maysep"] == 19.7
     assert result["daily_crosscheck"] == "NOT_PERFORMED"
+
+
+
+def test_simulation_weather_is_identical_to_matching_v10_annual_features():
+    """The Monte Carlo input must not silently diverge from derived v10 ASOS."""
+    legacy = ROOT / "data/processed/annual_weather.csv"
+    derived = ROOT / "data/processed/annual_asos_jeonju_2006_2025.csv"
+    with legacy.open(encoding="utf-8-sig", newline="") as handle:
+        older = list(csv.DictReader(handle))
+    with derived.open(encoding="utf-8-sig", newline="") as handle:
+        newer = list(csv.DictReader(handle))
+    assert len(older) == len(newer) == 20
+    assert set(older[0]).issubset(newer[0])
+    for old, new in zip(older, newer):
+        assert old["year"] == new["year"]
+        for column in old:
+            assert float(old[column]) == float(new[column]), (
+                f"ASOS input drift in {old['year']} {column}"
+            )
