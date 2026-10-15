@@ -16,6 +16,8 @@ jobs:
         run: python -m pytest -q
       - name: Verify 51-source crop exploration dataset and offline page
         run: python scripts/refresh_crop_discovery.py --check
+      - name: Check all 51 parcel-readiness gates and offline HTML
+        run: python scripts/build_feasibility.py --check
       - name: Reaudit derived ASOS annual data
         run: python -m farm_strategy.audit --annual data/processed/annual_asos_jeonju_2006_2025.csv --metadata data/metadata/asos_v10_archive_audit.json
       - name: Validate existing simulation input
@@ -37,4 +39,12 @@ jobs:
             output/screening-model-only.json
             output/screening-model-only.csv
             output/farm-kpi-dashboard.html
+          retention-days: 14
+      - name: Publish non-sensitive crop readiness board
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-51-crop-readiness
+          path: |
+            dashboard/feasibility/index.html
+            data/derived/crop_readiness_51.csv
           retention-days: 14
