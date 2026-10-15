@@ -6,7 +6,7 @@
 ## 실무 절차
 
 1. [현재 상태](../STATUS.md)에서 필요한 기간/지역과 자료 공백 확인. 기존 \`data/reported/rda_2024_all_51_crop_candidates.csv\`는 **2024년 스냅샷**이며, 2025 숫자로 덮어쓰지 않습니다.
-2. 공식 문서의 **기관명, 발행일, 관측·조사연도, 공간 범위(전국/전북 등), 원본 링크/쪽수, 원/10a/작기 기준**을 기록합니다. API 코드표만 있으면 \`CODEBOOK_ONLY\`이며 실적 관측치가 아닙니다.
+2. 먼저 [공식 전국·지역 출처 등록부](../reference/RDA_MULTYEAR_SOURCE_REGISTRY.md)에서 출처 URL과 전사 상태를 확인합니다. **출처 확인만으로 수치 행을 추가하지 않습니다.** 공식 문서의 **기관명, 발행일, 관측·조사연도, 공간 범위(전국/전북 등), 원본 링크/쪽수, 원/10a/작기 기준**을 기록합니다. API 코드표만 있으면 \`CODEBOOK_ONLY\`이며 실적 관측치가 아닙니다.
 3. **새 연도·지역 자료**는 우선 별도 long-format 파일/스키마로 작성합니다. 농가의 실제 판매명세서 \`T\`, 서면 견적 \`Q\`와 공공통계 \`R\`를 섞지 않습니다. 없는 작물/연도는 **결측**, 0 아님.
 4. 원자료 표의 총수입−경영비≈소득을 확인하고 자가/고용/합계 노동시간, 소득률, 작기 예외, 시설/노지 분류를 기록합니다. **인삼(4년근)**은 4년 1기작.
 5. **2024 기준표 자체의 오기 정정**만 필요한 경우, 근거 PDF와 페이지를 독립적으로 검토한 다음 기존 CSV를 수정합니다. 내용이 달라졌으면 SHA 잠금 문서를 새 원본 대조로 갱신해야 합니다.
@@ -22,6 +22,7 @@ python scripts/verify_rda_pdf_source.py \\
   --pdf data/raw/2024_농산물소득자료집.pdf --write-metadata
 # 마지막 검증:
 python scripts/verify_rda_pdf_source.py --check
+python scripts/check_crop_income_history.py --check
 python scripts/check_docs.py --check
 python -m pytest -q
 \`\`\`
