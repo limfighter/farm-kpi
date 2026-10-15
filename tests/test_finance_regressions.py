@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 
 from farm_strategy.model import one_path, read_config, read_weather, simulate
+from farm_strategy.cashflow import nominal_to_real
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = read_config(ROOT / "configs/base.json")
@@ -19,7 +20,8 @@ def test_outstanding_principal_is_not_fictitious_2036_cash_outflow():
         terminal["project_cash"] + terminal["loan_draw"] - terminal["loan_payment"],
     )
     assert path["equity_terminal_liability_adjusted_npv"] < path["equity_npv"]
-    pv = terminal["debt_end"] / (1 + CONFIG["finance"]["real_discount_rate"]) ** 9
+    terminal_real = nominal_to_real(terminal["debt_end"], 2036, CONFIG["finance"])
+    pv = terminal_real / (1 + CONFIG["finance"]["real_discount_rate"]) ** 9
     assert math.isclose(
         path["equity_npv"] - path["equity_terminal_liability_adjusted_npv"], pv
     )
