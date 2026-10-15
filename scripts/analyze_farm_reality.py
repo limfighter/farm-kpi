@@ -58,7 +58,7 @@ def render_html(result):
           "<th>실입금 또는 A 예시</th><th>기록 지급액</th><th>물량</th><th>전력</th>"+
           "</tr></thead><tbody>"+detail+"</tbody></table></div>"
         )
-    return """<!doctype html><html lang="ko"><head><meta charset="utf-8">
+    return ("""<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Farm KPI | 영농기록과 스트레스 비교</title><style>
 :root{font:15px/1.6 system-ui,-apple-system,sans-serif;background:#f5f7f2;color:#254136}
@@ -94,7 +94,7 @@ footer{margin:25px 0;color:#5b7563}
 "".join(rows)+"""</tbody></table></div></section>
 <section><h2>영농기록 CSV — 별도 집계</h2>"""+logged+"""</section>
 <footer>보고 상태: """+escape(z["status"])+""". 수치 단위와 미확인 값은 본래 입력 기준입니다.
-토양/수질/법적 허가/판로/금융 심사·정밀 기상확률은 별도 확인해야 합니다.</footer></body></html>"""
+토양/수질/법적 허가/판로/금융 심사·정밀 기상확률은 별도 확인해야 합니다.</footer></body></html>""")
 
 
 def main():
