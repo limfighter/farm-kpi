@@ -22,6 +22,12 @@ If you have original user-supplied ASOS files, keep them **locally** in `data/ra
 
 ## Evidence-first execution roadmap
 
+**Starting a separate ChatGPT session?** Read the
+[2026-10-15 project handoff](docs/SESSION_HANDOFF_2026-10-15.md)
+first. It lists completed code, file entrypoints, unverified sources,
+outstanding site constraints and the next P1-01 task. Work from the
+latest GitHub `main` state; use a **new PR** for subsequent changes.
+
 No crop, planting area, greenhouse construction or lease is selected.
 The [**8-week indicative decision workplan**](docs/FARM_DECISION_EXECUTION_PLAN.md)
 lists CI/data-quality fixes, parcel verification, buyer/net revenue and capital
