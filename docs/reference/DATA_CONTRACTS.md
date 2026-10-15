@@ -100,9 +100,9 @@ python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SY
 
 ## 작목별 농작업 일정의 출처 근거 (비수치 참조)
 
-- [작업일정 출처 레지스트리](../../data/metadata/crop_work_calendar_sources.json)는 위 2024년 RDA 51개 품목 식별자와 10개 농사로 작목별 작업일정 원문을 **별도로 연결**합니다. 41개 조사 작목은 여전히 일정 미검토입니다. 등록이 없는 것은 작목 부재나 부적합이 아니라 자료 미검토 상태입니다.
+- [작업일정 출처 레지스트리](../../data/metadata/crop_work_calendar_sources.json)는 위 2024년 RDA 51개 품목 식별자와 20개 농사로 작목별 작업일정 원문을 **별도로 연결**합니다. 31개 조사 작목은 여전히 일정 미검토입니다. 등록이 없는 것은 작목 부재나 부적합이 아니라 자료 미검토 상태입니다.
 - `official_title` / `source_url` / `variant` / `match_level` / `region_scope` / `reviewed_on` / `season_notes` / `stages[]`는 **원문 재배력/작형 설명을 간략화한 참조**입니다. 원문 발행연도 확인 전에는 `source_year=null`로 둡니다. 화면은 2024년 소득 조사시점과 재배력 게시연도를 동일하다고 표시하지 않습니다.
-- `stages[].window_months`는 원문에 달이 명시된 경우에만 목록으로 기록합니다. 미기재 월은 `[]`로 남깁니다. `crosses_calendar_year=true`면 다음 연도까지 걸친 작기(시설딸기 11~5월 등)로, 현 단년 HTML에 한 작기 수확량을 자동 생성하지 않습니다. 비교적 긴 기간은 월별 작업량 분배 자료가 **아닙니다**.
+- `stages[].window_months`는 원문에 달이 명시된 경우에만 목록으로 기록합니다. 미기재 월은 `[]`로 남깁니다. `crosses_calendar_year=true`면 다음 연도까지 걸친 작기(시설딸기 11~5월 등)로, 현 단년 HTML에 한 작기 수확량을 자동 생성하지 않습니다. 비교적 긴 기간은 월별 작업량 분배 자료가 **아닙니다**. 파프리카 겨울재배·가지 반촉성재배도 전년도 파종과 익년도 출하가 섞이지 않도록 `crosses_calendar_year`를 보존합니다.
 - `match_level`: `CROP_SYSTEM_REFERENCE`(작목/노지·시설 분류 참조), `VARIANT_REFERENCE`(작형 변형 중 하나), `CROP_FAMILY_ONLY`(작물 일치하지만 작형/토양·수경 등을 별도 확인해야 함). 이 세 값 모두 실제 농가 작형·지역·필지 적합성 인증은 아닙니다.
 - 원문에는 **KOGL 공공누리 2유형(출처표시 + 상업적 이용금지)** 조건을 표시한 페이지가 있습니다. 프로젝트는 짧은 단계명/월 범위와 URL·검토 메타데이터만 관리하고, 원문 PDF/표/그림을 재배포하지 않습니다. 향후 상품화 전에 개별 원문의 라이선스와 사용허가를 검토합니다.
 - 사용자가 원문 단계 이름으로 새 입력 행을 생성해도 **자가·고용 노동, 자재·외주비, 생산량, 가격, 시설비는 자동 입력되지 않고 UNKNOWN**입니다. 새 행의 `source_kind=A`는 사용자가 나중에 입력할 재무값의 출처 분류이며, 농사로 단계 자체의 출처는 `source_ref`로 연결합니다.

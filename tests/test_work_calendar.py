@@ -16,7 +16,7 @@ CROP_IDS = [r["crop_id"] for r in load_source(
 def test_sparse_official_calendar_coverage_never_populates_assumed_finances():
     refs = load_calendar_registry(FILE, CROP_IDS)
     assert len(CROP_IDS) == 51
-    assert len(refs) == 10
+    assert len(refs) == 20
     assert set(refs) <= set(CROP_IDS)
     assert refs["RDA2024-06"]["source_url"].endswith("menuId=PS00087")
     assert refs["RDA2024-22"]["stages"][-1]["crosses_calendar_year"] is True
@@ -52,3 +52,23 @@ def test_2024_survey_not_modified_by_calendars():
     refs = load_calendar_registry(FILE, CROP_IDS)
     assert "RDA2024-49" not in refs  # four-year ginseng, no annual schedule made up
     assert "RDA2024-37" not in refs  # no false new-orchard calendar
+
+
+def test_added_calendars_do_not_create_fictitious_income_or_site_suitability():
+    refs = load_calendar_registry(FILE, CROP_IDS)
+    paprika = refs["RDA2024-31"]
+    assert paprika["official_title"] == "파프리카"
+    assert paprika["stages"][-1]["window_months"] == [11,12,1,2,3,4,5,6,7]
+    assert paprika["stages"][-1]["crosses_calendar_year"]
+    eggplant = refs["RDA2024-30"]
+    assert eggplant["stages"][0]["crosses_calendar_year"]
+    assert eggplant["stages"][0]["window_months"] == [12,1]
+    potato_fall = refs["RDA2024-07"]
+    assert "전주" in potato_fall["season_notes"]  # explicitly unverified
+    assert potato_fall["region_scope"] == "제주도, 남부 해안지대"
+    cabbage = refs["RDA2024-16"]
+    assert cabbage["stages"][-1]["window_months"] == []  # unverified month not zero
+    blueberry = refs["RDA2024-44"]
+    assert "1~2년" in blueberry["season_notes"]
+    assert all("KRW" not in str(v) and "actual_profit" not in str(v)
+               for v in refs.values())
