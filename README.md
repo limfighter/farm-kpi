@@ -25,6 +25,19 @@
 - **[농지 현장정보 입력](dashboard/site-intake/index.html)** — 12개 공통 조사 항목 및 월별 가용시간을 로컬 JSON으로 저장. 외부 전송 없음.
 - **[기존 모델 트리맵](dashboard/index.html)** — 가상 가격/피해/비용 가정으로 만든 5개 **예시** 전략의 현금흐름·위험 비교.
 
+## 농작업 기반 작물·시설 비교 (가정형 첫 버전)
+
+**사용자가 원하는 주요 방향:** 실제 농장의 작업흐름·시설/임대/노지·투입·노동·생산·선별·출하·입금·월별 필요자금을 작목별로 비교하는 것. 출처·현장검증은 결과 신뢰도의 입력이지 모델 구축을 중지시키는 이유가 아닙니다.
+
+`src/farm_strategy/workflow.py`는 **작물 × 시설 × 실제 재배 면적**의 월별 운영활동/수익·비용 구성요소를 계산하는 독립 시뮬레이터입니다. 처음에는 완전히 **A(가정)**인 비교용 입력만 있습니다. 실제 감자/오이 수치, 견적, 작기, 수익 또는 적합성 판단이 **아닙니다**.
+
+```bash
+python scripts/compare_workflows.py --input data/templates/workflow_scenarios_SYNTHETIC.json --output output/workflow-example.json --html output/workflow-example.html
+# 이후 output/workflow-example.html 을 브라우저에서 오프라인으로 열기
+```
+
+대금 정산 지연과 보증금은 월별 현금으로 반영하되, 초기 투자비를 운영비로 재차 차감하지 않습니다. 출력의 운영 기여액은 **자기노동·세금·감가상각·대출을 반영한 순이익이 아니며**, 1년 작업+이후 미수금 수령만 추적하므로 장기 시설 투자 회수/NPV는 아직 계산하지 않습니다. 실제 농장·농사로 농작업일정·농가 영농기록과 견적 자료를 연결하는 것이 다음 과제입니다. [상세 계약](docs/reference/DATA_CONTRACTS.md).
+
 ## 개발 시작 및 검사
 
 Python **3.11** 권장. 원본 영수증, 정확한 농지 주소/지번, 대출자료, API 키, ASOS 시간별 원자료는 Git에 올리지 않습니다.
