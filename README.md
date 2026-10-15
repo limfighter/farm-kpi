@@ -13,6 +13,7 @@ python -m pip install -e '.[dev]'
 farm-strategy validate
 farm-strategy compare --seed 42 --paths 1000 --output output/compare.json
 farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000
+farm-strategy forecast --plan new_cucumber_house --seed 42 --paths 2000 --monthly-details --output output/monthly-example.json
 pytest -q
 ```
 
@@ -25,6 +26,12 @@ If you have original user-supplied ASOS files, keep them **locally** in `data/ra
 - **Hypothetical:** pest occurrence/damage, prices, greenhouse quote, hired labor rate, taxes and insurance.
 - **Accounting:** distinguish pre-financing project NPV, equity cashflow and owner-hours opportunity cost. Own work is **not** a cash labor expense. Loan principal is **not** business revenue.
 - **Investment policy:** no large greenhouse build or new borrowing until actual project quotes, working capital, labor cover and buyers are validated.
+
+## Monthly financing and liquidity (scenario assumptions)
+
+Scenario summaries report both annual year-end and month-end **minimum starting cash buffers** (2026-constant KRW 10,000). Optional `--monthly-details` exports 120 months from **one seeded sample path**, not a median or verified cash budget. Month-of-sale, costs, build payments and loan-draw schedules are assumptions defined in `configs/base.json`.
+
+The hypothetical 1.5% **nominal** loan uses an assumed 2% annual inflation deflator when combined with 2026-constant project cashflows. Nominal draw, repayment and outstanding debt remain separately visible. A monthly cash buffer is not evidence of eligibility for financing, nor is it a validated working-capital requirement.
 
 ## Governance
 
