@@ -20,6 +20,14 @@ pytest -q
 
 If you have original user-supplied ASOS files, keep them **locally** in `data/raw` (gitignored); do **not** upload them to GitHub. Derived yearly weather records are included for reproducibility.
 
+## Evidence-first execution roadmap
+
+No crop, planting area, greenhouse construction or lease is selected.
+The [**8-week indicative decision workplan**](docs/FARM_DECISION_EXECUTION_PLAN.md)
+lists CI/data-quality fixes, parcel verification, buyer/net revenue and capital
+requirements, generic crop-cycle simulation, and an evidence-gated pilot/decision.
+The timetable is contingent on external sources and responses; **unknown is not zero**.
+
 ## Crop discovery: 51 open options, no crop selected
 
 **No crop type, planting area split, facility decision, or harvesting schedule is
