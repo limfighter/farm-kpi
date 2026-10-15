@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Farm KPI Treemap Dashboard v2</title>
+<style>
+:root {
+  --brown-dark: #5A4030;
+  --brown: #7A5A43;
+  --brown-mid: #9A7557;
+  --brown-light: #C9AB90;
+  --sage-dark: #627A63;
+  --sage: #80997E;
+  --sage-light: #A9B9A3;
+  --cream: #F6F1EA;
+  --text: #2C221D;
+  --muted: #6A5F57;
+  --border: #D8CCBF;
+  --white: #FFFFFF;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  background: linear-gradient(180deg, #f8f4ef 0%, #f2ebe2 100%);
+  color: var(--text);
+}
+.page {
+  max-width: 1520px;
+  margin: 0 auto;
+  padding: 22px;
+}
+.hero {
+  background: linear-gradient(135deg, var(--brown-dark), var(--brown));
+  color: white;
+  border-radius: 28px;
+  padding: 26px 28px;
+  box-shadow: 0 20px 40px rgba(90,64,48,.18);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -100px; top: -70px;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(169,185,163,.42) 0%, rgba(169,185,163,0) 70%);
+}
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: 34px;
+  position: relative;
+  z-index: 1;
+}
+.hero p {
+  margin: 8px 0;
+  max-width: 980px;
+  color: rgba(255,255,255,.92);
+  position: relative;
+  z-index: 1;
+}
+.hero-stats {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+.hero-stat {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.14);
+}
+.hero-stat .label {
+  font-size: 12px;
+  opacity: .85;
+}
+.hero-stat .value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+.section {
+  margin-top: 18px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 18px;
+  box-shadow: 0 12px 24px rgba(122,90,67,.06);
+}
+.section h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+.section-desc {
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.control-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--cream);
+  border-radius: 18px;
+  margin-bottom: 14px;
+}
+.control-left, .control-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-right: 2px;
+}
+.scenario-btn, .metric-btn, .toggle-btn {
+  border: 1px solid var(--border);
+  background: white;
+  color: var(--brown-dark);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: .18s ease;
+}
+.scenario-btn:hover, .metric-btn:hover, .toggle-btn:hover {
+  transform: translateY(-1px);
+}
+.scenario-btn.active, .metric-btn.active, .toggle-btn.active {
+  background: var(--sage);
+  color: white;
+  border-color: var(--sage);
+}
+.summary-band {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.summary-card, .note-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f7f1ea 100%);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+}
+.summary-card h3, .note-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.note-card p, .summary-card p {
+  color: var(--muted);
+  margin: 0;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  gap: 12px;
+}
+.plan-card {
+  background: linear-gradient(180deg, #fff 0%, #f6f1ea 100%);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.plan-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%; height: 6px;
+  background: linear-gradient(90deg, var(--brown) 0%, var(--sage) 100%);
+}
+.plan-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.plan-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: grid; place-items: center;
+  background: rgba(128,153,126,.14);
+  font-size: 24px;
+}
+.plan-name {
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.25;
+}
+.plan-desc {
+  min-height: 40px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.plan-main {
+  margin-top: 10px;
+  font-size: 30px;
+  color: var(--brown-dark);
+  font-weight: 800;
+}
+.plan-main-sub {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+.plan-kpis {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 10px;
+  font-size: 13px;
+}
+.plan-kpis div.key { color: var(--muted); }
+.plan-kpis div.val { font-weight: 800; }
+.split {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 14px;
+}
+.treemap-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 10px;
+}
+.treemap-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.tm-node rect {
+  transition: .16s ease;
+}
+.tm-node:hover rect, .tm-node:focus rect {
+  filter: brightness(1.04);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.detail-panel {
+  background: linear-gradient(180deg, #fff 0%, #f7f1ea 100%);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 16px;
+  min-height: 180px;
+}
+.detail-type {
+  display: inline-block;
+  background: rgba(128,153,126,.16);
+  color: var(--sage-dark);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}
+.detail-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.detail-desc {
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.detail-extra {
+  font-size: 14px;
+  line-height: 1.5;
+  background: var(--cream);
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+}
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.flow-chip {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 12px;
+}
+.flow-chip span {
+  display: inline-grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--brown);
+  color: white;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.flow-chip strong {
+  display: block;
+  margin-bottom: 6px;
+}
+.flow-chip small {
+  color: var(--muted);
+  line-height: 1.45;
+}
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px;
+}
+.mini-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+.mini-card span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.matrix-head h3 {
+  margin: 0 0 6px;
+}
+.matrix-head p {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid rgba(255,255,255,.7);
+  padding: 10px 12px;
+  font-size: 13px;
+  text-align: right;
+}
+thead th {
+  background: #eee4d9;
+  position: sticky;
+  top: 0;
+}
+tbody th {
+  text-align: left;
+  background: #f9f4ee;
+}
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 12px;
+}
+.action-card {
+  background: linear-gradient(180deg, #fff 0%, #f6f1ea 100%);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+}
+.action-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.action-card code {
+  display: block;
+  white-space: pre-wrap;
+  background: #f2e8dd;
+  border-radius: 12px;
+  padding: 10px;
+  color: var(--brown-dark);
+  margin-top: 8px;
+  font-size: 12px;
+}
+.footnote {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 1280px) {
+  .hero-stats { grid-template-columns: repeat(3, 1fr); }
+  .cards { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  .split, .summary-band { grid-template-columns: 1fr; }
+  .flow-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 760px) {
+  .page { padding: 14px; }
+  .cards, .quick-actions, .mini-grid, .flow-grid { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="hero">
+    <h1>Farm KPI 대시보드 · 트리맵 중심 HTML</h1>
+    <p>
+      이번 버전은 <b>브라운 베이스</b>에 농업 데이터와 어울리는 <b>세이지 그린</b> 포인트를 더한 스타일로 다시 구성했습니다.
+      차트 라이브러리 의존을 줄이고, HTML 안에 직접 그린 <b>SVG 트리맵</b>을 사용해 가시성을 높였습니다.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="label">전략 수</div><div class="value">5</div></div>
+      <div class="hero-stat"><div class="label">시나리오 수</div><div class="value">6</div></div>
+      <div class="hero-stat"><div class="label">Monte Carlo Paths</div><div class="value">300</div></div>
+      <div class="hero-stat"><div class="label">기간</div><div class="value">2027–2036</div></div>
+      <div class="hero-stat"><div class="label">기상 창</div><div class="value">recent10</div></div>
+      <div class="hero-stat"><div class="label">기준 전략</div><div class="value">field_trial</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>1) 인터랙티브 전략 카드</h2>
+    <div class="section-desc">시나리오 버튼을 누르면 5개 전략 카드가 즉시 바뀝니다. 아이콘형 카드 UI도 함께 적용했습니다.</div>
+    <div class="control-strip">
+      <div class="control-left">
+        <span class="pill-label">시나리오 선택</span>
+        <button class='scenario-btn active' data-scenario='base'>기본</button><button class='scenario-btn' data-scenario='weak_damage'>약한 피해</button><button class='scenario-btn' data-scenario='severe_damage'>심한 피해</button><button class='scenario-btn' data-scenario='price_down_15'>가격 -15%</button><button class='scenario-btn' data-scenario='wage_up_30'>인건비 +30%</button><button class='scenario-btn' data-scenario='capex_up_20'>투자비 +20%</button>
+      </div>
+      <div class="control-right">
+        <button class="toggle-btn active" id="sortEconomicBtn">경제적 NPV 순 정렬</button>
+      </div>
+    </div>
+    <div class="summary-band">
+      <div class="summary-card">
+        <h3 id="scenarioTitle">기본 시나리오</h3>
+        <p id="scenarioDesc">기준 가정</p>
+      </div>
+      <div class="note-card">
+        <h3>읽는 법</h3>
+        <p>카드의 큰 숫자는 <b>경제적 NPV 중앙값</b>입니다. 아래에는 월별 필요자금 P90, 2030 부채후 현금, 고용시간, 말기 명목부채를 함께 보여줍니다.</p>
+      </div>
+    </div>
+    <div class="cards" id="planCards"></div>
+  </section>
+
+  <section class="section">
+    <h2>워크플로 트리맵</h2>
+    <div class="section-desc">사각형을 클릭하면 오른쪽 패널에서 해당 단계 설명을 볼 수 있습니다.</div>
+    <div class="split">
+      <div class="treemap-box"><svg viewBox="0 0 1220 640" class="treemap-svg" role="img" aria-label="Farm KPI 워크플로"><rect x="0" y="0" width="1220" height="640" fill="#F6F1EA" rx="18" ry="18"/><g class="tm-node group-node" tabindex="0" data-title="입력·검증" data-type="group" data-desc="데이터와 설정, 증빙 스키마를 읽고 기본 검사를 수행합니다." data-extra="대표 코드: read_weather, validate_cashflow_config, evidence-check, audit"><rect x="3.0" y="3.0" width="496.4" height="323.7" rx="18" ry="18" fill="#7A5A43" opacity="0.18" stroke="#7A5A43" stroke-width="2"/><text x="16.0" y="28.0" fill="#2C221D" font-size="21" font-weight="700">입력·검증</text><g class="tm-node child-node" tabindex="0" data-title="ASOS 연간 데이터 로드" data-type="item" data-desc="annual_weather.csv를 읽어 연도별 기상 특성을 시뮬레이션 입력으로 사용" data-extra="가중치/길이: 2 | 상위 그룹: 입력·검증"><rect x="13.0" y="45.0" width="235.2" height="152.7" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="64.0" fill="#FFFFFF" font-size="14" font-weight="600">ASOS 연간 데이터 로드</text></g><g class="tm-node child-node" tabindex="0" data-title="현금흐름 설정 검증" data-type="item" data-desc="월별 판매비중과 capex/payment month가 유효한지 검사" data-extra="가중치/길이: 2 | 상위 그룹: 입력·검증"><rect x="254.2" y="45.0" width="235.2" height="152.7" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="263.2" y="64.0" fill="#FFFFFF" font-size="14" font-weight="600">현금흐름 설정 검증</text></g><g class="tm-node child-node" tabindex="0" data-title="증빙 스키마 검사" data-type="item" data-desc="실제 영수증/견적은 자동 반영하지 않고 CSV 메타데이터 형식만 검사" data-extra="가중치/길이: 2 | 상위 그룹: 입력·검증"><rect x="13.0" y="203.7" width="476.4" height="73.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="222.7" fill="#FFFFFF" font-size="14" font-weight="600">증빙 스키마 검사</text></g><g class="tm-node child-node" tabindex="0" data-title="ASOS 감사" data-type="item" data-desc="파생 연간 기상 데이터와 시간별 감사 로직에 대한 회귀검증" data-extra="가중치/길이: 1 | 상위 그룹: 입력·검증"><rect x="13.0" y="283.0" width="476.4" height="33.7" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="302.0" fill="#FFFFFF" font-size="12" font-weight="600">ASOS 감사</text></g></g><g class="tm-node group-node" tabindex="0" data-title="시뮬레이션 엔진" data-type="group" data-desc="각 path에서 2027~2036 현금흐름을 계산합니다." data-extra="대표 코드: one_path, month_labor, loan_cash"><rect x="505.4" y="3.0" width="711.6" height="323.7" rx="18" ry="18" fill="#80997E" opacity="0.18" stroke="#80997E" stroke-width="2"/><text x="518.4" y="28.0" fill="#2C221D" font-size="21" font-weight="700">시뮬레이션 엔진</text><g class="tm-node child-node" tabindex="0" data-title="전략·시나리오 선택" data-type="item" data-desc="5개 plan × 6개 stress scenario 조합" data-extra="가중치/길이: 1 | 상위 그룹: 시뮬레이션 엔진"><rect x="515.4" y="45.0" width="226.5" height="77.3" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="524.4" y="64.0" fill="#FFFFFF" font-size="14" font-weight="600">전략·시나리오 선택</text></g><g class="tm-node child-node" tabindex="0" data-title="기상 연도 샘플링" data-type="item" data-desc="recent10 / all20 창에서 연도별 weather feature 샘플링" data-extra="가중치/길이: 2 | 상위 그룹: 시뮬레이션 엔진"><rect x="747.9" y="45.0" width="459.1" height="77.3" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="756.9" y="64.0" fill="#FFFFFF" font-size="14" font-weight="600">기상 연도 샘플링</text></g><g class="tm-node child-node" tabindex="0" data-title="가격 충격" data-type="item" data-desc="공통 및 작물별 price shock 반영" data-extra="가중치/길이: 2 | 상위 그룹: 시뮬레이션 엔진"><rect x="515.4" y="128.3" width="691.6" height="49.5" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="524.4" y="147.3" fill="#FFFFFF" font-size="12" font-weight="600">가격 충격</text></g><g class="tm-node child-node" tabindex="0" data-title="병해충·수리 draw" data-type="item" data-desc="병해충 손실과 시설 대수선 확률 반영" data-extra="가중치/길이: 2 | 상위 그룹: 시뮬레이션 엔진"><rect x="515.4" y="183.8" width="691.6" height="49.5" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="524.4" y="202.8" fill="#FFFFFF" font-size="12" font-weight="600">병해충·수리 draw</text></g><g class="tm-node child-node" tabindex="0" data-title="수익·비용 계산" data-type="item" data-desc="매출, 운영비, 투자비, salvage, 고용노동 등 연간 계산" data-extra="가중치/길이: 3 | 상위 그룹: 시뮬레이션 엔진"><rect x="515.4" y="239.4" width="691.6" height="77.3" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="524.4" y="258.4" fill="#FFFFFF" font-size="14" font-weight="600">수익·비용 계산</text></g></g><g class="tm-node group-node" tabindex="0" data-title="월별 유동성" data-type="group" data-desc="연간 금액을 120개월 month-end ledger로 배분합니다." data-extra="대표 코드: month_ledger, nominal_to_real"><rect x="3.0" y="332.7" width="1214.0" height="129.8" rx="18" ry="18" fill="#7A5A43" opacity="0.18" stroke="#7A5A43" stroke-width="2"/><text x="16.0" y="357.7" fill="#2C221D" font-size="21" font-weight="700">월별 유동성</text><g class="tm-node child-node" tabindex="0" data-title="연간→월별 배분" data-type="item" data-desc="매출/비용/투자/terminal을 설정된 시점에 월별 분배" data-extra="가중치/길이: 3 | 상위 그룹: 월별 유동성"><rect x="13.0" y="374.7" width="1194.0" height="29.9" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="393.7" fill="#FFFFFF" font-size="12" font-weight="600">연간→월별 배분</text></g><g class="tm-node child-node" tabindex="0" data-title="명목대출→실질 환산" data-type="item" data-desc="명목 대출 draw/payment를 2026 불변가로 환산" data-extra="가중치/길이: 2 | 상위 그룹: 월별 유동성"><rect x="13.0" y="410.6" width="1194.0" height="17.9" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="429.6" fill="#FFFFFF" font-size="12" font-weight="600">명목대출→실질 환산</text></g><g class="tm-node child-node" tabindex="0" data-title="최저 월말 잔액 추적" data-type="item" data-desc="monthly_liquidity_buffer_required 산출" data-extra="가중치/길이: 2 | 상위 그룹: 월별 유동성"><rect x="13.0" y="434.5" width="1194.0" height="17.9" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="453.5" fill="#FFFFFF" font-size="12" font-weight="600">최저 월말 잔액 추적</text></g></g><g class="tm-node group-node" tabindex="0" data-title="비교·출력" data-type="group" data-desc="전략 비교와 보고서, CSV/JSON 산출물을 만듭니다." data-extra="대표 코드: simulate, compare_plans, save_comparison_csv"><rect x="3.0" y="468.5" width="1214.0" height="168.5" rx="18" ry="18" fill="#80997E" opacity="0.18" stroke="#80997E" stroke-width="2"/><text x="16.0" y="493.5" fill="#2C221D" font-size="21" font-weight="700">비교·출력</text><g class="tm-node child-node" tabindex="0" data-title="forecast" data-type="item" data-desc="단일 전략 요약과 optional 120개월 예시 path 반환" data-extra="가중치/길이: 2 | 상위 그룹: 비교·출력"><rect x="13.0" y="510.5" width="1194.0" height="21.2" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="529.5" fill="#FFFFFF" font-size="12" font-weight="600">forecast</text></g><g class="tm-node child-node" tabindex="0" data-title="paired 5전략 비교" data-type="item" data-desc="공통 난수 기반으로 5개 전략의 차이를 비교" data-extra="가중치/길이: 3 | 상위 그룹: 비교·출력"><rect x="13.0" y="537.7" width="1194.0" height="34.8" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="556.7" fill="#FFFFFF" font-size="12" font-weight="600">paired 5전략 비교</text></g><g class="tm-node child-node" tabindex="0" data-title="p10 / median / p90" data-type="item" data-desc="주요 KPI의 분위수 요약" data-extra="가중치/길이: 2 | 상위 그룹: 비교·출력"><rect x="13.0" y="578.5" width="1194.0" height="21.2" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="597.5" fill="#FFFFFF" font-size="12" font-weight="600">p10 / median / p90</text></g><g class="tm-node child-node" tabindex="0" data-title="JSON / CSV / CI artifact" data-type="item" data-desc="screening-model-only 결과 및 GitHub Actions 업로드" data-extra="가중치/길이: 2 | 상위 그룹: 비교·출력"><rect x="13.0" y="605.8" width="1194.0" height="21.2" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="624.8" fill="#FFFFFF" font-size="12" font-weight="600">JSON / CSV / CI ar…</text></g></g></svg></div>
+      <div>
+        <div class="detail-panel" id="workflowDetail">
+          <div class="detail-type">워크플로</div>
+          <div class="detail-title">입력·검증</div>
+          <div class="detail-desc">데이터와 설정, 증빙 스키마를 읽고 기본 검사를 수행합니다.</div>
+          <div class="detail-extra">대표 코드: read_weather, validate_cashflow_config, evidence-check, audit</div>
+        </div>
+        <div class="flow-grid">
+          <div class='flow-chip'><span>1</span><strong>입력</strong><small>ASOS 연간 데이터, base.json, 증빙 CSV 스키마를 읽습니다.</small></div><div class='flow-chip'><span>2</span><strong>검증</strong><small>월별 비중, 월 값, evidence schema, 감사 테스트를 통과시킵니다.</small></div><div class='flow-chip'><span>3</span><strong>시뮬레이션</strong><small>전략·시나리오·기상연도를 path 단위로 계산합니다.</small></div><div class='flow-chip'><span>4</span><strong>월별 원장</strong><small>연간 금액을 120개월 month-end ledger로 배분합니다.</small></div><div class='flow-chip'><span>5</span><strong>전략 비교</strong><small>5개 전략을 공통 난수 조건으로 비교합니다.</small></div><div class='flow-chip'><span>6</span><strong>산출물</strong><small>JSON / CSV / GitHub Actions artifact를 만듭니다.</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>변수 트리맵</h2>
+    <div class="section-desc">변수 묶음의 구조와 비중을 빠르게 보는 용도입니다. 배열 변수는 길이를 면적으로 반영했습니다.</div>
+    <div class="split">
+      <div class="treemap-box"><svg viewBox="0 0 1220 860" class="treemap-svg" role="img" aria-label="모델 변수"><rect x="0" y="0" width="1220" height="860" fill="#F6F1EA" rx="18" ry="18"/><g class="tm-node group-node" tabindex="0" data-title="관측 입력" data-type="group" data-desc="ASOS에서 파생된 year-level 기상 변수" data-extra=""><rect x="3.0" y="3.0" width="113.3" height="448.7" rx="18" ry="18" fill="#80997E" opacity="0.18" stroke="#80997E" stroke-width="2"/><text x="16.0" y="28.0" fill="#2C221D" font-size="21" font-weight="700">관측 입력</text><g class="tm-node child-node" tabindex="0" data-title="ASOS year" data-type="item" data-desc="2006~2025 관측 연도" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="13.0" y="45.0" width="16.1" height="195.4" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="64.0" fill="#2C221D" font-size="12" font-weight="600">ASOS year</text></g><g class="tm-node child-node" tabindex="0" data-title="hot33_maysep" data-type="item" data-desc="5~9월 고온일" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="13.0" y="246.4" width="16.1" height="195.4" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="265.4" fill="#2C221D" font-size="12" font-weight="600">hot33_maysep</text></g><g class="tm-node child-node" tabindex="0" data-title="frost0_apr" data-type="item" data-desc="4월 서리 영향" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="35.1" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="44.1" y="64.0" fill="#2C221D" font-size="12" font-weight="600">frost0_apr</text></g><g class="tm-node child-node" tabindex="0" data-title="rain80_maysep" data-type="item" data-desc="여름철 과다 강수" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="46.1" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="55.1" y="64.0" fill="#2C221D" font-size="12" font-weight="600">rain80_maysep</text></g><g class="tm-node child-node" tabindex="0" data-title="rain40_aprjun" data-type="item" data-desc="봄~초여름 강수" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="57.2" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="66.2" y="64.0" fill="#2C221D" font-size="12" font-weight="600">rain40_aprjun</text></g><g class="tm-node child-node" tabindex="0" data-title="heat30_aprjun" data-type="item" data-desc="봄~초여름 고온" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="68.2" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="77.2" y="64.0" fill="#2C221D" font-size="12" font-weight="600">heat30_aprjun</text></g><g class="tm-node child-node" tabindex="0" data-title="rain40_juloct" data-type="item" data-desc="7~10월 습윤도" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="79.2" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="88.2" y="64.0" fill="#2C221D" font-size="12" font-weight="600">rain40_juloct</text></g><g class="tm-node child-node" tabindex="0" data-title="hot33_juloct" data-type="item" data-desc="7~10월 고온" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="90.3" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="99.3" y="64.0" fill="#2C221D" font-size="12" font-weight="600">hot33_juloct</text></g><g class="tm-node child-node" tabindex="0" data-title="rain40_maysep" data-type="item" data-desc="5~9월 강수 빈도" data-extra="가중치/길이: 1 | 상위 그룹: 관측 입력"><rect x="101.3" y="45.0" width="5.0" height="396.7" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="110.3" y="64.0" fill="#2C221D" font-size="12" font-weight="600">rain40_maysep</text></g></g><g class="tm-node group-node" tabindex="0" data-title="finance" data-type="group" data-desc="수익·비용·노동·투자에 관한 핵심 재무 변수" data-extra=""><rect x="122.3" y="3.0" width="1094.7" height="448.7" rx="18" ry="18" fill="#7A5A43" opacity="0.18" stroke="#7A5A43" stroke-width="2"/><text x="135.3" y="28.0" fill="#2C221D" font-size="21" font-weight="700">finance</text><g class="tm-node child-node" tabindex="0" data-title="years[2]" data-type="item" data-desc="모델 기간 2027~2036" data-extra="가중치/길이: 2 | 상위 그룹: finance"><rect x="132.3" y="45.0" width="302.8" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="64.0" fill="#FFFFFF" font-size="12" font-weight="600">years[2]</text></g><g class="tm-node child-node" tabindex="0" data-title="real_discount_rate" data-type="item" data-desc="실질 할인율" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="441.1" y="45.0" width="148.4" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="450.1" y="64.0" fill="#2C221D" font-size="12" font-weight="600">real_discount_rate</text></g><g class="tm-node child-node" tabindex="0" data-title="field_initial_capex" data-type="item" data-desc="노지 초기 투자" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="595.5" y="45.0" width="148.4" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="604.5" y="64.0" fill="#2C221D" font-size="12" font-weight="600">field_initial_cape…</text></g><g class="tm-node child-node" tabindex="0" data-title="site_overhead" data-type="item" data-desc="부지 고정비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="749.9" y="45.0" width="148.4" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="758.9" y="64.0" fill="#2C221D" font-size="12" font-weight="600">site_overhead</text></g><g class="tm-node child-node" tabindex="0" data-title="potato_revenue" data-type="item" data-desc="감자 매출" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="904.2" y="45.0" width="148.4" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="913.2" y="64.0" fill="#2C221D" font-size="12" font-weight="600">potato_revenue</text></g><g class="tm-node child-node" tabindex="0" data-title="scallion_revenue" data-type="item" data-desc="쪽파 매출" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="1058.6" y="45.0" width="148.4" height="28.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="1067.6" y="64.0" fill="#2C221D" font-size="12" font-weight="600">scallion_revenue</text></g><g class="tm-node child-node" tabindex="0" data-title="cucumber_revenue_300p" data-type="item" data-desc="오이 매출" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="132.3" y="79.0" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="98.0" fill="#2C221D" font-size="12" font-weight="600">cucumber_revenue_3…</text></g><g class="tm-node child-node" tabindex="0" data-title="potato_cost_ex_hired" data-type="item" data-desc="감자 운영비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="348.5" y="79.0" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="357.5" y="98.0" fill="#2C221D" font-size="12" font-weight="600">potato_cost_ex_hir…</text></g><g class="tm-node child-node" tabindex="0" data-title="scallion_cost_ex_hired" data-type="item" data-desc="쪽파 운영비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="564.6" y="79.0" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="573.6" y="98.0" fill="#2C221D" font-size="12" font-weight="600">scallion_cost_ex_h…</text></g><g class="tm-node child-node" tabindex="0" data-title="cucumber_cost_ex_hired" data-type="item" data-desc="오이 운영비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="780.7" y="79.0" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="789.7" y="98.0" fill="#2C221D" font-size="12" font-weight="600">cucumber_cost_ex_h…</text></g><g class="tm-node child-node" tabindex="0" data-title="new_house_capex" data-type="item" data-desc="신축 투자비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="996.9" y="79.0" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="1005.9" y="98.0" fill="#2C221D" font-size="12" font-weight="600">new_house_capex</text></g><g class="tm-node child-node" tabindex="0" data-title="new_house_maintenance" data-type="item" data-desc="신축 유지비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="132.3" y="103.2" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="122.2" fill="#2C221D" font-size="12" font-weight="600">new_house_maintena…</text></g><g class="tm-node child-node" tabindex="0" data-title="house_salvage_fraction" data-type="item" data-desc="잔존가치 비율" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="348.5" y="103.2" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="357.5" y="122.2" fill="#2C221D" font-size="12" font-weight="600">house_salvage_frac…</text></g><g class="tm-node child-node" tabindex="0" data-title="rent_deposit" data-type="item" data-desc="임대 보증금" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="564.6" y="103.2" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="573.6" y="122.2" fill="#2C221D" font-size="12" font-weight="600">rent_deposit</text></g><g class="tm-node child-node" tabindex="0" data-title="rent_fitout" data-type="item" data-desc="임대 fit-out" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="780.7" y="103.2" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="789.7" y="122.2" fill="#2C221D" font-size="12" font-weight="600">rent_fitout</text></g><g class="tm-node child-node" tabindex="0" data-title="rent_yearly" data-type="item" data-desc="연 임대료" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="996.9" y="103.2" width="210.1" height="18.3" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="1005.9" y="122.2" fill="#2C221D" font-size="12" font-weight="600">rent_yearly</text></g><g class="tm-node child-node" tabindex="0" data-title="rent_maintenance" data-type="item" data-desc="임대 유지비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="132.3" y="127.5" width="264.2" height="13.4" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="146.5" fill="#2C221D" font-size="12" font-weight="600">rent_maintenance</text></g><g class="tm-node child-node" tabindex="0" data-title="land_maintenance_if_idle" data-type="item" data-desc="유휴지 유지비" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="402.5" y="127.5" width="264.2" height="13.4" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="411.5" y="146.5" fill="#2C221D" font-size="12" font-weight="600">land_maintenance_i…</text></g><g class="tm-node child-node" tabindex="0" data-title="facility_major_repair_cost" data-type="item" data-desc="대수선 비용" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="672.7" y="127.5" width="264.2" height="13.4" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="681.7" y="146.5" fill="#2C221D" font-size="12" font-weight="600">facility_major_rep…</text></g><g class="tm-node child-node" tabindex="0" data-title="hired_hour_rate" data-type="item" data-desc="고용 인건비/시간" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="942.8" y="127.5" width="264.2" height="13.4" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="951.8" y="146.5" fill="#2C221D" font-size="12" font-weight="600">hired_hour_rate</text></g><g class="tm-node child-node" tabindex="0" data-title="owner_hour_economic_value" data-type="item" data-desc="자가노동 기회비용" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="132.3" y="146.9" width="77.1" height="57.1" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="165.9" fill="#2C221D" font-size="12" font-weight="600">owner_hour_economi…</text></g><g class="tm-node child-node" tabindex="0" data-title="owner_available_hours_by_month[12]" data-type="item" data-desc="월별 자가 가용시간" data-extra="가중치/길이: 12 | 상위 그룹: finance"><rect x="215.5" y="146.9" width="991.5" height="57.1" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="224.5" y="165.9" fill="#FFFFFF" font-size="14" font-weight="600">owner_available_hours_by_month[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="hour_requirements_site[12]" data-type="item" data-desc="부지 관리시간" data-extra="가중치/길이: 12 | 상위 그룹: finance"><rect x="132.3" y="210.0" width="1074.7" height="52.2" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="229.0" fill="#FFFFFF" font-size="14" font-weight="600">hour_requirements_site[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="hour_requirements_potato[12]" data-type="item" data-desc="감자 월별 시간" data-extra="가중치/길이: 12 | 상위 그룹: finance"><rect x="132.3" y="268.2" width="1074.7" height="52.2" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="287.2" fill="#FFFFFF" font-size="14" font-weight="600">hour_requirements_potato[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="hour_requirements_scallion[12]" data-type="item" data-desc="쪽파 월별 시간" data-extra="가중치/길이: 12 | 상위 그룹: finance"><rect x="132.3" y="326.4" width="1074.7" height="52.2" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="345.4" fill="#FFFFFF" font-size="14" font-weight="600">hour_requirements_scallion[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="hour_requirements_cucumber[12]" data-type="item" data-desc="오이 월별 시간" data-extra="가중치/길이: 12 | 상위 그룹: finance"><rect x="132.3" y="384.6" width="1074.7" height="52.2" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="403.6" fill="#FFFFFF" font-size="14" font-weight="600">hour_requirements_cucumber[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="assumed_annual_inflation_rate" data-type="item" data-desc="인플레이션 가정" data-extra="가중치/길이: 1 | 상위 그룹: finance"><rect x="132.3" y="442.9" width="1074.7" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="141.3" y="461.9" fill="#2C221D" font-size="12" font-weight="600">assumed_annual_inf…</text></g></g><g class="tm-node group-node" tabindex="0" data-title="loan" data-type="group" data-desc="가정 대출 설정" data-extra=""><rect x="3.0" y="457.7" width="1214.0" height="28.6" rx="18" ry="18" fill="#80997E" opacity="0.18" stroke="#80997E" stroke-width="2"/><text x="16.0" y="482.7" fill="#2C221D" font-size="21" font-weight="700">loan</text><g class="tm-node child-node" tabindex="0" data-title="enabled_for_new_house" data-type="item" data-desc="신축 전략에만 대출 허용" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">enabled_for_new_ho…</text></g><g class="tm-node child-node" tabindex="0" data-title="principal" data-type="item" data-desc="원금" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">principal</text></g><g class="tm-node child-node" tabindex="0" data-title="annual_nominal_rate" data-type="item" data-desc="명목 금리" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">annual_nominal_rat…</text></g><g class="tm-node child-node" tabindex="0" data-title="draw_year" data-type="item" data-desc="대출 실행 연도" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">draw_year</text></g><g class="tm-node child-node" tabindex="0" data-title="grace_years" data-type="item" data-desc="거치 기간" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">grace_years</text></g><g class="tm-node child-node" tabindex="0" data-title="amortization_years" data-type="item" data-desc="상환 기간" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">amortization_years</text></g><g class="tm-node child-node" tabindex="0" data-title="status" data-type="item" data-desc="실제 승인 아님" data-extra="가중치/길이: 1 | 상위 그룹: loan"><rect x="13.0" y="499.7" width="0.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="518.7" fill="#2C221D" font-size="12" font-weight="600">status</text></g></g><g class="tm-node group-node" tabindex="0" data-title="risk" data-type="group" data-desc="가격·병해충·수리 확률과 초기 생산성 가정" data-extra=""><rect x="3.0" y="492.3" width="1214.0" height="102.7" rx="18" ry="18" fill="#7A5A43" opacity="0.18" stroke="#7A5A43" stroke-width="2"/><text x="16.0" y="517.3" fill="#2C221D" font-size="21" font-weight="700">risk</text><g class="tm-node child-node" tabindex="0" data-title="price_common_sigma" data-type="item" data-desc="공통 가격 변동성" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="534.3" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="553.3" fill="#2C221D" font-size="12" font-weight="600">price_common_sigma</text></g><g class="tm-node child-node" tabindex="0" data-title="price_potato_sigma" data-type="item" data-desc="감자 변동성" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="536.9" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="555.9" fill="#2C221D" font-size="12" font-weight="600">price_potato_sigma</text></g><g class="tm-node child-node" tabindex="0" data-title="price_scallion_sigma" data-type="item" data-desc="쪽파 변동성" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="539.5" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="558.5" fill="#2C221D" font-size="12" font-weight="600">price_scallion_sig…</text></g><g class="tm-node child-node" tabindex="0" data-title="price_cucumber_sigma" data-type="item" data-desc="오이 변동성" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="542.0" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="561.0" fill="#2C221D" font-size="12" font-weight="600">price_cucumber_sig…</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_potato_base" data-type="item" data-desc="감자 병해충 확률" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="544.6" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="563.6" fill="#2C221D" font-size="12" font-weight="600">pest_potato_base</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_scallion_base" data-type="item" data-desc="쪽파 병해충 확률" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="547.2" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="566.2" fill="#2C221D" font-size="12" font-weight="600">pest_scallion_base</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_cucumber_base" data-type="item" data-desc="오이 병해충 확률" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="549.8" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="568.8" fill="#2C221D" font-size="12" font-weight="600">pest_cucumber_base</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_loss_potato" data-type="item" data-desc="감자 피해율" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="552.4" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="571.4" fill="#2C221D" font-size="12" font-weight="600">pest_loss_potato</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_loss_scallion" data-type="item" data-desc="쪽파 피해율" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="554.9" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="573.9" fill="#2C221D" font-size="12" font-weight="600">pest_loss_scallion</text></g><g class="tm-node child-node" tabindex="0" data-title="pest_loss_cucumber" data-type="item" data-desc="오이 피해율" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="557.5" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="576.5" fill="#2C221D" font-size="12" font-weight="600">pest_loss_cucumber</text></g><g class="tm-node child-node" tabindex="0" data-title="major_repair_base_prob" data-type="item" data-desc="대수선 기본확률" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="560.1" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="579.1" fill="#2C221D" font-size="12" font-weight="600">major_repair_base_…</text></g><g class="tm-node child-node" tabindex="0" data-title="major_repair_wet_sensitivity" data-type="item" data-desc="대수선 습윤 민감도" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="562.7" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="581.7" fill="#2C221D" font-size="12" font-weight="600">major_repair_wet_s…</text></g><g class="tm-node child-node" tabindex="0" data-title="first_year_field_productivity" data-type="item" data-desc="1년차 노지 생산성" data-extra="가중치/길이: 1 | 상위 그룹: risk"><rect x="13.0" y="565.3" width="1194.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="584.3" fill="#2C221D" font-size="12" font-weight="600">first_year_field_p…</text></g><g class="tm-node child-node" tabindex="0" data-title="cucumber_ramp_from_2028[9]" data-type="item" data-desc="오이 램프업 계수" data-extra="가중치/길이: 9 | 상위 그룹: risk"><rect x="13.0" y="567.8" width="1194.0" height="17.2" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="586.8" fill="#FFFFFF" font-size="12" font-weight="600">cucumber_ramp_from…</text></g></g><g class="tm-node group-node" tabindex="0" data-title="monthly_cashflow" data-type="group" data-desc="연간 금액을 월별로 나눌 때 쓰는 timing 설정" data-extra=""><rect x="3.0" y="601.0" width="1214.0" height="211.5" rx="18" ry="18" fill="#80997E" opacity="0.18" stroke="#80997E" stroke-width="2"/><text x="16.0" y="626.0" fill="#2C221D" font-size="21" font-weight="700">monthly_cashflow</text><g class="tm-node child-node" tabindex="0" data-title="potato_sales[12]" data-type="item" data-desc="감자 판매 시점 가중치" data-extra="가중치/길이: 12 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="643.0" width="1194.0" height="39.1" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="662.0" fill="#FFFFFF" font-size="12" font-weight="600">potato_sales[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="scallion_sales[12]" data-type="item" data-desc="쪽파 판매 시점 가중치" data-extra="가중치/길이: 12 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="688.2" width="1194.0" height="39.1" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="707.2" fill="#FFFFFF" font-size="12" font-weight="600">scallion_sales[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="cucumber_sales[12]" data-type="item" data-desc="오이 판매 시점 가중치" data-extra="가중치/길이: 12 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="733.3" width="1194.0" height="39.1" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="752.3" fill="#FFFFFF" font-size="12" font-weight="600">cucumber_sales[12]</text></g><g class="tm-node child-node" tabindex="0" data-title="field_capex_month" data-type="item" data-desc="노지 투자 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="778.4" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="797.4" fill="#2C221D" font-size="12" font-weight="600">field_capex_month</text></g><g class="tm-node child-node" tabindex="0" data-title="house_capex_month" data-type="item" data-desc="신축 투자 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="782.2" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="801.2" fill="#2C221D" font-size="12" font-weight="600">house_capex_month</text></g><g class="tm-node child-node" tabindex="0" data-title="lease_capex_month" data-type="item" data-desc="임대 투자 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="786.0" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="805.0" fill="#2C221D" font-size="12" font-weight="600">lease_capex_month</text></g><g class="tm-node child-node" tabindex="0" data-title="loan_draw_month" data-type="item" data-desc="대출 실행 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="789.7" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="808.7" fill="#2C221D" font-size="12" font-weight="600">loan_draw_month</text></g><g class="tm-node child-node" tabindex="0" data-title="loan_payment_month" data-type="item" data-desc="대출 상환 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="793.5" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="812.5" fill="#2C221D" font-size="12" font-weight="600">loan_payment_month</text></g><g class="tm-node child-node" tabindex="0" data-title="repair_month" data-type="item" data-desc="수리 반영 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="797.2" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="816.2" fill="#2C221D" font-size="12" font-weight="600">repair_month</text></g><g class="tm-node child-node" tabindex="0" data-title="terminal_month" data-type="item" data-desc="잔존가치 유입 월" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="801.0" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="820.0" fill="#2C221D" font-size="12" font-weight="600">terminal_month</text></g><g class="tm-node child-node" tabindex="0" data-title="status" data-type="item" data-desc="실거래 아닌 timing 가정" data-extra="가중치/길이: 1 | 상위 그룹: monthly_cashflow"><rect x="13.0" y="804.8" width="1194.0" height="0.0" rx="12" ry="12" fill="#627A63" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="823.8" fill="#2C221D" font-size="12" font-weight="600">status</text></g></g><g class="tm-node group-node" tabindex="0" data-title="outputs / KPI" data-type="group" data-desc="주요 성과지표" data-extra=""><rect x="3.0" y="818.5" width="1214.0" height="38.5" rx="18" ry="18" fill="#7A5A43" opacity="0.18" stroke="#7A5A43" stroke-width="2"/><text x="16.0" y="843.5" fill="#2C221D" font-size="21" font-weight="700">outputs / KPI</text><g class="tm-node child-node" tabindex="0" data-title="project_npv" data-type="item" data-desc="사업 NPV" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">project_npv</text></g><g class="tm-node child-node" tabindex="0" data-title="economic_npv" data-type="item" data-desc="자가노동 기회비용 반영 NPV" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">economic_npv</text></g><g class="tm-node child-node" tabindex="0" data-title="equity_npv" data-type="item" data-desc="지분 NPV" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">equity_npv</text></g><g class="tm-node child-node" tabindex="0" data-title="equity_terminal_liability_adjusted_npv" data-type="item" data-desc="말기 부채 반영 NPV" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">equity_terminal_li…</text></g><g class="tm-node child-node" tabindex="0" data-title="monthly_liquidity_buffer_required" data-type="item" data-desc="월말 기준 필요자금" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">monthly_liquidity_…</text></g><g class="tm-node child-node" tabindex="0" data-title="annual_liquidity_buffer_required" data-type="item" data-desc="연말 기준 필요자금" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">annual_liquidity_b…</text></g><g class="tm-node child-node" tabindex="0" data-title="cash_2030_after_debt" data-type="item" data-desc="2030 부채후 현금" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">cash_2030_after_de…</text></g><g class="tm-node child-node" tabindex="0" data-title="hired_hours_2030" data-type="item" data-desc="2030 고용시간" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">hired_hours_2030</text></g><g class="tm-node child-node" tabindex="0" data-title="debt_end" data-type="item" data-desc="말기 명목부채" data-extra="가중치/길이: 1 | 상위 그룹: outputs / KPI"><rect x="13.0" y="860.5" width="0.0" height="0.0" rx="12" ry="12" fill="#9A7557" stroke="#FFFFFF" stroke-width="2"/><text x="22.0" y="879.5" fill="#2C221D" font-size="12" font-weight="600">debt_end</text></g></g></svg></div>
+      <div>
+        <div class="detail-panel" id="variableDetail">
+          <div class="detail-type">변수 그룹</div>
+          <div class="detail-title">finance</div>
+          <div class="detail-desc">수익·비용·노동·투자에 관한 핵심 재무 변수</div>
+          <div class="detail-extra">매출, 운영비, 투자비, 노동시간, 인플레이션 가정 등이 포함됩니다.</div>
+        </div>
+        <div class="mini-grid">
+          <div class='mini-card'><strong>관측 입력</strong><span>기상 파생 변수</span></div><div class='mini-card'><strong>finance</strong><span>매출·비용·노동·투자</span></div><div class='mini-card'><strong>loan</strong><span>가정 대출 조건</span></div><div class='mini-card'><strong>risk</strong><span>가격·병해충·대수선 리스크</span></div><div class='mini-card'><strong>monthly_cashflow</strong><span>월별 시점 가정</span></div><div class='mini-card'><strong>outputs / KPI</strong><span>최종 판단 지표</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>2) 인터랙티브 비교 매트릭스</h2>
+    <div class="section-desc">보고 싶은 KPI를 바꿔가며 6개 시나리오 × 5개 전략 값을 확인할 수 있습니다.</div>
+    <div class="control-strip">
+      <div class="control-left">
+        <span class="pill-label">KPI 선택</span>
+        <button class='metric-btn active' data-metric='economic_npv_median'>경제적 NPV 중앙값</button><button class='metric-btn' data-metric='monthly_liquidity_buffer_required_p90'>월별 필요자금 P90</button><button class='metric-btn' data-metric='cash_2030_after_debt_median'>2030 부채후 현금 중앙값</button>
+      </div>
+      <div class="control-right">
+        <span class="pill-label">현재 값은 CI 산출물(screening-model-only.csv) 기준</span>
+      </div>
+    </div>
+    <div class='metric-table metric-economic_npv_median' style='display:none'><div class='matrix-head'><h3>경제적 NPV 중앙값</h3><p>만원, 2026 불변가</p></div><div class='table-wrap'><table><thead><tr><th>시나리오</th><th>⏸️ 시험재배 후 중단</th><th>🌱 노지 감자·쪽파 지속</th><th>⭐ 프리미엄 오이 하우스</th><th>📄 오이 하우스 임대</th><th>🏗️ 오이 하우스 신축</th></tr></thead><tbody><tr><th>기본</th><td style='background:#80997e'>-1,779</td><td style='background:#a1b49e'>-4,509</td><td style='background:#abbca8'>-5,379</td><td style='background:#b6c5b4'>-6,325</td><td style='background:#cfdacc'>-8,429</td></tr><tr><th>약한 피해</th><td style='background:#80997e'>-1,771</td><td style='background:#a0b39d'>-4,432</td><td style='background:#9eb19c'>-4,278</td><td style='background:#acbdaa'>-5,495</td><td style='background:#c5d2c3'>-7,599</td></tr><tr><th>심한 피해</th><td style='background:#80997e'>-1,794</td><td style='background:#a2b5a0'>-4,650</td><td style='background:#c2cfc0'>-7,363</td><td style='background:#c9d4c6'>-7,876</td><td style='background:#e2e9df'>-9,979</td></tr><tr><th>가격 -15%</th><td style='background:#81997f'>-1,821</td><td style='background:#a5b7a3'>-4,901</td><td style='background:#d1dbce'>-8,549</td><td style='background:#d4ded1'>-8,840</td><td style='background:#edf2ea'>-10,943</td></tr><tr><th>인건비 +30%</th><td style='background:#819a7f'>-1,826</td><td style='background:#a5b7a3'>-4,886</td><td style='background:#c5d1c2'>-7,571</td><td style='background:#d0dacd'>-8,517</td><td style='background:#e9efe6'>-10,621</td></tr><tr><th>투자비 +20%</th><td style='background:#80997e'>-1,779</td><td style='background:#a1b49e'>-4,509</td><td style='background:#b6c5b3'>-6,312</td><td style='background:#b6c5b4'>-6,325</td><td style='background:#dae3d7'>-9,362</td></tr></tbody></table></div></div><div class='metric-table metric-monthly_liquidity_buffer_required_p90' style='display:none'><div class='matrix-head'><h3>월별 필요자금 P90</h3><p>만원, 2026 불변가</p></div><div class='table-wrap'><table><thead><tr><th>시나리오</th><th>⏸️ 시험재배 후 중단</th><th>🌱 노지 감자·쪽파 지속</th><th>⭐ 프리미엄 오이 하우스</th><th>📄 오이 하우스 임대</th><th>🏗️ 오이 하우스 신축</th></tr></thead><tbody><tr><th>기본</th><td style='background:#efe3d8'>1,757</td><td style='background:#ddcec1'>2,867</td><td style='background:#bca897'>4,950</td><td style='background:#a38a77'>6,565</td><td style='background:#a58d7a'>6,387</td></tr><tr><th>약한 피해</th><td style='background:#efe3d8'>1,749</td><td style='background:#dfd0c3'>2,776</td><td style='background:#c2ae9f'>4,594</td><td style='background:#b29b8a'>5,621</td><td style='background:#b39d8c'>5,536</td></tr><tr><th>심한 피해</th><td style='background:#efe3d7'>1,774</td><td style='background:#dacbbe'>3,053</td><td style='background:#a58c7a'>6,417</td><td style='background:#83644e'>8,565</td><td style='background:#866852'>8,393</td></tr><tr><th>가격 -15%</th><td style='background:#eee2d7'>1,790</td><td style='background:#d6c6b9'>3,295</td><td style='background:#a18774'>6,684</td><td style='background:#7a5a43'>9,128</td><td style='background:#7d5d47'>8,952</td></tr><tr><th>인건비 +30%</th><td style='background:#eee2d7'>1,804</td><td style='background:#d6c6b8'>3,323</td><td style='background:#a88f7d'>6,251</td><td style='background:#7a5a43'>9,118</td><td style='background:#7d5d47'>8,942</td></tr><tr><th>투자비 +20%</th><td style='background:#efe3d8'>1,757</td><td style='background:#ddcec1'>2,867</td><td style='background:#ab9381'>6,040</td><td style='background:#a38a77'>6,565</td><td style='background:#947964'>7,477</td></tr></tbody></table></div></div><div class='metric-table metric-cash_2030_after_debt_median' style='display:none'><div class='matrix-head'><h3>2030 부채후 현금 중앙값</h3><p>만원, 2026 불변가</p></div><div class='table-wrap'><table><thead><tr><th>시나리오</th><th>⏸️ 시험재배 후 중단</th><th>🌱 노지 감자·쪽파 지속</th><th>⭐ 프리미엄 오이 하우스</th><th>📄 오이 하우스 임대</th><th>🏗️ 오이 하우스 신축</th></tr></thead><tbody><tr><th>기본</th><td style='background:#c3d0c0'>-110</td><td style='background:#cdd8ca'>-209</td><td style='background:#8fa58d'>426</td><td style='background:#cbd6c8'>-193</td><td style='background:#b9c8b7'>-9</td></tr><tr><th>약한 피해</th><td style='background:#c3d0c0'>-110</td><td style='background:#cbd7c9'>-196</td><td style='background:#80997e'>584</td><td style='background:#bfccbc'>-63</td><td style='background:#adbeaa'>120</td></tr><tr><th>심한 피해</th><td style='background:#c3d0c0'>-110</td><td style='background:#ced9cc'>-228</td><td style='background:#abbca9'>136</td><td style='background:#e0e7dd'>-410</td><td style='background:#ced9cc'>-226</td></tr><tr><th>가격 -15%</th><td style='background:#c3d0c0'>-110</td><td style='background:#d1dbcf'>-258</td><td style='background:#bac8b7'>-16</td><td style='background:#edf2ea'>-544</td><td style='background:#dbe4d8'>-361</td></tr><tr><th>인건비 +30%</th><td style='background:#c3d0c0'>-110</td><td style='background:#d1dbce'>-255</td><td style='background:#acbdaa'>125</td><td style='background:#e8eee5'>-494</td><td style='background:#d6e0d4'>-311</td></tr><tr><th>투자비 +20%</th><td style='background:#c3d0c0'>-110</td><td style='background:#cdd8ca'>-209</td><td style='background:#8fa58d'>426</td><td style='background:#cbd6c8'>-193</td><td style='background:#b9c8b7'>-9</td></tr></tbody></table></div></div>
+  </section>
+
+  <section class="section">
+    <h2>빠른 실행 가이드</h2>
+    <div class="section-desc">현재 구조를 다시 만들거나 결과를 갱신할 때 자주 쓰는 명령입니다.</div>
+    <div class="quick-actions">
+      <div class="action-card">
+        <h3>전략 비교 다시 생성</h3>
+        <code>farm-strategy compare --seed 42 --paths 1000 --stress-matrix \
+--output output/compare-model-only.json \
+--csv output/compare-model-only.csv</code>
+      </div>
+      <div class="action-card">
+        <h3>단일 전략 월별 상세 보기</h3>
+        <code>farm-strategy forecast --plan new_cucumber_house \
+--seed 42 --paths 1000 --monthly-details \
+--output output/monthly-example.json</code>
+      </div>
+      <div class="action-card">
+        <h3>실제 증빙 형식 검사</h3>
+        <code>farm-strategy evidence-check \
+--file data/private/my_evidence.csv</code>
+      </div>
+    </div>
+    <div class="footnote">
+      주의: 이 화면의 결과는 실측 매출, 실제 공사 견적, 승인된 대출조건으로 교정되기 전의 <b>가정 기반 모델</b>입니다.
+    </div>
+  </section>
+</div>
+
+<script>
+const scenarioData = {"base": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1779.27, "project_npv_median": -1491.27, "monthly_liquidity_buffer_required_p90": 1757.19, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4508.84, "project_npv_median": -2173.79, "monthly_liquidity_buffer_required_p90": 2867.42, "cash_2030_after_debt_median": -208.68, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -5378.89, "project_npv_median": -2329.5, "monthly_liquidity_buffer_required_p90": 4950.44, "cash_2030_after_debt_median": 426.44, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -6325.44, "project_npv_median": -3276.05, "monthly_liquidity_buffer_required_p90": 6565.33, "cash_2030_after_debt_median": -192.53, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -8429.19, "project_npv_median": -5379.8, "monthly_liquidity_buffer_required_p90": 6386.98, "cash_2030_after_debt_median": -9.1, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}], "weak_damage": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1771.18, "project_npv_median": -1483.18, "monthly_liquidity_buffer_required_p90": 1748.77, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -4278.18, "project_npv_median": -1228.79, "monthly_liquidity_buffer_required_p90": 4594.22, "cash_2030_after_debt_median": 583.55, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4432.2, "project_npv_median": -2097.15, "monthly_liquidity_buffer_required_p90": 2776.38, "cash_2030_after_debt_median": -196.01, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -5494.98, "project_npv_median": -2445.59, "monthly_liquidity_buffer_required_p90": 5620.99, "cash_2030_after_debt_median": -63.23, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -7598.73, "project_npv_median": -4549.34, "monthly_liquidity_buffer_required_p90": 5535.55, "cash_2030_after_debt_median": 120.2, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}], "severe_damage": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1793.71, "project_npv_median": -1505.71, "monthly_liquidity_buffer_required_p90": 1774.06, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4650.03, "project_npv_median": -2314.98, "monthly_liquidity_buffer_required_p90": 3052.8, "cash_2030_after_debt_median": -228.24, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -7363.22, "project_npv_median": -4313.83, "monthly_liquidity_buffer_required_p90": 6416.51, "cash_2030_after_debt_median": 135.79, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -7875.57, "project_npv_median": -4826.18, "monthly_liquidity_buffer_required_p90": 8564.56, "cash_2030_after_debt_median": -409.58, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -9979.32, "project_npv_median": -6929.93, "monthly_liquidity_buffer_required_p90": 8392.76, "cash_2030_after_debt_median": -226.15, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}], "price_down_15": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1820.64, "project_npv_median": -1532.64, "monthly_liquidity_buffer_required_p90": 1789.89, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4901.18, "project_npv_median": -2566.13, "monthly_liquidity_buffer_required_p90": 3294.53, "cash_2030_after_debt_median": -257.66, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -8549.08, "project_npv_median": -5499.69, "monthly_liquidity_buffer_required_p90": 6683.83, "cash_2030_after_debt_median": -15.92, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -8839.53, "project_npv_median": -5790.14, "monthly_liquidity_buffer_required_p90": 9127.76, "cash_2030_after_debt_median": -544.06, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -10943.28, "project_npv_median": -7893.89, "monthly_liquidity_buffer_required_p90": 8952.12, "cash_2030_after_debt_median": -360.63, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}], "wage_up_30": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1825.83, "project_npv_median": -1537.83, "monthly_liquidity_buffer_required_p90": 1803.75, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4886.37, "project_npv_median": -2551.32, "monthly_liquidity_buffer_required_p90": 3323.39, "cash_2030_after_debt_median": -255.24, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -7570.72, "project_npv_median": -4521.33, "monthly_liquidity_buffer_required_p90": 6251.36, "cash_2030_after_debt_median": 124.62, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -8517.27, "project_npv_median": -5467.88, "monthly_liquidity_buffer_required_p90": 9117.58, "cash_2030_after_debt_median": -494.35, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -10621.02, "project_npv_median": -7571.63, "monthly_liquidity_buffer_required_p90": 8941.94, "cash_2030_after_debt_median": -310.92, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}], "capex_up_20": [{"plan": "pause_after_trial", "plan_ko": "시험재배 후 중단", "icon": "⏸️", "desc": "시험재배 뒤 운영을 멈추는 보수적 전략", "economic_npv_median": -1779.27, "project_npv_median": -1491.27, "monthly_liquidity_buffer_required_p90": 1757.19, "cash_2030_after_debt_median": -110.0, "hired_hours_2030_median": 0.0, "debt_end_nominal_median": 0.0}, {"plan": "field_trial", "plan_ko": "노지 감자·쪽파 지속", "icon": "🌱", "desc": "노지 작물(감자·쪽파)을 계속 운영하는 기준 전략", "economic_npv_median": -4508.84, "project_npv_median": -2173.79, "monthly_liquidity_buffer_required_p90": 2867.42, "cash_2030_after_debt_median": -208.68, "hired_hours_2030_median": 83.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_premium", "plan_ko": "프리미엄 오이 하우스", "icon": "⭐", "desc": "프리미엄 매출 uplift를 가정한 신축 오이 전략", "economic_npv_median": -6311.59, "project_npv_median": -3262.2, "monthly_liquidity_buffer_required_p90": 6040.44, "cash_2030_after_debt_median": 426.44, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}, {"plan": "leased_cucumber_house", "plan_ko": "오이 하우스 임대", "icon": "📄", "desc": "하우스를 임대해 오이 재배로 운영", "economic_npv_median": -6325.44, "project_npv_median": -3276.05, "monthly_liquidity_buffer_required_p90": 6565.33, "cash_2030_after_debt_median": -192.53, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 0.0}, {"plan": "new_cucumber_house", "plan_ko": "오이 하우스 신축", "icon": "🏗️", "desc": "2028년 하우스를 신축해 오이 재배로 전환", "economic_npv_median": -9361.89, "project_npv_median": -6312.5, "monthly_liquidity_buffer_required_p90": 7476.98, "cash_2030_after_debt_median": -9.1, "hired_hours_2030_median": 538.0, "debt_end_nominal_median": 2400.0}]};
+const scenarioDesc = {"base": "기준 가정", "weak_damage": "기상/생육 피해가 다소 증가한 경우", "severe_damage": "기상/생육 피해가 크게 증가한 경우", "price_down_15": "판매단가가 15% 하락한 경우", "wage_up_30": "인건비가 30% 상승한 경우", "capex_up_20": "시설 투자비가 20% 상승한 경우"};
+const scenarioName = {"base": "기본", "weak_damage": "약한 피해", "severe_damage": "심한 피해", "price_down_15": "가격 -15%", "wage_up_30": "인건비 +30%", "capex_up_20": "투자비 +20%"};
+const planCards = document.getElementById('planCards');
+const scenarioTitle = document.getElementById('scenarioTitle');
+const scenarioDescEl = document.getElementById('scenarioDesc');
+let currentScenario = 'base';
+let economicSort = true;
+const defaultPlanOrder = ['field_trial', 'pause_after_trial', 'new_cucumber_house', 'leased_cucumber_house', 'new_cucumber_premium'];
+
+function fmt(v) {
+  return Number(v).toLocaleString('ko-KR', {maximumFractionDigits: 0});
+}
+
+function renderCards() {
+  let cards = [...scenarioData[currentScenario]];
+  if (economicSort) {
+    cards.sort((a,b) => b.economic_npv_median - a.economic_npv_median);
+  } else {
+    cards.sort((a,b) => defaultPlanOrder.indexOf(a.plan) - defaultPlanOrder.indexOf(b.plan));
+  }
+  planCards.innerHTML = cards.map((d, idx) => `
+    <article class="plan-card">
+      <div class="plan-head">
+        <div class="plan-icon">${d.icon}</div>
+        <div>
+          <div class="plan-name">#${idx+1} · ${d.plan_ko}</div>
+          <div class="plan-desc">${d.desc}</div>
+        </div>
+      </div>
+      <div class="plan-main">${fmt(d.economic_npv_median)}</div>
+      <div class="plan-main-sub">경제적 NPV 중앙값 (만원)</div>
+      <div class="plan-kpis">
+        <div class="key">월별 필요자금 P90</div><div class="val">${fmt(d.monthly_liquidity_buffer_required_p90)}</div>
+        <div class="key">2030 부채후 현금</div><div class="val">${fmt(d.cash_2030_after_debt_median)}</div>
+        <div class="key">2030 고용시간</div><div class="val">${fmt(d.hired_hours_2030_median)}</div>
+        <div class="key">말기 명목부채</div><div class="val">${fmt(d.debt_end_nominal_median)}</div>
+      </div>
+    </article>
+  `).join('');
+  scenarioTitle.textContent = scenarioName[currentScenario] + " 시나리오";
+  scenarioDescEl.textContent = scenarioDesc[currentScenario];
+}
+
+document.querySelectorAll('.scenario-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentScenario = btn.dataset.scenario;
+    renderCards();
+  });
+});
+
+document.getElementById('sortEconomicBtn').addEventListener('click', (e) => {
+  economicSort = !economicSort;
+  const sortButton = document.getElementById('sortEconomicBtn');
+  sortButton.textContent = economicSort ? '경제적 NPV 순 정렬' : '기본 전략 순';
+  sortButton.classList.toggle('active', economicSort);
+  sortButton.setAttribute('aria-pressed', String(economicSort));
+  renderCards();
+});
+
+function attachTreemapInteractions(selector, targetId, defaultType) {
+  const target = document.getElementById(targetId);
+  document.querySelectorAll(selector + ' .tm-node').forEach(node => {
+    const update = () => {
+      const type = node.dataset.type === 'group' ? defaultType : '세부 항목';
+      const title = node.dataset.title || '';
+      const desc = node.dataset.desc || '';
+      const extra = node.dataset.extra || '';
+      target.innerHTML = `
+        <div class="detail-type">${type}</div>
+        <div class="detail-title">${title}</div>
+        <div class="detail-desc">${desc}</div>
+        <div class="detail-extra">${extra}</div>
+      `;
+    };
+    node.addEventListener('click', (event) => {
+      event.stopPropagation(); // Child nodes must not trigger their parent detail panel.
+      update();
+    });
+    node.addEventListener('keypress', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        update();
+      }
+    });
+  });
+}
+
+document.querySelectorAll('.metric-table')[0].style.display = 'block';
+document.querySelectorAll('.metric-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.metric-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const metric = btn.dataset.metric;
+    document.querySelectorAll('.metric-table').forEach(t => t.style.display = 'none');
+    document.querySelector('.metric-' + metric).style.display = 'block';
+  });
+});
+
+attachTreemapInteractions('.section:nth-of-type(3)', 'workflowDetail', '워크플로 그룹');
+attachTreemapInteractions('.section:nth-of-type(4)', 'variableDetail', '변수 그룹');
+renderCards();
+</script>
+</body>
+</html>
