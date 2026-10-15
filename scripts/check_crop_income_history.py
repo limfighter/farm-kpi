@@ -7,9 +7,12 @@ import argparse
 import csv
 import json
 from pathlib import Path
-from refresh_crop_discovery import load_source
+import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from farm_strategy.reported import load_source  # noqa: E402
+
 BASE = ROOT / "data/reported/rda_2024_all_51_crop_candidates.csv"
 SOURCES = ROOT / "data/metadata/rda_income_source_registry.json"
 LONG = ROOT / "data/reported/rda_income_long.csv"

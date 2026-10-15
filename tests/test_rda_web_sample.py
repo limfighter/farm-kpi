@@ -59,6 +59,18 @@ def test_income_modified_beyond_source_snapshot_rejected(tmp_path):
         check(fixture(tmp_path, lambda rows: rows[0].update(income_krw_per_10a="3362209")))
 
 
+@pytest.mark.parametrize("field", ["yield_quantity", "reported_price_krw_per_kg"])
+@pytest.mark.parametrize("observed_index", range(5))
+def test_each_observed_yield_and_price_stays_locked_to_source_snapshot(
+        tmp_path, field, observed_index):
+    def alter(rows):
+        observed = [r for r in rows if r["observation_status"] == "OBSERVED_WEB_TABLE"]
+        observed[observed_index][field] = "1"
+
+    with pytest.raises(ValueError, match="Manual official"):
+        check(fixture(tmp_path, alter))
+
+
 def test_no_arbitrary_duplicates(tmp_path):
     with pytest.raises(ValueError, match="Duplicate"):
         check(fixture(tmp_path, lambda rows: rows.append(dict(rows[0]))))

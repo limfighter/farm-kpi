@@ -67,4 +67,4 @@ farm-strategy site-check \\
 | `site-check` 검증 실패 | [현장 조사표 구조](../RDA_AUDIT_AND_SITE_INTAKE.md); 주소·개인정보 필드나 단위 오류 확인 |
 | CI 실패 | GitHub Actions에서 **현재 커밋**의 첫 실패 단계를 검토, 테스트 무력화 금지 |
 
-**다음 시작점:** [프로젝트 상태](../STATUS.md)에서 P1-01 미완료 항목을 확인하고 신규 PR을 작성하세요.
+**다음 시작점:** [프로젝트 상태](../STATUS.md)에서 현재 차단사항을 확인하고 [세션별 실행 계획](../sessions/README.md)에서 선행조건에 맞는 작업을 골라 이어가세요.

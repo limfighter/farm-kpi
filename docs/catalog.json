@@ -67,6 +67,12 @@
       "lifecycle": "active"
     },
     {
+      "path": "docs/explanation/CODE_STRUCTURE.md",
+      "type": "explanation",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
       "path": "docs/explanation/DOCS_DESIGN_SOURCES.md",
       "type": "explanation",
       "owner": "maintainer",
@@ -148,6 +154,78 @@
       "path": "docs/STRATEGY_COMPARISON_AND_EVIDENCE.md",
       "type": "reference",
       "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/README.md",
+      "type": "index",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/01-public-sources.md",
+      "type": "how-to",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/02-site-feasibility.md",
+      "type": "how-to",
+      "owner": "operator",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/03-labor-and-capital.md",
+      "type": "how-to",
+      "owner": "operator",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/04-buyers-and-settlement.md",
+      "type": "how-to",
+      "owner": "operator",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/05-facility-options.md",
+      "type": "how-to",
+      "owner": "operator",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/06-weather-and-agronomy.md",
+      "type": "how-to",
+      "owner": "research",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/07-accounting-components.md",
+      "type": "how-to",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/08-evidence-gated-model.md",
+      "type": "how-to",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/09-robust-comparison.md",
+      "type": "how-to",
+      "owner": "model",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/10-offline-integration.md",
+      "type": "how-to",
+      "owner": "maintainer",
+      "lifecycle": "active"
+    },
+    {
+      "path": "docs/sessions/11-pilot-and-decision.md",
+      "type": "how-to",
+      "owner": "operator",
       "lifecycle": "active"
     }
   ]

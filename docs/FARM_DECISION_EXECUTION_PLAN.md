@@ -24,8 +24,10 @@ Critical accounting distinctions: RDA `income = gross_receipts - management_cost
 
 ## Development progress recorded 2026-10-15
 
-For the next ChatGPT session, start with
-[`docs/SESSION_HANDOFF_2026-10-15.md`](SESSION_HANDOFF_2026-10-15.md).
+For the next ChatGPT session, read the current [STATUS](STATUS.md) and
+[session-by-session execution plans](sessions/README.md) first.
+[`docs/SESSION_HANDOFF_2026-10-15.md`](SESSION_HANDOFF_2026-10-15.md)
+is a historical snapshot, not the current task/status source.
 The historic implementation PR was #1; the current merge status is determined
 by the GitHub PR, not by this dated roadmap.
 
