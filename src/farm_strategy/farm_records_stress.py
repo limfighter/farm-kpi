@@ -305,6 +305,14 @@ def stress_portfolio(portfolio, cases):
                   "stressed": _shortfall_summary(stressed, key)}
             for key in ("irrigation_m3", "electricity_kwh")
         }
+        # Financial deltas alone are not a viable planting plan: shortages
+        # are operational blockers even when the model has no yield-loss link.
+        if any(z["stressed"]["months_supply_unknown"] for z in summaries.values()):
+            physical_supply_status = "SUPPLY_UNKNOWN_NOT_EVALUABLE"
+        elif any(z["stressed"]["months_short"] for z in summaries.values()):
+            physical_supply_status = "RESOURCE_DEFICIT_UNPRICED_YIELD_RISK"
+        else:
+            physical_supply_status = "NO_MODELED_MONTHLY_RESOURCE_DEFICIT"
         delta_settlements = sum(p["net_expected_settlement_krw"] for p in stressed["per_crop"]) - sum(
             p["net_expected_settlement_krw"] for p in baseline["per_crop"])
         delta_cash = stressed["ending_cash_krw"] - baseline["ending_cash_krw"]
@@ -324,6 +332,8 @@ def stress_portfolio(portfolio, cases):
                 stressed["maximum_month_end_cash_shortfall_krw"] -
                 baseline["maximum_month_end_cash_shortfall_krw"]),
             "scarcity": summaries,
+            "physical_supply_status": physical_supply_status,
+            "financial_result_is_conditional_not_feasibility_approval": True,
         })
     return {
         "status": "EXPLICIT_STRESS_NOT_PROBABILISTIC_YIELD_OR_CROP_RECOMMENDATION",
