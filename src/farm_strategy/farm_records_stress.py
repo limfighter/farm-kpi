@@ -8,6 +8,7 @@ No source code path upgrades observations into forecasts or recalibrates harvest
 labor, commodity prices, weather losses or production functions automatically.
 """
 import csv
+from contextlib import nullcontext
 from collections import defaultdict
 from copy import deepcopy
 from datetime import date, datetime
@@ -120,7 +121,11 @@ def read_farm_log(csv_path, portfolio):
     total = 0
     seen_rows = set()
     seen_settlements = set()
-    with Path(csv_path).open("r", encoding="utf-8-sig", newline="") as fh:
+    # Local web interface passes a memory-only StringIO. Never persist a
+    # potentially sensitive uploaded CSV merely to parse it.
+    stream = nullcontext(csv_path) if hasattr(csv_path, "read") else Path(csv_path).open(
+        "r", encoding="utf-8-sig", newline="")
+    with stream as fh:
         reader = csv.DictReader(fh, strict=True)
         if reader.fieldnames is None or tuple(reader.fieldnames) != LOG_HEADERS:
             raise ValueError("Log CSV requires exact documented columns")

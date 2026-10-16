@@ -239,6 +239,12 @@
       "type": "reference",
       "owner": "model",
       "lifecycle": "active"
+    },
+    {
+      "path": "docs/how-to/UNIFIED_FARM_WORKSPACE.md",
+      "type": "how-to",
+      "owner": "model",
+      "lifecycle": "active"
     }
   ]
 }

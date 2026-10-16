@@ -51,3 +51,13 @@
 ## 검증 방법
 
 전체 테스트와 [CI](../../.github/workflows/ci.yml)의 출처·문서·화면 재현성 명령을 함께 실행합니다. 구조 변경 시에는 변경 전 코드의 동일 seed 결과와 상세 경로·단일 계획 요약·계획 비교 결과를 직접 대조합니다. 로컬 테스트 통과와 원격 push/PR CI 통과는 별도로 보고합니다. 원본 PDF나 현장 자료가 없는 검증의 한계는 [모델 경계](MODEL_BOUNDARIES.md)와 [RDA 웹 표본](../reference/RDA_WEB_EVIDENCE_SAMPLE.md)에 따릅니다.
+
+
+## 단일 최상위 분석 파이프라인
+
+이제 scripts/run_farm_workspace.py -> farm_strategy.farm_workspace.run_farm_workspace가 모든 현금 관련 기존 코드를 한 번에 연결합니다. lifecycle은 작물별 원장, execution_detail은 등급 수량·포장비 검증, portfolio는 공통 농장 현금, physical_operations는 일별 자원/금융 사건, farm_records_stress는 하락위험/부분 영농기록을 담당합니다. 모듈별 현금을 단순히 더하지 않고 최종 authoritative_portfolio에 모든 중복 없는 현금을 반영합니다.
+
+구형 CLI/화면은 소스 감사·하위 호환 때문에 보존됩니다. 레거시 51작목 편집기는 아직 통합 입력 포맷으로 자동 변환하지 못하므로 단일 계산 흐름 구현을 모든 편집 UI의 통일이라고 주장하지 않습니다.
+
+
+**브라우저 한 곳:** scripts/serve_farm_workspace.py는 Python 표준 라이브러리의 loopback-only HTTP 서버로 단일 JSON 편집·비식별 로컬 CSV/계산·결과 표시를 제공합니다. 서버 내 계산은 동일 run_farm_workspace와 render_html을 호출합니다. 업로드 CSV는 문자열 버퍼로만 처리하며 디스크에 임시 저장하지 않습니다. 외부 배포·원격 인증/실시간 데이터·브라우저 안 모델 자체 복제는 지원하지 않습니다.

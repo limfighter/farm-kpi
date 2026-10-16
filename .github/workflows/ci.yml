@@ -130,6 +130,17 @@ jobs:
             output/farm-reality-synthetic.json
             output/farm-reality-synthetic.html
           retention-days: 14
+      - name: Validate ONE canonical farm ledger and unified report
+        run: |
+          python scripts/run_farm_workspace.py --input data/templates/farm_workspace_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-workspace-synthetic.json --html output/farm-workspace-synthetic.html
+      - name: Upload unified farm workspace report
+        uses: actions/upload-artifact@v4
+        with:
+          name: farm-kpi-unified-farm-workspace
+          path: |
+            output/farm-workspace-synthetic.json
+            output/farm-workspace-synthetic.html
+          retention-days: 14
       - name: Validate existing simulation input
         run: farm-strategy validate
       - name: Validate empty private evidence template (no imported numbers)
