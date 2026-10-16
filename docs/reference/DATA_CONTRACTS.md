@@ -182,3 +182,5 @@ financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/sou
 - WORK/HARVEST/SETTLEMENT/EXPENSE/WATER_USE/POWER_USE 각각의 행수는 숫자 0도 가능합니다. 이는 **그 종류의 관측이 없음**을 뜻하며 해당 합계는 JSON null, HTML UNKNOWN입니다. 자가시간·고용시간도 각각 기록 유무를 구분합니다. 기록된 실제 0을 포함한 입력 합계만 0을 표시합니다.
 - 실제 영농기록 첫/마지막 **원본 날짜와 source_ref는 내보내지 않습니다**. 하지만 출력에 작물 사례 case_id와 사용자가 지정한 스트레스 description이 남으므로 외부 공유 전에 비식별 확인이 필요합니다. 데이터는 보안이 자동 인증된 익명 파일이 아닙니다.
 - 공급량 부족이 있어도 피해-수확량 반응식이 없으므로 회계 차액이 0일 수 있습니다. 각 시나리오 physical_supply_status는 SUPPLY_UNKNOWN_NOT_EVALUABLE / RESOURCE_DEFICIT_UNPRICED_YIELD_RISK / NO_MODELED_MONTHLY_RESOURCE_DEFICIT 중 하나입니다. 마지막 상태조차 현장 물·전력 인입/계약·재배 허가의 실제 승인 상태가 아닙니다.
+
+- 현장 관측(O)·정산(T)의 '미래 일자' 여부는 서버/CI 실행기의 UTC 달력이 아니라 **전주 인근 독립 농지의 한국 표준시(Asia/Seoul)** 날짜를 기준으로 판단합니다. 지역이나 시간대가 다른 농장은 현재 구현의 적용범위가 아니며 별도 시간대 정의가 필요합니다.
