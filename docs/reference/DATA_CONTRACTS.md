@@ -184,3 +184,12 @@ financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/sou
 - 공급량 부족이 있어도 피해-수확량 반응식이 없으므로 회계 차액이 0일 수 있습니다. 각 시나리오 physical_supply_status는 SUPPLY_UNKNOWN_NOT_EVALUABLE / RESOURCE_DEFICIT_UNPRICED_YIELD_RISK / NO_MODELED_MONTHLY_RESOURCE_DEFICIT 중 하나입니다. 마지막 상태조차 현장 물·전력 인입/계약·재배 허가의 실제 승인 상태가 아닙니다.
 
 - 현장 관측(O)·정산(T)의 '미래 일자' 여부는 서버/CI 실행기의 UTC 달력이 아니라 **전주 인근 독립 농지의 한국 표준시(Asia/Seoul)** 날짜를 기준으로 판단합니다. 지역이나 시간대가 다른 농장은 현재 구현의 적용범위가 아니며 별도 시간대 정의가 필요합니다.
+
+
+## 통합 워크스페이스 v1 (농장 현금 단일 원장)
+
+작물별 등급/작형·생육단계·자원·대출·가격 및 영농기록의 기존 별도 계약을 읽는 단일 최상위 JSON: schema_version=1, disclaimer, portfolio, grade_lots_by_case, physical_detail, stress. 일부가 미입력이라면 grade_lots_by_case는 빈 객체, physical_detail과 stress는 null이며 실제 미확인 UNKNOWN을 0으로 승격하지 않습니다.
+
+portfolio가 유일한 농장 전체 현금원장입니다. grade_lots_by_case에서 case_id별 모든 출하를 상품화량·단위와 일치시키고 기존 판매를 교체하며 포장비는 공유 운영비에 한 번만 반영. physical_detail의 원금상환 생성 조건과 기존 수동 금융현금은 상호 배타적입니다. 일별/금융현금과 스트레스 기준현금은 유일한 authoritative_portfolio 금액과 일치해야 합니다.
+
+물량에 따라 달라지는 포장비가 존재하고 같은 작물의 yield_factor가 1이 아닌 스트레스를 동시에 입력한 경우 명시적으로 계산 중단(변동 포장비 연동 미지원). 로컬 영농기록은 JSON이 아닌 CLI --log 옵션으로만 사용하고, 부분합계를 기존 가상 손익에 다시 더하지 않습니다. [상세 실행 가이드](../how-to/UNIFIED_FARM_WORKSPACE.md).

@@ -17,6 +17,14 @@
 
 개발 자동화·MCP 작업 규칙은 [루트 AGENTS.md](AGENTS.md)에 있습니다. 현재 결정 상태의 기준 문서는 [docs/STATUS.md](docs/STATUS.md)입니다.
 
+## 하나의 Farm KPI 농장 경영 화면
+
+모든 작물별 시뮬레이션, 월별 농장 합산 현금, 등급별 출하/포장, 관수·전기·노동, 일별 물리 제약, 가정형 대출 상환 및 위험 분석을 하나의 입력 JSON과 하나의 결과 화면으로 연결했습니다. 각 모듈의 손익을 중복 합산하지 않고 농장 전체 장부를 단일 기준으로 둡니다.
+
+    python scripts/run_farm_workspace.py --input data/templates/farm_workspace_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-workspace.json --html output/farm-workspace.html
+
+[통합 사용 가이드](docs/how-to/UNIFIED_FARM_WORKSPACE.md) · [공통 합성 입력](data/templates/farm_workspace_SYNTHETIC.json). 레거시 51작목 브라우저 편집기와 통합 JSON의 자동 양방향 동기화는 아직 미구현입니다. 실제 농지·거래처·인허가·금융 검증도 아직 없습니다.
+
 ## 현실 농사 변수·사업 이점
 
 [현실 농사 변수·조건부 이점 51항목](docs/reference/FARM_REALISM_FACTORS.md)은 **작목 51종과 별개**로, 계산필드 23개·현장 체크리스트 10개·미구현 18개를 구분합니다. 토양·용수·법규·실수취가·피크 주간 노동·현금 위험을 검증하지 않은 작목에 수익 순위를 확정하지 않습니다. 23개 요인에 입력 기능이 있다는 사실은 실농가 데이터 검증을 뜻하지 않습니다.
