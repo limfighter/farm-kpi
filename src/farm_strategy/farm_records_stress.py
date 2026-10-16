@@ -10,7 +10,8 @@ labor, commodity prices, weather losses or production functions automatically.
 import csv
 from collections import defaultdict
 from copy import deepcopy
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import math
 from pathlib import Path
 import re
@@ -40,6 +41,11 @@ STRESS_FIELDS = {
 CROP_FACTOR_FIELDS = {"yield_factor", "price_factor"}
 SAFE_REFERENCE = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
 MAX_LOG_ROWS = 100000
+FARM_TIMEZONE = ZoneInfo("Asia/Seoul")  # independent parcel near Jeonju
+
+
+def _farm_local_today():
+    return datetime.now(FARM_TIMEZONE).date()
 
 
 def _nonnegative(value, name):
@@ -135,7 +141,7 @@ def read_farm_log(csv_path, portfolio):
             if kind not in LOG_KINDS or row["source_kind"] not in LOG_KINDS.get(kind, set()):
                 raise ValueError("Log kind incompatible with claimed provenance class")
             _source_id(row["source_ref"])
-            if row["source_kind"] in {"O", "T"} and dt > date.today():
+            if row["source_kind"] in {"O", "T"} and dt > _farm_local_today():
                 raise ValueError("Future-dated evidence cannot be O/T")
             q = _numeric_csv(row["quantity"], "quantity")
             amount = _numeric_csv(row["amount_krw"], "amount_krw")
