@@ -31,6 +31,7 @@ def render_html(result):
             "<td>"+fmt(s["peak_month_end_cash_shortfall_delta_krw"],"원")+"</td>"+
             "<td>"+str(water["months_short"])+"/"+str(water["months_supply_unknown"])+"</td>"+
             "<td>"+str(electric["months_short"])+"/"+str(electric["months_supply_unknown"])+"</td>"+
+            "<td>"+escape(s["physical_supply_status"])+"</td>"+
             "</tr>")
     log=result["field_log"]
     logged="""
@@ -86,11 +87,12 @@ footer{margin:25px 0;color:#5b7563}
 <div>가정 스트레스 시나리오<b>"""+str(len(z["scenarios"]))+"""개</b></div></div></section>
 <section><h2>스트레스 결과 — 기준 대비 변화</h2>
 <p class=notice>가격×수확량은 함께 매출에 작용합니다. **관수·전력 공급 부족은 자동으로 수확량을 깎지 않습니다.**
+월별 자원 부족이 발견되면 자금차이가 0원이어도 실제 재배 가능하다는 뜻이 아니며 <b>미해결 위험</b>으로 표시합니다.
 노동·품질·단기 전력 kW·정산기간도 시나리오에서 별도 변화시키지 않습니다.
 각 항목은 사용자가 명시한 가정만 반영됩니다. 부족월/미확인월을 함께 표시합니다.</p>
 <div class=scroll><table><thead><tr><th>상황</th><th>가정 설명</th><th>예상 순정산액 차이</th>
 <th>무차입 NPV 차이</th><th>기말 현금 차이</th><th>필요자금 최고치 차이</th>
-<th>관수 부족/미확인 월</th><th>전기 부족/미확인 월</th></tr></thead><tbody>"""+
+<th>관수 부족/미확인 월</th><th>전기 부족/미확인 월</th><th>자원 제약 판정</th></tr></thead><tbody>"""+
 "".join(rows)+"""</tbody></table></div></section>
 <section><h2>영농기록 CSV — 별도 집계</h2>"""+logged+"""</section>
 <footer>보고 상태: """+escape(z["status"])+""". 수치 단위와 미확인 값은 본래 입력 기준입니다.
