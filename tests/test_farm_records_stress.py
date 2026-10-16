@@ -29,6 +29,7 @@ def test_control_does_not_move_any_cash_or_capacity():
     assert x["unlevered_npv_delta_krw_if_rate_supplied"]==0
     assert x["peak_month_end_cash_shortfall_delta_krw"]==0
     assert x["scarcity"]["irrigation_m3"]["baseline"]==x["scarcity"]["irrigation_m3"]["stressed"]
+    assert x["physical_supply_status"]=="NO_MODELED_MONTHLY_RESOURCE_DEFICIT"
 
 
 def test_price_and_yield_are_joint_multiplied_with_same_commission_and_fixed_freight():
@@ -51,6 +52,8 @@ def test_scarcity_alone_is_not_invented_weather_damage():
     assert z["ending_cash_delta_krw"]==0
     assert z["scarcity"]["irrigation_m3"]["stressed"]["months_short"]>0
     assert z["scarcity"]["electricity_kwh"]["stressed"]["months_short"]>0
+    assert z["physical_supply_status"]=="RESOURCE_DEFICIT_UNPRICED_YIELD_RISK"
+    assert z["financial_result_is_conditional_not_feasibility_approval"]
 
 
 def test_unknown_supply_remains_unknown_even_after_shock():
@@ -59,6 +62,7 @@ def test_unknown_supply_remains_unknown_even_after_shock():
     z=stress_portfolio(d,[cases()["scenarios"][2]])["scenarios"][0]
     assert z["scarcity"]["irrigation_m3"]["stressed"]["months_supply_unknown"]==24
     assert z["scarcity"]["irrigation_m3"]["stressed"]["maximum_shortage"] is None
+    assert z["physical_supply_status"]=="SUPPLY_UNKNOWN_NOT_EVALUABLE"
 
 
 def test_locally_redacted_records_are_separate_from_simulation():
