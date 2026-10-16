@@ -29,6 +29,7 @@ def test_control_does_not_move_any_cash_or_capacity():
     assert x["unlevered_npv_delta_krw_if_rate_supplied"]==0
     assert x["peak_month_end_cash_shortfall_delta_krw"]==0
     assert x["scarcity"]["irrigation_m3"]["baseline"]==x["scarcity"]["irrigation_m3"]["stressed"]
+    assert x["physical_supply_status"]=="NO_MODELED_MONTHLY_RESOURCE_DEFICIT"
 
 
 def test_price_and_yield_are_joint_multiplied_with_same_commission_and_fixed_freight():
@@ -51,6 +52,8 @@ def test_scarcity_alone_is_not_invented_weather_damage():
     assert z["ending_cash_delta_krw"]==0
     assert z["scarcity"]["irrigation_m3"]["stressed"]["months_short"]>0
     assert z["scarcity"]["electricity_kwh"]["stressed"]["months_short"]>0
+    assert z["physical_supply_status"]=="RESOURCE_DEFICIT_UNPRICED_YIELD_RISK"
+    assert z["financial_result_is_conditional_not_feasibility_approval"]
 
 
 def test_unknown_supply_remains_unknown_even_after_shock():
@@ -59,6 +62,7 @@ def test_unknown_supply_remains_unknown_even_after_shock():
     z=stress_portfolio(d,[cases()["scenarios"][2]])["scenarios"][0]
     assert z["scarcity"]["irrigation_m3"]["stressed"]["months_supply_unknown"]==24
     assert z["scarcity"]["irrigation_m3"]["stressed"]["maximum_shortage"] is None
+    assert z["physical_supply_status"]=="SUPPLY_UNKNOWN_NOT_EVALUABLE"
 
 
 def test_locally_redacted_records_are_separate_from_simulation():
@@ -144,3 +148,103 @@ def test_stress_does_not_mutate_orig_portfolio_or_template():
     before=deepcopy(p)
     stress_portfolio(p,cases()["scenarios"])
     assert p==before
+
+
+def test_duplicate_rows_cannot_double_book_farm_receipts(tmp_path):
+    p=mutate_csv(tmp_path,lambda rows:rows.append(deepcopy(rows[2])))
+    with pytest.raises(ValueError,match="Duplicate farm log row"):
+        read_farm_log(p,portfolio())
+
+
+def test_duplicate_settlement_booking_ref_with_changed_amount_is_rejected(tmp_path):
+    def duplicate(rows):
+        new=deepcopy(rows[2])
+        new["amount_krw"]="550000"  # amounts differ but same receipt identity
+        rows.append(new)
+    p=mutate_csv(tmp_path,duplicate)
+    with pytest.raises(ValueError,match="Duplicate settlement reference"):
+        read_farm_log(p,portfolio())
+
+
+def test_separate_settlement_receipts_may_share_buyer_but_not_booking_id(tmp_path):
+    def extra(rows):
+        new=deepcopy(rows[2])
+        new["source_ref"]="DEMO_BANK_03"
+        new["amount_krw"]="1000"
+        new["quantity"]="1"
+        rows.append(new)
+    p=mutate_csv(tmp_path,extra)
+    report=read_farm_log(p,portfolio())
+    a=next(x for x in report["cases"] if x["case_id"]=="SYNTHETIC SPRING CROP")
+    assert a["recorded"]["settled_cash_krw"]==491000
+    assert a["record_kind_counts"]["SETTLEMENT"]==2
+
+
+def test_missing_observations_export_null_not_pseudo_zero(tmp_path):
+    p=tmp_path/"only_harvest.csv"
+    with LOG.open(encoding="utf-8",newline="") as f:
+        r=csv.DictReader(f)
+        cols=list(r.fieldnames)
+        rows=[x for x in r if x["kind"]=="HARVEST" and x["case_id"]=="SYNTHETIC SPRING CROP"]
+    with p.open("w",encoding="utf-8",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=cols)
+        w.writeheader()
+        w.writerows(rows)
+    report=read_farm_log(p,portfolio())
+    spring=next(x for x in report["cases"] if x["case_id"]=="SYNTHETIC SPRING CROP")
+    recorded=spring["recorded"]
+    assert recorded["harvest_quantity_by_unit"]=={"kg":400}
+    assert recorded["settled_cash_krw"] is None
+    assert recorded["settled_quantity_by_unit"] is None
+    assert recorded["paid_expense_krw"] is None
+    assert recorded["owner_hours_recorded"] is None
+    assert recorded["hired_hours_recorded"] is None
+    assert recorded["water_m3_recorded"] is None
+    assert recorded["electricity_kwh_recorded"] is None
+    assert spring["record_kind_counts"]["HARVEST"]==1
+    assert spring["record_kind_counts"]["SETTLEMENT"]==0
+    fall=next(x for x in report["cases"] if x["case_id"]=="SYNTHETIC AUTUMN CROP")
+    assert fall["coverage"]=="NO_RECORDS_UNKNOWN"
+    assert all(v is None for k,v in fall["recorded"].items() if k!="expense_by_category_krw")
+    assert fall["recorded"]["expense_by_category_krw"] is None
+
+
+def test_actual_recorded_zero_differs_from_unknown(tmp_path):
+    def zero_owner(rows):
+        rows[0]["owner_hours"]="0"
+        rows[0]["hired_hours"]=""  # WORK: explicitly owner zero, hired never observed
+        rows[3]["quantity"]="0"  # an explicit water-meter zero reading
+    p=mutate_csv(tmp_path,zero_owner)
+    output=read_farm_log(p,portfolio())
+    crop=next(x for x in output["cases"] if x["case_id"]=="SYNTHETIC SPRING CROP")
+    assert crop["recorded"]["owner_hours_recorded"]==0
+    assert crop["recorded"]["hired_hours_recorded"] is None
+    assert crop["recorded"]["water_m3_recorded"]==0
+    assert crop["recorded"]["electricity_kwh_recorded"]==20
+
+
+def test_export_contains_neither_exact_log_dates_nor_source_refs():
+    output=read_farm_log(LOG,portfolio())
+    encoded=json.dumps(output,ensure_ascii=False)
+    assert "first_record_date" not in encoded
+    assert "last_record_date" not in encoded
+    assert "2027-04-12" not in encoded
+    assert "2028-01-31" not in encoded
+    assert "DEMO_BANK_01" not in encoded
+    assert "DEMO_WORK_01" not in encoded
+
+
+def test_korean_calendar_controls_future_evidence_validation(monkeypatch):
+    """At 00:30 KST, UTC still reads the previous date, but T/O may be today."""
+    from datetime import date, datetime
+    from zoneinfo import ZoneInfo
+    import farm_strategy.farm_records_stress as module
+
+    class Clock:
+        @staticmethod
+        def now(tz):
+            assert tz.key == "Asia/Seoul"
+            return datetime(2026, 10, 16, 0, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+
+    monkeypatch.setattr(module, "datetime", Clock)
+    assert module._farm_local_today() == date(2026, 10, 16)

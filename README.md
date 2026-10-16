@@ -55,6 +55,10 @@ python scripts/analyze_farm_reality.py --portfolio data/templates/portfolio_SYNT
 
 실제 파일 사용 시 `--log data/private/my-redacted-log.csv`로 바꾸고 **로컬 컴퓨터에서만 실행**합니다. 기록 CSV가 없다면 `--log`를 빼고 가정 스트레스만 실행할 수 있습니다. 사적 파일의 원본·날짜별 거래·출처ID는 HTML/JSON에 복제하지 않고 작형별 합계만 출력합니다.
 
+## 실제 영농 도입 전 P0 결함 점검
+
+[실제 농장 준비도·결함 감사](docs/reference/FARM_READINESS_GAP_AUDIT.md)에 수정한 **중복 정산·누락 0 오해·민감한 활동 날짜·물/전력 부족 표시**와 미해결 토양·용수·거래처·자금 근거를 분리했습니다. 기능 수가 늘어도 이 도구는 가정/현장 관측 분리용이며 작물·시설 투자 승인 자료가 아닙니다.
+
 ## 오프라인 브라운·세이지 화면
 
 - **[2022~2023 공식 웹 통계 검증 화면](dashboard/source-coverage/index.html)** — 3개 작목 표본의 정확한 원/10a 수치 5건과 결측 1건을 분리(원본 PDF·노동시간 미대조, 작목 추천 아님).

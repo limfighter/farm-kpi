@@ -233,6 +233,12 @@
       "type": "reference",
       "owner": "model",
       "lifecycle": "active"
+    },
+    {
+      "path": "docs/reference/FARM_READINESS_GAP_AUDIT.md",
+      "type": "reference",
+      "owner": "model",
+      "lifecycle": "active"
     }
   ]
 }

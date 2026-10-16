@@ -10,7 +10,8 @@ labor, commodity prices, weather losses or production functions automatically.
 import csv
 from collections import defaultdict
 from copy import deepcopy
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 import math
 from pathlib import Path
 import re
@@ -40,6 +41,11 @@ STRESS_FIELDS = {
 CROP_FACTOR_FIELDS = {"yield_factor", "price_factor"}
 SAFE_REFERENCE = re.compile(r"^[A-Za-z0-9_-]{3,64}$")
 MAX_LOG_ROWS = 100000
+FARM_TIMEZONE = ZoneInfo("Asia/Seoul")  # independent parcel near Jeonju
+
+
+def _farm_local_today():
+    return datetime.now(FARM_TIMEZONE).date()
 
 
 def _nonnegative(value, name):
@@ -103,14 +109,17 @@ def read_farm_log(csv_path, portfolio):
     last_year = first_year + portfolio["site"]["horizon_years"] - 1
     observed = defaultdict(lambda: {
         "rows": 0, "source_counts": {"O": 0, "T": 0, "A": 0},
+        "kind_rows": {name: 0 for name in LOG_KINDS},
+        "_owner_hours_present": 0, "_hired_hours_present": 0,
         "owner_hours_recorded": 0., "hired_hours_recorded": 0.,
         "harvest_quantity_by_unit": {},
         "settled_quantity_by_unit": {}, "settled_cash_krw": 0.,
         "paid_expense_krw": 0., "expense_by_category_krw": {},
         "water_m3_recorded": 0., "electricity_kwh_recorded": 0.,
-        "first_record_date": None, "last_record_date": None,
     })
     total = 0
+    seen_rows = set()
+    seen_settlements = set()
     with Path(csv_path).open("r", encoding="utf-8-sig", newline="") as fh:
         reader = csv.DictReader(fh, strict=True)
         if reader.fieldnames is None or tuple(reader.fieldnames) != LOG_HEADERS:
@@ -132,9 +141,8 @@ def read_farm_log(csv_path, portfolio):
             if kind not in LOG_KINDS or row["source_kind"] not in LOG_KINDS.get(kind, set()):
                 raise ValueError("Log kind incompatible with claimed provenance class")
             _source_id(row["source_ref"])
-            if row["source_kind"] in {"O", "T"} and dt > date.today():
+            if row["source_kind"] in {"O", "T"} and dt > _farm_local_today():
                 raise ValueError("Future-dated evidence cannot be O/T")
-            _required_blank(row, (), kind)
             q = _numeric_csv(row["quantity"], "quantity")
             amount = _numeric_csv(row["amount_krw"], "amount_krw")
             own = _numeric_csv(row["owner_hours"], "owner_hours")
@@ -160,12 +168,24 @@ def read_farm_log(csv_path, portfolio):
                 required = "m3" if kind == "WATER_USE" else "kWh"
                 if category or unit != required or q is None or amount is not None or own is not None or hired is not None:
                     raise ValueError("Utility use requires correctly dimensioned quantity, not cash")
+            fingerprint = tuple(row[name] for name in LOG_HEADERS)
+            if fingerprint in seen_rows:
+                raise ValueError("Duplicate farm log row; remove repeated imports")
+            seen_rows.add(fingerprint)
+            # A settled transfer must be a single booking per crop/day/reference/unit.
+            # Different transfers from the same buyer need different local IDs.
+            if kind == "SETTLEMENT":
+                booking = (ident, row["date"], row["source_ref"], unit)
+                if booking in seen_settlements:
+                    raise ValueError("Duplicate settlement reference on the same crop and day")
+                seen_settlements.add(booking)
             a = observed[ident]
+            a["kind_rows"][kind] += 1
             a["rows"] += 1
             a["source_counts"][row["source_kind"]] += 1
-            a["first_record_date"] = min(a["first_record_date"] or dt.isoformat(), dt.isoformat())
-            a["last_record_date"] = max(a["last_record_date"] or dt.isoformat(), dt.isoformat())
             if kind == "WORK":
+                a["_owner_hours_present"] += (own is not None)
+                a["_hired_hours_present"] += (hired is not None)
                 a["owner_hours_recorded"] += own or 0.
                 a["hired_hours_recorded"] += hired or 0.
             elif kind == "HARVEST":
@@ -185,21 +205,33 @@ def read_farm_log(csv_path, portfolio):
     results = []
     for ident in sorted(case_ids):
         a = observed[ident]  # even absent crop gets a zero-row, NOT a 0 harvest
+        # A zero can be reported ONLY if at least one relevant row explicitly
+        # recorded that metric. No row -> null/UNKNOWN, not measured zero.
+        counts = a["kind_rows"]
+        recorded = {
+            "owner_hours_recorded": (a["owner_hours_recorded"] if a["_owner_hours_present"] else None),
+            "hired_hours_recorded": (a["hired_hours_recorded"] if a["_hired_hours_present"] else None),
+            "harvest_quantity_by_unit": (a["harvest_quantity_by_unit"] if counts["HARVEST"] else None),
+            "settled_quantity_by_unit": (a["settled_quantity_by_unit"] if counts["SETTLEMENT"] else None),
+            "settled_cash_krw": (a["settled_cash_krw"] if counts["SETTLEMENT"] else None),
+            "paid_expense_krw": (a["paid_expense_krw"] if counts["EXPENSE"] else None),
+            "expense_by_category_krw": (a["expense_by_category_krw"] if counts["EXPENSE"] else None),
+            "water_m3_recorded": (a["water_m3_recorded"] if counts["WATER_USE"] else None),
+            "electricity_kwh_recorded": (a["electricity_kwh_recorded"] if counts["POWER_USE"] else None),
+        }
         results.append({
             "case_id": ident, "recorded_rows": a["rows"],
             "coverage": "PARTIAL_UNVERIFIED" if a["rows"] else "NO_RECORDS_UNKNOWN",
+            "record_kind_counts": counts,
             "provenance_claim_counts": a["source_counts"],
-            "first_record_date": a["first_record_date"],
-            "last_record_date": a["last_record_date"],
-            "recorded": {k: v for k, v in a.items() if k not in
-                         {"rows", "source_counts", "first_record_date", "last_record_date"}},
+            "recorded": recorded,
             "scenario_forecast_net_settlement_krw": forecasts[ident]["net_expected_settlement_krw"],
         })
     return {
         "status": "LOCAL_REDACTED_FIELD_LOG_NOT_RECONCILED_FULL_FARM_ACCOUNTS",
         "rows": total, "cases": results,
         "unmodeled_logs_do_not_change_scenario_cash": True,
-        "warning": "Only rows supplied were aggregated; missing work or settlement is UNKNOWN, not 0. A/O/T labels are self-reported and NOT externally verified. Do not subtract partial expenses from complete modeled proceeds, and do not post raw receipts, names, locations or account numbers.",
+        "warning": "Only supplied rows were aggregated; unrecorded metrics export as null/UNKNOWN, explicit recorded zero stays 0. Duplicate rows/settlement references are rejected. A/O/T labels are self-reported and NOT externally verified. Do not subtract partial expenses from modeled proceeds. Even minimized reports contain crop case IDs; review before sharing. Do not post raw receipts, names, locations or account numbers.",
     }
 
 
@@ -279,6 +311,14 @@ def stress_portfolio(portfolio, cases):
                   "stressed": _shortfall_summary(stressed, key)}
             for key in ("irrigation_m3", "electricity_kwh")
         }
+        # Financial deltas alone are not a viable planting plan: shortages
+        # are operational blockers even when the model has no yield-loss link.
+        if any(z["stressed"]["months_supply_unknown"] for z in summaries.values()):
+            physical_supply_status = "SUPPLY_UNKNOWN_NOT_EVALUABLE"
+        elif any(z["stressed"]["months_short"] for z in summaries.values()):
+            physical_supply_status = "RESOURCE_DEFICIT_UNPRICED_YIELD_RISK"
+        else:
+            physical_supply_status = "NO_MODELED_MONTHLY_RESOURCE_DEFICIT"
         delta_settlements = sum(p["net_expected_settlement_krw"] for p in stressed["per_crop"]) - sum(
             p["net_expected_settlement_krw"] for p in baseline["per_crop"])
         delta_cash = stressed["ending_cash_krw"] - baseline["ending_cash_krw"]
@@ -298,6 +338,8 @@ def stress_portfolio(portfolio, cases):
                 stressed["maximum_month_end_cash_shortfall_krw"] -
                 baseline["maximum_month_end_cash_shortfall_krw"]),
             "scarcity": summaries,
+            "physical_supply_status": physical_supply_status,
+            "financial_result_is_conditional_not_feasibility_approval": True,
         })
     return {
         "status": "EXPLICIT_STRESS_NOT_PROBABILISTIC_YIELD_OR_CROP_RECOMMENDATION",

@@ -174,3 +174,13 @@ financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/sou
 [명시적 스트레스 예시](../../data/templates/farm_stresses_SYNTHETIC.json): `schema_version=1`, `disclaimer`, `scenarios[]`이며 각 시나리오는 `id,description,case_factors,water_supply_factor,electricity_supply_factor,months_affected,source_kind=A,source_ref`가 필요합니다. `case_factors`에 기재된 각 작물 ID별 `yield_factor`, `price_factor`는 기존 상품화율·운송비·정산 지연을 그대로 유지하고 **판매수량과 단가**에만 곱합니다. 물/전력 공급 배수는 `months_affected`에 열거한 1부터 시작하는 월 인덱스에만 적용하며 빈 리스트는 모든 월 적용을 의미합니다. 원래 월 공급량 자체가 미확인(null)이면 충격을 가해도 UNKNOWN입니다. 입금 시점, 관수/기후의 자동 작물 피해율, 유통 등급, 신규 고용/에너지비 지출은 추정하지 않습니다. 수확량과 가격 배수는 고정 시간/전 작기 대상이며 개별 판매 이벤트별 시점 변동은 후속 과제입니다.
 
 공식 참고: [농사로 2026년 경영기록장](https://www.nongsaro.go.kr/portal/ps/pst/pstb/pstbc/mngmtDtaDtl.ps?menuId=PS03213&nttSn=847&pageIndex=1), [농식품부 유통구조 개선·가격 변동 요인](https://www.mafra.go.kr/bbs/home/795/592429/download.do). 실 농가 수치·가격·파종 제약이 새로 확보되었다는 뜻은 아닙니다.
+
+
+## 영농기록 중복·결측·민감한 시점 방어 (2026-10-16)
+
+- 완전히 같은 CSV 행은 중복이라 거부합니다. 동일 작형(case_id), 일자(date), source_ref, 판매 단위(unit)의 SETTLEMENT 재등장은 **금액이 달라도 중복 정산 위험**이므로 거부합니다. 여러 실제 입금은 각각 비식별 참조ID를 갖도록 기록합니다. 분할입금·반품·취소·미수금 대사는 미지원이며 원화의 음수 줄을 넣어 맞추지 않습니다.
+- WORK/HARVEST/SETTLEMENT/EXPENSE/WATER_USE/POWER_USE 각각의 행수는 숫자 0도 가능합니다. 이는 **그 종류의 관측이 없음**을 뜻하며 해당 합계는 JSON null, HTML UNKNOWN입니다. 자가시간·고용시간도 각각 기록 유무를 구분합니다. 기록된 실제 0을 포함한 입력 합계만 0을 표시합니다.
+- 실제 영농기록 첫/마지막 **원본 날짜와 source_ref는 내보내지 않습니다**. 하지만 출력에 작물 사례 case_id와 사용자가 지정한 스트레스 description이 남으므로 외부 공유 전에 비식별 확인이 필요합니다. 데이터는 보안이 자동 인증된 익명 파일이 아닙니다.
+- 공급량 부족이 있어도 피해-수확량 반응식이 없으므로 회계 차액이 0일 수 있습니다. 각 시나리오 physical_supply_status는 SUPPLY_UNKNOWN_NOT_EVALUABLE / RESOURCE_DEFICIT_UNPRICED_YIELD_RISK / NO_MODELED_MONTHLY_RESOURCE_DEFICIT 중 하나입니다. 마지막 상태조차 현장 물·전력 인입/계약·재배 허가의 실제 승인 상태가 아닙니다.
+
+- 현장 관측(O)·정산(T)의 '미래 일자' 여부는 서버/CI 실행기의 UTC 달력이 아니라 **전주 인근 독립 농지의 한국 표준시(Asia/Seoul)** 날짜를 기준으로 판단합니다. 지역이나 시간대가 다른 농장은 현재 구현의 적용범위가 아니며 별도 시간대 정의가 필요합니다.
