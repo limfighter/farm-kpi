@@ -19,6 +19,9 @@
 
 ## 하나의 Farm KPI 농장 경영 화면
 
+**브라우저로 한 곳에서 사용하기:** 개발환경에서 `python scripts/serve_farm_workspace.py` 실행 → 브라우저의 `http://127.0.0.1:8765/` 접속. 이 화면에서 농장 공통 JSON·비식별 영농 CSV 불러오기, 계획 수정, Python 통합 재계산, 보고서 확인, 결과 JSON 저장이 가능합니다. 전부 본인 컴퓨터의 로컬 서버에서 처리합니다. 인터넷/외부 서비스에 입력을 전송하지 않습니다. 공개 웹사이트/LAN 서버로 실행하지 마세요.
+
+
 모든 작물별 시뮬레이션, 월별 농장 합산 현금, 등급별 출하/포장, 관수·전기·노동, 일별 물리 제약, 가정형 대출 상환 및 위험 분석을 하나의 입력 JSON과 하나의 결과 화면으로 연결했습니다. 각 모듈의 손익을 중복 합산하지 않고 농장 전체 장부를 단일 기준으로 둡니다.
 
     python scripts/run_farm_workspace.py --input data/templates/farm_workspace_SYNTHETIC.json --log data/templates/field_log_SYNTHETIC.csv --output output/farm-workspace.json --html output/farm-workspace.html

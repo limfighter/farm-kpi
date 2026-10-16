@@ -193,3 +193,6 @@ financing_events는 year/month/name/kind(DRAW,INTEREST,PRINCIPAL)/amount_krw/sou
 portfolio가 유일한 농장 전체 현금원장입니다. grade_lots_by_case에서 case_id별 모든 출하를 상품화량·단위와 일치시키고 기존 판매를 교체하며 포장비는 공유 운영비에 한 번만 반영. physical_detail의 원금상환 생성 조건과 기존 수동 금융현금은 상호 배타적입니다. 일별/금융현금과 스트레스 기준현금은 유일한 authoritative_portfolio 금액과 일치해야 합니다.
 
 물량에 따라 달라지는 포장비가 존재하고 같은 작물의 yield_factor가 1이 아닌 스트레스를 동시에 입력한 경우 명시적으로 계산 중단(변동 포장비 연동 미지원). 로컬 영농기록은 JSON이 아닌 CLI --log 옵션으로만 사용하고, 부분합계를 기존 가상 손익에 다시 더하지 않습니다. [상세 실행 가이드](../how-to/UNIFIED_FARM_WORKSPACE.md).
+
+
+로컬 대화형 UI는 `python scripts/serve_farm_workspace.py` 실행 후 `http://127.0.0.1:8765/`에서 한 JSON과 선택적 비식별 CSV를 메모리로 읽어 위의 동일한 Python 원장으로 재계산합니다. POST는 loopback 호스트와 로컬 Origin/전용 헤더/크기 제한으로 보호되며, 실제 금융/지번·거래처 원본을 넣어도 안전하다고 인증한 서비스는 아닙니다. public/LAN 웹서비스로 배포하지 않습니다.
