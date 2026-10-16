@@ -232,3 +232,19 @@ def test_export_contains_neither_exact_log_dates_nor_source_refs():
     assert "2028-01-31" not in encoded
     assert "DEMO_BANK_01" not in encoded
     assert "DEMO_WORK_01" not in encoded
+
+
+def test_korean_calendar_controls_future_evidence_validation(monkeypatch):
+    """At 00:30 KST, UTC still reads the previous date, but T/O may be today."""
+    from datetime import date, datetime
+    from zoneinfo import ZoneInfo
+    import farm_strategy.farm_records_stress as module
+
+    class Clock:
+        @staticmethod
+        def now(tz):
+            assert tz.key == "Asia/Seoul"
+            return datetime(2026, 10, 16, 0, 30, tzinfo=ZoneInfo("Asia/Seoul"))
+
+    monkeypatch.setattr(module, "datetime", Clock)
+    assert module._farm_local_today() == date(2026, 10, 16)
